@@ -1,0 +1,207 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+	android:fillViewport="true"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".PropDetailActivity" >
+	
+	<!-- fillViewport fix source: http://stackoverflow.com/questions/10312272/layout-weight-is-not-work-in-scrollview -->
+    
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:padding="10dp">
+		
+	    <RelativeLayout
+	        android:id="@+id/ownerPad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:orientation="horizontal"
+	        android:layout_weight="1">
+	
+	        <Button
+		        android:id="@+id/btnPickOwner"
+				style="?android:attr/buttonStyleSmall"		        
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/label_pick_owner"/>
+		    
+		    <TextView
+		        android:id="@+id/txtPickOwner"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@+id/btnPickOwner"
+		        android:layout_centerVertical="true"
+		        android:hint="@string/label_pick_owner"/>
+		
+		</RelativeLayout>   
+	    
+	    <RelativeLayout
+	        android:id="@+id/addressPad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:orientation="horizontal"
+	        android:layout_weight="1">
+		    
+		    <EditText
+		        android:id="@+id/txtAddress"
+		        android:inputType="text"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@+id/lblAddress"
+		        android:ems="10" />
+
+		    <TextView
+		        android:id="@+id/lblAddress"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_centerVertical="true"
+		        android:text="@string/label_house_address"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+	        android:id="@+id/bedroomPad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:orientation="horizontal"
+	        android:layout_weight="1">
+		    
+		    <EditText
+		        android:id="@+id/txtBedrooms"
+		        android:inputType="number"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@+id/lblBedrooms"
+		        android:ems="10" />
+
+		    <TextView
+		        android:id="@+id/lblBedrooms"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_centerVertical="true"
+		        android:text="@string/label_house_bedrooms"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+	    
+	    </RelativeLayout>
+	    <!-- SPINNER IMPLEMENTED ON LESSON 10-->
+	    <RelativeLayout
+	        android:id="@+id/ratingPad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:orientation="horizontal"
+	        android:layout_weight="1">
+	
+		    <Spinner 
+		        android:id="@+id/spinnerRating"
+		        android:layout_toRightOf="@+id/lblRating"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:ems="10" />
+
+		    <TextView
+		        android:id="@+id/lblRating"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_centerVertical="true"
+		        android:text="@string/label_house_rating"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    </RelativeLayout>
+
+  	    <RelativeLayout
+	        android:id="@+id/propTypePad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:orientation="horizontal"
+	        android:layout_weight="1">
+	
+		    <Spinner 
+		        android:id="@+id/spinnerType"
+		        android:layout_toRightOf="@+id/lblType"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:ems="10" />
+
+		    <!-- 		    
+		    <Button
+		        android:id="@+id/btnAddPropType"
+		        android:layout_toRightOf="@+id/spinnerType"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/new_prop_type" />"
+ 			-->
+
+		    <Button
+		        android:id="@+id/btnAddPropType"
+		        style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:text="@string/new_prop_type" />
+
+		    <TextView
+		        android:id="@+id/lblType"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_centerVertical="true"
+		        android:text="@string/label_prop_type"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    </RelativeLayout>
+	    <!-- CHECKBOX IMPLEMENTED ON LESSON 9-->
+		<RelativeLayout
+		    android:id="@+id/photoPad"
+		    android:background="@color/gray_try"
+		    android:layout_width="match_parent"
+		    android:layout_height="0dip"
+		    android:layout_weight="4" >
+		    
+		    <!-- background color source: http://stackoverflow.com/questions/7378636/setting-background-colour-of-android-layout-element -->
+		    
+		    <ImageView
+		        android:id="@+id/imgDisplayImage"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@android:drawable/ic_menu_camera" 
+		        android:contentDescription="@string/hint_imgDisplayImage"/>
+		    
+		</RelativeLayout>
+
+	    <CheckBox
+	        android:id="@+id/chkConfirmed"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="20dp"
+	        android:text="@string/label_check_confirmed" />
+
+	    <LinearLayout 
+		    android:id="@+id/buttonPad"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dip"
+	        android:gravity="center"
+	        android:layout_weight="1"
+	        android:orientation="horizontal">
+		    
+		    <Button 
+		        android:id="@+id/btnCancel"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/btn_cancel" />
+		    
+		    <Button
+		        android:id="@+id/btnSave"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/btn_save" />
+		        
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>

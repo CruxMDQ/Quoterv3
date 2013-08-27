@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+	<PreferenceCategory android:title="Data filter">
+	    
+	    <CheckBoxPreference
+	        android:title="Hide unconfirmed houses"
+	        android:key="hide_unconfirmed_houses"
+	        android:summary="Hides houses that have not been confirmed from the list."
+	        android:defaultValue="false" />
+	    
+	</PreferenceCategory>
+	    
+</PreferenceScreen>
