@@ -47,7 +47,6 @@ import com.callisto.quoter.utils.ImageUtils;
 
 public class PropDetailActivity extends Activity implements LocationListener
 {
-
 	/*
 	 * Constants: used for onActivityResult
 	 */
@@ -66,7 +65,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	 */
 	private int mFormMode;
 	
-	long mPropType;
+	long mPropTypeId, mRatingId;
 
 	/*
 	 * Property and initial room types
@@ -103,8 +102,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	Object objSpnRatingSelection, objSpnTypeSelection;
 	AdapterView.OnItemSelectedListener spnLstPropType, spnLstRating;
 	
-	
-	private Uri mContactUri;
+		private Uri mContactUri;
 
 	/*
 	 * GPS STUFF
@@ -477,13 +475,28 @@ public class PropDetailActivity extends Activity implements LocationListener
 			{
 //				mPropType = getItemPositionById(mCursorPropTypes, id, mPropTypes); 	// 3
 //				mPropType = spinnerType.getItemIdAtPosition(pos); 	// 2
-				mPropType = id; 	// 1
+				mPropTypeId = id; 	// 1
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) { }
 		};
 		spinnerType.setOnItemSelectedListener(spnLstPropType);
+
+		spnLstRating = new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) 
+			{
+				mRatingId = id;
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) { }
+		};
+		spinnerRating.setOnItemSelectedListener(spnLstRating);
 		
 		/*
 		 * Set form mode
@@ -799,8 +812,12 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			if (c.getLong(c.getColumnIndex(DBAdapter.C_COLUMN_ID)) == id)
+			long t = c.getLong(c.getColumnIndex(DBAdapter.C_COLUMN_ID));
+			
+			if (t == id)
 			{
+				Log.i(this.getClass().toString(), "id = " + t + ", c.getPosition() = " + c.getPosition());
+				
 				return c.getPosition();
 			}
 		}
@@ -967,7 +984,16 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
-		spinnerRating.setSelection(
+
+		mRatingId = getItemPositionById(
+				mCursorRatings,
+				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
+				mRatings
+			);
+		
+		Log.i(this.getClass().toString(), "mRatingId = " + mRatingId);
+
+		spinnerRating.setSelection((int)
 			getItemPositionById(
 					mCursorRatings, 
 					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
@@ -975,11 +1001,17 @@ public class PropDetailActivity extends Activity implements LocationListener
 				)
 			);
 
-		mPropType = mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID));
+		mPropTypeId = getItemPositionById(
+				mCursorHouses, 
+				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
+				mPropTypes
+			);
 
-		spinnerType.setSelection(
+		Log.i(this.getClass().toString(), "mPropTypeId = " + mPropTypeId);
+
+		spinnerType.setSelection((int)
 			getItemPositionById(
-					mCursorRatings, 
+					mCursorHouses, 
 					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
 					mPropTypes
 				)
@@ -1084,19 +1116,18 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
-		long t = spinnerRating.getSelectedItemId();
-		Log.i(this.getClass().toString(), "Spinner selected item ID: " + t);
-		
-		reg.put(PropDBAdapter.C_PROP_RATING_ID, spinnerRating.getSelectedItemId());
+//		reg.put(PropDBAdapter.C_PROP_RATING_ID, spinnerRating.getSelectedItemId());
+		reg.put(PropDBAdapter.C_PROP_RATING_ID, mRatingId);
 
 		/*
 		 * MUST use the definition at this DB adapter because of differing column names
 		 * 
 		 * FOLLOW-UP: after setting up the onSelectedItemListener on the spinner, is this really necessary? 
 		 */
-//		mPropType = Integer.parseInt(spinnerType.getSelectedItem().toString());
+		mPropTypeId = Integer.parseInt(spinnerType.getSelectedItem().toString());
+		Log.i(this.getClass().toString(), "mPropTypeId: " + mPropTypeId);
 		
-		reg.put(PropDBAdapter.C_PROP_TYPE_ID, mPropType);
+		reg.put(PropDBAdapter.C_PROP_TYPE_ID, mPropTypeId);
 //		reg.put(PropDBAdapter.C_PROP_TYPE_ID, spinnerType.getSelectedItemId());
 
 		/*
