@@ -50,15 +50,12 @@ public class PropDetailActivity extends Activity implements LocationListener
 	/*
 	 * Constants: used for onActivityResult
 	 */
-	protected static final int C_PICK_CONTACT = 70001,
-			C_PICK_IMAGE = 70002;
+	protected static final int C_PICK_CONTACT = 70001,C_PICK_IMAGE = 70002;
 	
 	private PropDBAdapter mHouses;
 	private RatingsDBAdapter mRatings;
 	private PropTypesDBAdapter mPropTypes;
-	private Cursor mCursorHouses, 
-		mCursorRatings,
-		mCursorPropTypes;
+	private Cursor mCursorHouses,mCursorRatings,mCursorPropTypes;
 	
 	/*
 	 * Form mode
@@ -120,6 +117,10 @@ public class PropDetailActivity extends Activity implements LocationListener
 	private Uri mCameraUri;
 	private String mPhotoPath;
 	private Bitmap mBitmap;
+
+	protected int posRating;
+
+	protected int posType;
 
 	// **** VISIBLE METHODS AND OVERRIDES ****
 	
@@ -454,49 +455,53 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		spinnerRating.setAdapter(adapterRatings);
 		*/
-
+		
 		populatePropTypes();
 		populateRatings();
 		
-		int pos = mCursorRatings.getInt(mCursorRatings.getColumnIndex(RatingsDBAdapter.C_COLUMN_ID));
-		Log.i(this.getClass().toString(), "Spinner selected value " + pos);
-		
-		spinnerRating.setSelection(pos);
-		
-		long t = spinnerRating.getSelectedItemId();
-		Log.i(this.getClass().toString(), "Spinner selected item ID: " + t);
-
 		spnLstPropType = new AdapterView.OnItemSelectedListener()
 		{
-
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int pos, long id) 
+			public void onItemSelected(AdapterView<?> parent, View view,int pos, long id) 
 			{
 //				mPropType = getItemPositionById(mCursorPropTypes, id, mPropTypes); 	// 3
 //				mPropType = spinnerType.getItemIdAtPosition(pos); 	// 2
-				mPropTypeId = id; 	// 1
+				Log.i(this.getClass().toString(), "onItemSelected  spnLstPropType" + pos);
+				posType = pos;
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) { }
 		};
 		spinnerType.setOnItemSelectedListener(spnLstPropType);
-
+		
 		spnLstRating = new AdapterView.OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int pos, long id) 
+			public void onItemSelected(AdapterView<?> parent, View view,int pos, long id) 
 			{
-				mRatingId = id;
-				
+				posRating = pos;
+				Log.i(this.getClass().toString(), "onItemSelected  spnLstRating" + pos);
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) { }
 		};
 		spinnerRating.setOnItemSelectedListener(spnLstRating);
+				
+		if (extra.containsKey(PropDBAdapter.C_COLUMN_ID))
+		{
+			spinnerRating.setEnabled(true);
+			spinnerType.setEnabled(true);
+			
+			mPropId = extra.getLong(PropDBAdapter.C_COLUMN_ID);
+			query(mPropId);
+			spinnerRating.setSelection(getItemPositionById(mCursorRatings, mRatingId, mRatings),false);
+			Log.i(this.getClass().toString(), "spinnerRating getSelectedItemPosition " + spinnerRating.getSelectedItemPosition());
+			spinnerType.setSelection(getItemPositionById(mCursorPropTypes, mPropId, mPropTypes),false);
+			Log.i(this.getClass().toString(), "spinnerType getSelectedItemPosition " + spinnerType.getSelectedItemPosition());		
+		
+		}	
 		
 		/*
 		 * Set form mode
@@ -506,11 +511,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * Get record ID if provided
 		 */
-		if (extra.containsKey(PropDBAdapter.C_COLUMN_ID))
-		{
-			mPropId = extra.getLong(PropDBAdapter.C_COLUMN_ID);
-			query(mPropId);
-		}
 		
 		doEyeInTheSky();
 		
@@ -808,6 +808,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 		return 0;
 	}
 	
+	
+	
 	private int getItemPositionById(Cursor c, long id, DBAdapter adapter)
 	{
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
@@ -823,6 +825,21 @@ public class PropDetailActivity extends Activity implements LocationListener
 		}
 		
 		return 0;
+	} 
+	
+	private long getItemyPos(Cursor c, int pos, DBAdapter adapter)
+	{
+		int i= 0;
+		long t=0;
+		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+		{			
+			if (i == pos)
+			{
+				t = c.getLong(c.getColumnIndex(DBAdapter.C_COLUMN_ID));				
+			}
+			i++;
+		}
+		return t;
 	} 
 
 	/***
@@ -985,36 +1002,15 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
 
-		mRatingId = getItemPositionById(
-				mCursorRatings,
-				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
-				mRatings
-			);
+		mRatingId = getItemPositionById(mCursorRatings,mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),mRatings);
 		
-		Log.i(this.getClass().toString(), "mRatingId = " + mRatingId);
+		Log.i(this.getClass().toString(), "query mRatingId = " + mRatingId);
 
-//		spinnerRating.setSelection((int)
-//			getItemPositionById(
-//					mCursorRatings, 
-//					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
-//					mRatings
-//				)
-//			);
-		spinnerRating.setSelection(
-			    getItemPositionById(
-			        mCursorRatings, 
-			        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID)),
-			        mRatings
-			    )
-			);
-		
-		mPropTypeId = getItemPositionById(
-				mCursorHouses, 
-				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
-				mPropTypes
-			);
+//		spinnerRating.setSelection((int)getItemPositionById(mCursorRatings,mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),mRatings));
 
-		Log.i(this.getClass().toString(), "mPropTypeId = " + mPropTypeId);
+		mPropTypeId = getItemPositionById(mCursorHouses,mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),mPropTypes);
+
+		Log.i(this.getClass().toString(), "query mPropTypeId = " + mPropTypeId);
 
 //		spinnerType.setSelection((int)
 //			getItemPositionById(
@@ -1023,20 +1019,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 //					mPropTypes
 //				)
 //			);
-		try
-		{
-			spinnerType.setSelection(
-				    getItemPositionById(
-				        mCursorPropTypes, 
-				        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID)),
-				        mPropTypes
-				    )
-				);
-		}
-		catch(Exception e)
-		{
-			Log.i(this.getClass().toString(), "EXCEPTION: " + e.getMessage());
-		}
+
 		/*
 		 * REQUIRED FOR PICKING CONTACT FROM PHONE BOOK
 		 */
@@ -1137,16 +1120,19 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
 //		reg.put(PropDBAdapter.C_PROP_RATING_ID, spinnerRating.getSelectedItemId());
+		mRatingId = getItemyPos(mCursorRatings, posRating, mRatings);
 		reg.put(PropDBAdapter.C_PROP_RATING_ID, mRatingId);
+		Log.i(this.getClass().toString(), "save mRatingId: " + mRatingId);
+
 
 		/*
 		 * MUST use the definition at this DB adapter because of differing column names
 		 * 
 		 * FOLLOW-UP: after setting up the onSelectedItemListener on the spinner, is this really necessary? 
 		 */
-		//mPropTypeId = Integer.parseInt(spinnerType.getSelectedItemId());
-		Log.i(this.getClass().toString(), "mPropTypeId: " + mPropTypeId);
-		
+	
+		mPropTypeId =getItemyPos(mCursorPropTypes, posType, mPropTypes);
+		Log.i(this.getClass().toString(), "save mPropTypeId: " + mPropTypeId);
 		reg.put(PropDBAdapter.C_PROP_TYPE_ID, mPropTypeId);
 //		reg.put(PropDBAdapter.C_PROP_TYPE_ID, spinnerType.getSelectedItemId());
 

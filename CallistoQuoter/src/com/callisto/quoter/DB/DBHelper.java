@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	/*
 	 * VERSION CHANGE IMPLEMENTED ON DATABASE UPGRADE STEP
 	 */
-	private static int version = 7;	//2	
+	private static int version = 7;	
 	
 	private static String name = "REDB";
 	private static CursorFactory factory = null;
@@ -224,5 +224,4 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		Log.i(this.getClass().toString(), "Update to version 7 complete");
 	}
-
 }
