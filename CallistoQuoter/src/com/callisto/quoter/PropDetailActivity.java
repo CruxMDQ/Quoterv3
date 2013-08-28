@@ -982,7 +982,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 			);
 		
 		mPropTypeId = getItemPositionById(
-				mCursorHouses, 
+				mCursorPropTypes, 
 				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
 				mPropTypes
 			);
