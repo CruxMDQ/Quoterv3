@@ -993,14 +993,21 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		Log.i(this.getClass().toString(), "mRatingId = " + mRatingId);
 
-		spinnerRating.setSelection((int)
-			getItemPositionById(
-					mCursorRatings, 
-					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
-					mRatings
-				)
+//		spinnerRating.setSelection((int)
+//			getItemPositionById(
+//					mCursorRatings, 
+//					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
+//					mRatings
+//				)
+//			);
+		spinnerRating.setSelection(
+			    getItemPositionById(
+			        mCursorRatings, 
+			        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID)),
+			        mRatings
+			    )
 			);
-
+		
 		mPropTypeId = getItemPositionById(
 				mCursorHouses, 
 				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
@@ -1009,14 +1016,27 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 		Log.i(this.getClass().toString(), "mPropTypeId = " + mPropTypeId);
 
-		spinnerType.setSelection((int)
-			getItemPositionById(
-					mCursorHouses, 
-					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
-					mPropTypes
-				)
-			);
-
+//		spinnerType.setSelection((int)
+//			getItemPositionById(
+//					mCursorHouses, 
+//					mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID),
+//					mPropTypes
+//				)
+//			);
+		try
+		{
+			spinnerType.setSelection(
+				    getItemPositionById(
+				        mCursorPropTypes, 
+				        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_TYPE_ID)),
+				        mPropTypes
+				    )
+				);
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString(), "EXCEPTION: " + e.getMessage());
+		}
 		/*
 		 * REQUIRED FOR PICKING CONTACT FROM PHONE BOOK
 		 */
@@ -1124,7 +1144,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 * 
 		 * FOLLOW-UP: after setting up the onSelectedItemListener on the spinner, is this really necessary? 
 		 */
-		mPropTypeId = Integer.parseInt(spinnerType.getSelectedItem().toString());
+		//mPropTypeId = Integer.parseInt(spinnerType.getSelectedItemId());
 		Log.i(this.getClass().toString(), "mPropTypeId: " + mPropTypeId);
 		
 		reg.put(PropDBAdapter.C_PROP_TYPE_ID, mPropTypeId);
