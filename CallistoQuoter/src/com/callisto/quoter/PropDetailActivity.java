@@ -43,6 +43,7 @@ import com.callisto.quoter.DB.DBAdapter;
 import com.callisto.quoter.DB.PropDBAdapter;
 import com.callisto.quoter.DB.PropTypesDBAdapter;
 import com.callisto.quoter.DB.RatingsDBAdapter;
+import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.utils.ImageUtils;
 
 public class PropDetailActivity extends Activity implements LocationListener
@@ -56,9 +57,11 @@ public class PropDetailActivity extends Activity implements LocationListener
 	private PropDBAdapter mHouses;
 	private RatingsDBAdapter mRatings;
 	private PropTypesDBAdapter mPropTypes;
+	private RoomTypesDBAdapter mRoomTypes;
 	private Cursor mCursorHouses, 
 		mCursorRatings,
-		mCursorPropTypes;
+		mCursorPropTypes,
+		mCursorRoomTypes;
 	
 	/*
 	 * Form mode
@@ -87,6 +90,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	private Button btnSave;
 	private Button btnPickOwner;
 	private Button btnAddPropType;
+	private Button btnAddRoom;
 	
 	/*
 	 * CHECKBOX IMPLEMENTED ON LESSON 9
@@ -233,19 +237,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 						{
 							Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
 							
-//					        Matrix matrix = new Matrix();
-//					        matrix.postRotate(90);
-//
-//					        Bitmap rotatedBitmap = Bitmap.createBitmap(thumbnail, 
-//					        		0, 0, 
-//					        		thumbnail.getWidth(), 
-//					        		thumbnail.getHeight(), 
-//					        		matrix, 
-//					        		true);
-//
-//					        mBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 80, 80, true);
-//				            mImageView.setImageBitmap(mBitmap);
-
 				            mImageView.setImageBitmap(thumbnail);
 						}
 
@@ -403,6 +394,16 @@ public class PropDetailActivity extends Activity implements LocationListener
 			}
 		});
 		
+		btnAddRoom = (Button) findViewById(R.id.btnAddRoom);
+		btnAddRoom.setOnClickListener(new View.OnClickListener() 
+		{
+			@Override
+			public void onClick(View v) 
+			{
+				addRoom();				
+			}
+		});
+		
 		/*
 		 * CAMERA STUFF, STEP 2: Retrieve widget from XML, assign event listener and create call for pic taking activity
 		 */
@@ -435,28 +436,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 		mHouses = new PropDBAdapter(this);
 		mHouses.open();
 		
-		/*
-		 * Creating spinner stuff
-		 */
-		
-		/*
-		mRatings = new RatingsDBAdapter(this);
-		mRatings.open();
-		
-		mCursorRatings = mRatings.getList();
-		
-		@SuppressWarnings("deprecation")
-		SimpleCursorAdapter adapterRatings = new SimpleCursorAdapter(this, 
-				android.R.layout.simple_spinner_item, 
-				mCursorRatings, 
-				new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME },
-				new int[] { android.R.id.text1 } );
-		
-		adapterRatings.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		
-		spinnerRating.setAdapter(adapterRatings);
-		*/
-
 		populatePropTypes();
 		populateRatings();
 		
@@ -551,20 +530,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		return true;
 	}
-/*	
-	// **** START OF STUFF REQUIRED BY SPINNERS **** 
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view,
-			int pos, long id) 
-	{
-		mPropType = id;
-	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) { }
-	
-	// **** END OF STUFF REQUIRED BY SPINNERS ****
-*/
 	@Override
 	public void onLocationChanged(Location location)
 	{
@@ -672,7 +638,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		View addView = inflater.inflate(R.layout.dialog_prop_type_add, null);
 		
-		final AddPropTypeDialogWrapper wrapper = new AddPropTypeDialogWrapper(addView);
+		final AddTypeDialogWrapper wrapper = new AddTypeDialogWrapper(addView);
 		
 		new AlertDialog.Builder(this)
 			.setTitle("New property type")
@@ -695,7 +661,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 				}
 			).show();			
 	}
-//	
+
 	private void addRoom()
 	{
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -709,37 +675,37 @@ public class PropDetailActivity extends Activity implements LocationListener
 		spinnerRoomType.setOnItemSelectedListener(spnLstRoomType);
 
 		populateRoomTypes();
-//		
-//		new AlertDialog.Builder(this)
-//			.setTitle("Select initial room")
-//			.setView(addView)
-//			.setPositiveButton(R.string.ok,
-//				new DialogInterface.OnClickListener() 
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) 
-//					{
-//						// TO DO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
-//						// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
-//						
-//						// TO DO How to get the ID of a table row based on the text displayed on a spinner
-//						
-//						TextView t = (TextView) daSpinnerRoomTypes.getSelectedView();
-//						
-//						startRoomsActivity(daPropId, daRoomTypeId, t.getText().toString());
-//						
-////						startRoomsActivity(daPropId, t.getText().toString());
-//					}
-//				})
-//			.setNegativeButton(R.string.cancel,
-//				new DialogInterface.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//	
-//					}
-//				}
-//			).show();			
+
+		new AlertDialog.Builder(this)
+			.setTitle("Select initial room")
+			.setView(addView)
+			.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() 
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						// TO DO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
+						// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
+						
+						// TO DO How to get the ID of a table row based on the text displayed on a spinner
+						
+						TextView t = (TextView) spinnerRoomType.getSelectedView();
+						
+						startRoomsActivity(mPropId, mRoomTypeId, t.getText().toString());
+						
+//						startRoomsActivity(daPropId, t.getText().toString());
+					}
+				})
+			.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+	
+					}
+				}
+			).show();			
 	}
 
 	private void cancel() 
@@ -909,10 +875,28 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 	private void populateRoomTypes() 
 	{
+		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
 		
+		int[] to = new int[] { android.R.id.text1 };
+
+		mRoomTypes = new RoomTypesDBAdapter(this);
+		mRoomTypes.open();
+		
+		mCursorRoomTypes = mRoomTypes.getList();
+		
+		@SuppressWarnings("deprecation")
+		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
+				android.R.layout.simple_spinner_item, 
+				mCursorRoomTypes, 
+				from,		/*new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME }, */
+				to);		/*new int[] { android.R.id.text1 } */
+		
+		adapterRoomTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		
+		spinnerRoomType.setAdapter(adapterRoomTypes);
 	}
 
-	private void processAddPropType(AddPropTypeDialogWrapper wrapper) 
+	private void processAddPropType(AddTypeDialogWrapper wrapper) 
 	{
 	    ContentValues reg = new ContentValues();
 	    
@@ -922,7 +906,18 @@ public class PropDetailActivity extends Activity implements LocationListener
 	    
 		populatePropTypes();
 	}
-
+	
+//	private void processAddRoomType(AddRoomDialogWrapper wrapper)
+//	{
+//	    ContentValues reg = new ContentValues();
+//	    
+//	    reg.put(RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME, wrapper.getName());
+//	    
+//	    mRoomTypes.insert(reg);
+//	    
+//		populateRoomTypes();
+//	}
+//
 	/***
 	 * Queries database for details on the row matching the provided ID and fills up form text boxes.
 	 * @param id identifier of the row to retrieve data from.
@@ -1232,12 +1227,33 @@ public class PropDetailActivity extends Activity implements LocationListener
 		}
 	}
 	
-	class AddPropTypeDialogWrapper
+	/***
+	 * Starts room tab host activity. All parameters are bundled as extras with the same name.
+	 * @param propId ID of the property being quoted
+	 * @param roomTypeId First room type ID
+	 * @param roomType First room type name, used for titling the tab
+	 */
+	public void startRoomsActivity(long propId, long roomTypeId, String roomType)
+	{
+		Intent intent = new Intent();
+		
+		intent.setClass(this, RoomDetailTabhost.class);
+		
+		intent.putExtra("mPropId", mPropId);
+		
+		intent.putExtra("mRoomTypeId", mRoomTypeId);
+		
+//		intent.putExtra("roomType", roomType);
+
+		startActivity(intent);
+	}
+	
+	class AddTypeDialogWrapper
 	{
 		EditText nameField = null;
 		View base = null;
 		
-		AddPropTypeDialogWrapper(View base)
+		AddTypeDialogWrapper(View base)
 		{
 			this.base = base;
 			nameField = (EditText) base.findViewById(R.id.txtName);
@@ -1271,7 +1287,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 			spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
 		}
 
-		@SuppressWarnings("unused")
+//		@SuppressWarnings("unused")
 		private Spinner getSpinner()
 		{
 			if (spinnerType == null)

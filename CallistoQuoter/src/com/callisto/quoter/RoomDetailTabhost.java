@@ -17,10 +17,10 @@ public class RoomDetailTabhost extends TabActivity
 	private TabHost tabHost;
 
 	private static final int
-	ADD_TAB = Menu.FIRST + 11,
-	DELETE_TAB = Menu.FIRST + 12,
+		ADD_TAB = Menu.FIRST + 11,
+		DELETE_TAB = Menu.FIRST + 12,
 	// TODO TRANSLATE THIS INTO DBHELPER!
-	TABLE_ROOMTYPES = 16;
+		TABLE_ROOMTYPES = 16;
 
 	private int z = 0;
 	

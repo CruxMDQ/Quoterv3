@@ -72,11 +72,12 @@
 		    
 		    <EditText
 		        android:id="@+id/txtBedrooms"
-		        android:inputType="number"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
+		        android:layout_toLeftOf="@+id/btnAddRoom"
 		        android:layout_toRightOf="@+id/lblBedrooms"
-		        android:ems="10" />
+		        android:ems="10"
+		        android:inputType="number" />
 
 		    <TextView
 		        android:id="@+id/lblBedrooms"
@@ -86,7 +87,17 @@
 		        android:layout_centerVertical="true"
 		        android:text="@string/label_house_bedrooms"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
-	    
+		    
+		    <Button
+		        android:id="@+id/btnAddRoom"
+		        style="?android:attr/buttonStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:text="@string/new_prop_type" />
+
+		    	    
 	    </RelativeLayout>
 	    <!-- SPINNER IMPLEMENTED ON LESSON 10-->
 	    <RelativeLayout

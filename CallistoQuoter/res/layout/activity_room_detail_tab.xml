@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="5dp">
+        
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:tag="tabPane"
+            />
+        
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <RelativeLayout
+                android:id="@+id/dashboard"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+	            <TextView
+	                android:id="@+id/lblType"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentLeft="true"
+	                android:layout_alignParentTop="true"
+	                android:layout_marginLeft="20dp"
+	                android:layout_marginTop="30dp"
+	                android:text="@string/room_type" />
+
+	            <Spinner
+	                android:id="@+id/spnPropType"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignBottom="@+id/lblType"
+	                android:layout_marginLeft="20dp"
+	                android:layout_toRightOf="@+id/lblType" />
+
+	            <TextView
+	                android:id="@+id/lblWidthX"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@+id/lblType"
+	                android:layout_below="@+id/lblType"
+	                android:layout_marginTop="30dp"
+	                android:text="Dimension 1:" />
+
+	            <TextView
+	                android:id="@+id/lblWidthY"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@+id/lblWidthX"
+	                android:layout_below="@+id/lblWidthX"
+	                android:layout_marginTop="30dp"
+	                android:text="Dimension 2:" />
+
+	            <EditText
+	                android:id="@+id/txtWidthX"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignBaseline="@+id/lblWidthX"
+	                android:layout_alignBottom="@+id/lblWidthX"
+	                android:layout_alignLeft="@+id/txtWidthY"
+	                android:layout_alignParentRight="true"
+	                android:ems="10"
+	                android:hint="@string/hint_dimension_room"
+	                android:inputType="numberDecimal" >
+
+	                <requestFocus />
+	            </EditText>
+
+	            <EditText
+	                android:id="@+id/txtWidthY"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignBaseline="@+id/lblWidthY"
+	                android:layout_alignBottom="@+id/lblWidthY"
+	                android:layout_alignParentRight="true"
+	                android:layout_toRightOf="@+id/lblWidthY"
+	                android:ems="10"
+	                android:hint="@string/hint_dimension_room"
+	                android:inputType="numberDecimal" />
+
+	            <TextView
+	                android:id="@+id/lblFloors"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignLeft="@+id/lblWidthY"
+	                android:layout_below="@+id/txtWidthY"
+	                android:layout_marginTop="30dp"
+	                android:text="@string/floors" />
+
+	            <EditText
+	                android:id="@+id/txtFloors"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignBaseline="@+id/lblFloors"
+	                android:layout_alignBottom="@+id/lblFloors"
+	                android:layout_alignParentRight="true"
+	                android:layout_toRightOf="@+id/lblFloors"
+	                android:ems="10" />
+            
+			    <RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignParentBottom="true"
+					android:layout_below="@+id/txtFloors"
+					android:layout_centerInParent="true"
+					android:layout_marginTop="10dp"
+					android:gravity="bottom" 
+					>
+					
+					<ImageView
+						android:id="@+id/imgDisplayImage"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_centerInParent="true"
+						android:contentDescription="@string/hint_image" 
+						/>    
+				</RelativeLayout>
+            
+            </RelativeLayout>
+            
+        </FrameLayout>
+        
+    </LinearLayout>
+    
+</TabHost>

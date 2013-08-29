@@ -53,6 +53,13 @@
             android:name="com.callisto.quoter.Config"
             android:label="@string/menu_preferences">
         </activity>
+        <activity
+            android:name="com.callisto.quoter.RoomDetailActivity" >
+        </activity>
+        <activity 
+            android:name="com.callisto.quoter.RoomDetailTabhost">
+        </activity>
+        
     	<meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAMqqOSqfaZQXwoiOmgClXaY4fAB9ANAGs"/>

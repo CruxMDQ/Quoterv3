@@ -314,6 +314,7 @@ public class PropListActivity extends ListActivity
 //		populatePropTypes();
 //	}
 
+	@SuppressWarnings("deprecation")
 	private void query() 
 	{
 		mCursorProperties = dbAdapter.getCursor(filter);
