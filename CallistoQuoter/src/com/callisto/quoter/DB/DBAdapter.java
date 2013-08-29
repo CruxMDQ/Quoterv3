@@ -41,13 +41,6 @@ public abstract class DBAdapter
 		dbHelper.close();
 	}
 
-	public DBAdapter open() throws SQLException
-	{
-		dbHelper = new DBHelper(context);
-		db = dbHelper.getWritableDatabase();
-		return this;
-	}
-	
 	public Cursor getList()
 	{
 		Cursor c = db.query(true, managedTable, columns, null, null, null, null, null, null);
@@ -55,8 +48,25 @@ public abstract class DBAdapter
 		return c;		
 	}
 	
+	/***
+	 * Inserts values into a new table record.
+	 * @param reg The set of values to insert.
+	 * @return 
+	 */
 	public long insert(ContentValues reg)
 	{
-		return 0;
+		if (db == null)
+		{
+			open();
+		}
+		
+		return db.insert(this.getTableManaged(), null, reg);
+	}
+
+	public DBAdapter open() throws SQLException
+	{
+		dbHelper = new DBHelper(context);
+		db = dbHelper.getWritableDatabase();
+		return this;
 	}
 }

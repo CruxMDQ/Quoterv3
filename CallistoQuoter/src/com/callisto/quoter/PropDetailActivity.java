@@ -65,12 +65,10 @@ public class PropDetailActivity extends Activity implements LocationListener
 	 */
 	private int mFormMode;
 	
-	long mPropTypeId, mRatingId;
-
 	/*
 	 * Property and initial room types
 	 */
-	private int mRoomType;
+	long mPropTypeId, mRoomTypeId, mRatingId;
 	
 	/*
 	 * Record identifier (used when form mode is Modify)
@@ -98,11 +96,15 @@ public class PropDetailActivity extends Activity implements LocationListener
 	/*
 	 * SPINNER IMPLEMENTED ON LESSON 10
 	 */
-	private Spinner spinnerRating, spinnerType;
-	Object objSpnRatingSelection, objSpnTypeSelection;
-	AdapterView.OnItemSelectedListener spnLstPropType, spnLstRating;
+	private Spinner spinnerRating, 
+		spinnerPropType, 
+		spinnerRoomType;
+
+	AdapterView.OnItemSelectedListener spnLstPropType, 
+		spnLstRoomType, 
+		spnLstRating;
 	
-		private Uri mContactUri;
+	private Uri mContactUri;
 
 	/*
 	 * GPS STUFF
@@ -355,7 +357,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
 		spinnerRating = (Spinner) findViewById(R.id.spinnerRating);
-		spinnerType = (Spinner) findViewById(R.id.spinnerType);
+		spinnerPropType = (Spinner) findViewById(R.id.spinnerType);
 		
 		/*
 		 * Define buttons and their actions
@@ -473,17 +475,28 @@ public class PropDetailActivity extends Activity implements LocationListener
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) 
 			{
-//				mPropTypeId = pos;	// 4
-//				mPropType = getItemPositionById(mCursorPropTypes, id, mPropTypes); 	// 3
-//				mPropType = spinnerType.getItemIdAtPosition(pos); 	// 2
 				mPropTypeId = id; 	// 1
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) { }
 		};
-		spinnerType.setOnItemSelectedListener(spnLstPropType);
+		spinnerPropType.setOnItemSelectedListener(spnLstPropType);
 
+		spnLstRoomType = new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) 
+			{
+				mRoomTypeId = id;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) { }
+			
+		};
+		
 		spnLstRating = new AdapterView.OnItemSelectedListener() {
 
 			@Override
@@ -683,19 +696,19 @@ public class PropDetailActivity extends Activity implements LocationListener
 			).show();			
 	}
 //	
-//	private void addRoom()
-//	{
-//		LayoutInflater inflater = LayoutInflater.from(this);
-//		
-//		View addView = inflater.inflate(R.layout.add_room, null);
-//		
-//		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
-//		
-//		daSpinnerRoomTypes = wrapper.getSpinner();
-//		
-//		daSpinnerRoomTypes.setOnItemSelectedListener(spinnerListener);
-//		
-//		populateRoomTypes();
+	private void addRoom()
+	{
+		LayoutInflater inflater = LayoutInflater.from(this);
+		
+		View addView = inflater.inflate(R.layout.dialog_room_add, null);
+		
+		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
+		
+		spinnerRoomType = wrapper.getSpinner();
+		
+		spinnerRoomType.setOnItemSelectedListener(spnLstRoomType);
+
+		populateRoomTypes();
 //		
 //		new AlertDialog.Builder(this)
 //			.setTitle("Select initial room")
@@ -727,7 +740,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 //					}
 //				}
 //			).show();			
-//	}
+	}
 
 	private void cancel() 
 	{
@@ -891,7 +904,12 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		adapterPropTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		
-		spinnerType.setAdapter(adapterPropTypes);
+		spinnerPropType.setAdapter(adapterPropTypes);
+	}
+
+	private void populateRoomTypes() 
+	{
+		
 	}
 
 	private void processAddPropType(AddPropTypeDialogWrapper wrapper) 
@@ -991,7 +1009,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 		try
 		{
-			spinnerType.setSelection(
+			spinnerPropType.setSelection(
 				    getItemPositionById(
 				        mCursorPropTypes, 
 				        mCursorHouses.getInt
@@ -1172,7 +1190,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
 		spinnerRating.setEnabled(option);
-		spinnerType.setEnabled(option);
+		spinnerPropType.setEnabled(option);
 		
 		//mImageView.setEnabled(option);
 		

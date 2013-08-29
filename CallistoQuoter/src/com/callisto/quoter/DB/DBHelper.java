@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	/*
 	 * VERSION CHANGE IMPLEMENTED ON DATABASE UPGRADE STEP
 	 */
-	private static int version = 7;	
+	private static int version = 8;	
 	
 	private static String name = "REDB";
 	private static CursorFactory factory = null;
@@ -53,7 +53,20 @@ public class DBHelper extends SQLiteOpenHelper {
 	private String DEFINE_PROP_TYPE_INDEX = "CREATE UNIQUE INDEX " + TABLE_PROP_TYPE_NAME
 			+ " ON " + TABLE_PROP_TYPES
 			+ "(" + TABLE_PROP_TYPE_NAME + " ASC)";
-		
+
+	private String TABLE_ROOM_TYPES = "ROOM_TYPES",
+			TABLE_ROOM_TYPE_NAME = "re_room_type";
+	
+	private String DEFINE_ROOM_TYPES = "create table if not exists " 
+			+ TABLE_ROOM_TYPES + "(" 
+			+ TABLE_ID + " integer primary key, " 
+			+ TABLE_ROOM_TYPE_NAME + " text not null"
+			+ ");";
+	
+	private String DEFINE_ROOM_TYPE_INDEX = "CREATE UNIQUE INDEX " + TABLE_ROOM_TYPE_NAME
+			+ " ON " + TABLE_ROOM_TYPES
+			+ "(" + TABLE_ROOM_TYPE_NAME + " ASC)";
+
 	public DBHelper(Context context)
 	{
 		super(context, name, factory, version);
@@ -85,6 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		upgradeToVersion5(db);
 		upgradeToVersion6(db);
 		upgradeToVersion7(db);
+		upgradeToVersion8(db);
 	}
 
 	@Override
@@ -150,6 +164,17 @@ public class DBHelper extends SQLiteOpenHelper {
 			try
 			{
 				upgradeToVersion6(db);
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
+		}
+		if (oldVersion < 8)
+		{
+			try
+			{
+				upgradeToVersion8(db);
 			}
 			catch(SQLException e)
 			{
@@ -223,5 +248,26 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_prop_type_id INTEGER NOT NULL DEFAULT 1");
 		
 		Log.i(this.getClass().toString(), "Update to version 7 complete");
+	}
+	
+	private void upgradeToVersion8(SQLiteDatabase db)
+	{
+		db.execSQL(DEFINE_ROOM_TYPES);
+		
+		db.execSQL(DEFINE_ROOM_TYPE_INDEX);
+		
+		db.execSQL("INSERT INTO " + TABLE_ROOM_TYPES 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
+				+ " VALUES (1, 'Living room')");
+		db.execSQL("INSERT INTO " + TABLE_ROOM_TYPES 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
+				+ " VALUES (2, 'Cocina')");
+		db.execSQL("INSERT INTO " + TABLE_ROOM_TYPES 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
+				+ " VALUES (3, 'Dormitorio')");
+
+		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_room_type_id INTEGER NOT NULL DEFAULT 1");
+		
+		Log.i(this.getClass().toString(), "Update to version 8 complete");
 	}
 }
