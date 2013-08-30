@@ -1,27 +1,18 @@
 package com.callisto.quoter;
 
-import java.io.File;
-
-import com.callisto.quoter.DB.PropTypesDBAdapter;
-import com.callisto.quoter.DB.RoomTypesDBAdapter;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +25,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+
+import com.callisto.quoter.DB.PropsRoomsDBAdapter;
+import com.callisto.quoter.DB.RoomTypesDBAdapter;
+import com.callisto.quoter.DB.RoomsDBAdapter;
+import com.callisto.quoter.utils.ImageUtils;
 //
 //import com.callisto.quoter.R;
 //import com.callisto.quoter.contentprovider.QuoterContentProvider;
@@ -99,6 +95,8 @@ public class RoomDetailActivity extends Activity
 	OnItemSelectedListener spinnerListener;
 
 	private RoomTypesDBAdapter mRoomTypes;
+	private RoomsDBAdapter mRooms;
+	private PropsRoomsDBAdapter mPropRooms;
 
 	private Cursor mCursorRoomTypes;
 
@@ -289,19 +287,6 @@ public class RoomDetailActivity extends Activity
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		};
-		
-//		dialogRoomType.setOnItemSelectedListener(new OnItemSelectedListener()
-//		{
-//			@Override
-//			public void onItemSelected(AdapterView<?> parent, View view,
-//					int pos, long id)
-//			{
-//				daRoomTypeId = id;
-//			}
-//
-//			@Override
-//			public void onNothingSelected(AdapterView<?> parent) { }
-//		});
 	}
 
 	@Override
@@ -467,210 +452,77 @@ public class RoomDetailActivity extends Activity
 			).show();			
 	}
 
-//	private void saveStuff()
-//	{
-//		QuoterDBHelper DAO = new QuoterDBHelper(getApplicationContext());
-//
-//		ContentValues roomDetails = new ContentValues();
-//		
-//		/* Log research about casting from string to float found at: 
-//		 * stackoverflow.com/questions/4229710/string-from-edittext-to-float
-//		 */
-//		String s1 = daTxtWidthX.getText().toString();
-//		String s2 = daTxtWidthY.getText().toString();
-//		
-//		if (/*daTxtWidthX.getText().toString()*/ !s1.equals(""))
-//		{
-//			roomDetails.put(TableRooms.COLUMN_ROOM_WIDTH_X, Float.valueOf(daTxtWidthX.getText().toString()));
-//		}
-//		
-//		if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
-//		{
-//			roomDetails.put(TableRooms.COLUMN_ROOM_WIDTH_Y, Float.valueOf(daTxtWidthY.getText().toString()));
-//		}
-//		
-////			roomDetails.put("COLUMN_ROOM_WIDTH_X", Float.valueOf(daTxtWidthX.getText().toString()));
-////			roomDetails.put("COLUMN_ROOM_WIDTH_Y", Float.valueOf(daTxtWidthY.getText().toString()));
-//		roomDetails.put(TableRooms.COLUMN_FLOORS, daTxtFloors.getText().toString());
-//		roomDetails.put(TableRooms.COLUMN_DETAILS, "TEST");
-//		roomDetails.put(TableRooms.COLUMN_PICTURE, daPhotoPath);
-////			roomDetails.put(TableRooms.COLUMN_ID_ROOM, daRoomId);
-//		roomDetails.put(TableRoomTypes.COLUMN_ID_ROOM_TYPE, daRoomTypeId);
-//	
-//		System.out.println("Room ID: " + daRoomId);
-//		
-//		if (daRoomId == -1)
-//		{
-//			try
-//			{
-//				System.out.println("Performing room insertion");
-//				daRoomId = DAO.insert(TABLE_ROOMS, roomDetails);
-//			}
-//			catch(SQLException S)
-//			{
-//				System.out.println("Exception on insert on TABLE_ROOMS step");
-//				System.out.println(S.getMessage());
-//			}
-//		}
-//		else
-//		{
-//			try
-//			{
-//				System.out.println("Updating existing room");
-//				roomDetails.put(TableRooms.COLUMN_ID_ROOM, daRoomId);
-//
-//				DAO.update(TABLE_ROOMS, roomDetails);
-//			}
-//			catch(SQLException S)
-//			{
-//				System.out.println("Exception on update on TABLE_ROOMS step");
-//				System.out.println(S.getMessage());
-//			}
-//		}
-//			
-//		ContentValues propRooms = new ContentValues();
-//		
-//		propRooms.put(TableProperties.COLUMN_ID_PROPERTY, daPropId);
-//		propRooms.put(TableRooms.COLUMN_ID_ROOM, daRoomId);
-//		
-//		try
-//		{
-//			DAO.insert(TABLE_PROP_ROOMS, propRooms);
-//		}
-//		catch(SQLException S)
-//		{
-//			System.out.println("Exception on update on TABLE_PROP_ROOMS step");
-//			System.out.println(S.getMessage());
-//		}
-//	}
-//
-////	@Override
-////	public Loader<Cursor> onCreateLoader(int id, Bundle args)
-////	{
-////		String[] projection = { TableRoomTypes.COLUMN_ID_ROOM_TYPE, TableRoomTypes.COLUMN_NAME };
-////		
-////		CursorLoader cursorLoader = new CursorLoader (this,
-////				QuoterContentProvider.CONTENT_URI_ROOM_TYPES, projection, null, null, null);
-////		
-////		return cursorLoader;
-////	}
-////	
-////	@Override
-////	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
-////	{
-////		MaskingWrapper mask = new MaskingWrapper(data);
-////		
-////		daAdapter.swapCursor(mask);
-////	}
-////	
-////	@Override
-////	public void onLoaderReset(Loader<Cursor> loader)
-////	{
-////		// Data not available anymore -> delete reference
-////		daAdapter.swapCursor(null);
-////	}
-//
-//	
-//	class AddRoomDialogWrapper
-//	{
-//		Spinner spinnerType = null;
-//		View base = null;
-//		Object item;
-//		
-//		AddRoomDialogWrapper(View base)
-//		{
-//			this.base = base;
-//			spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-//		}
-//
-//		private Spinner getSpinner()
-//		{
-//			if (spinnerType == null)
-//			{
-//				spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-//			}
-//			
-//			return (spinnerType);
-//		}
-//		
-//		public Object getSelectedItem()
-//		{
-//			return item;
-//		}
-//	}
-//	
-//	// CursorWrapper subclass built to dodge the '_id' requirement for SimpleCursorAdapter
-//	// (ref.: http://stackoverflow.com/questions/7796345/column-id-does-not-exist-simplecursoradapter-revisited/7796404#7796404)
-//	class MaskingWrapper extends CursorWrapper
-//	{
-//		Cursor maskedCursor;
-//		
-//		public MaskingWrapper(Cursor cursor)
-//		{
-//			super(cursor);
-//			maskedCursor = cursor;
-//		}
-//		
-//		@Override
-//		public int getColumnCount(){
-//			return super.getColumnCount() + 1;
-//		}
-//		
-//		@Override
-//		public int getColumnIndex(String columnName)
-//		{
-//			if (columnName == "_id")
-//				return 0;
-//			else
-//				return super.getColumnIndex(columnName);
-//		}
-//
-//		@Override
-//		public int getColumnIndexOrThrow(String columnName)
-//		{
-//			if (columnName == "_id")
-//				return 0;
-//			else
-//				return super.getColumnIndexOrThrow(columnName);
-//		}
-//
-//		@Override
-//		public double getDouble(int columnIndex)
-//		{
-//			if (columnIndex == 0)
-//				return (double)super.getPosition();
-//			else
-//				return super.getDouble(columnIndex);
-//		}
-//		
-//		@Override
-//		public float getFloat(int columnIndex)
-//		{
-//			if (columnIndex == 0)
-//				return (float)super.getPosition();
-//			else
-//				return super.getFloat(columnIndex);
-//		}
-//		
-//		@Override
-//		public int getType(int columnIndex)
-//		{
-//			if (columnIndex == 0)
-//				return Cursor.FIELD_TYPE_INTEGER;
-//			else
-//				return super.getType(columnIndex);
-//		}
-//		
-//		@Override
-//		public boolean isNull(int columnIndex)
-//		{
-//			if (columnIndex == 0)
-//				return super.isNull(1);
-//			else
-//				return super.isNull(columnIndex);
-//		}
-//		
-//	}
+	private void save()
+	{
+		ContentValues reg = new ContentValues();
+		
+		/* Log research about casting from string to float found at: 
+		 * stackoverflow.com/questions/4229710/string-from-edittext-to-float
+		 */
+		String s1 = daTxtWidthX.getText().toString();
+		String s2 = daTxtWidthY.getText().toString();
+		
+		if (/*daTxtWidthX.getText().toString()*/ !s1.equals(""))
+		{
+			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, Float.valueOf(daTxtWidthX.getText().toString()));
+		}
+		
+		if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
+		{
+			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(daTxtWidthX.getText().toString()));
+		}
+		
+//			roomDetails.put("COLUMN_ROOM_WIDTH_X", Float.valueOf(daTxtWidthX.getText().toString()));
+//			roomDetails.put("COLUMN_ROOM_WIDTH_Y", Float.valueOf(daTxtWidthY.getText().toString()));
+		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, daTxtFloors.getText().toString());
+		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
+		reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
+//			roomDetails.put(TableRooms.COLUMN_ID_ROOM, daRoomId);
+		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
+	
+		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
+		
+		if (mRoomId == -1)
+		{
+			try
+			{
+				Log.i(this.getClass().toString(), "Performing room insertion");
+				mRooms.insert(reg);
+			}
+			catch(SQLException S)
+			{
+				Log.i(this.getClass().toString(), S.getMessage());
+			}
+		}
+		else
+		{
+			try
+			{
+				Log.i(this.getClass().toString(), "Updating existing room");
+				reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
+				
+				mRooms.update(reg);
+			}
+			catch(SQLException S)
+			{
+				Log.i(this.getClass().toString(), S.getMessage());
+			}
+		}
+			
+		ContentValues propRooms = new ContentValues();
+		
+		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
+		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
+		
+		try
+		{
+			mPropRooms.insert(propRooms);
+		}
+		catch(SQLException S)
+		{
+			Log.i(this.getClass().toString(), S.getMessage());
+		}
+	}
 
 	public class AddRoomDialogWrapper
 	{

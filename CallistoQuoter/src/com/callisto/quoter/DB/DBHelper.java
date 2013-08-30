@@ -12,16 +12,28 @@ public class DBHelper extends SQLiteOpenHelper {
 	/*
 	 * VERSION CHANGE IMPLEMENTED ON DATABASE UPGRADE STEP
 	 */
-	private static int version = 8;	
+	private static int version = 9;	// 9	
 	
 	private static String name = "REDB";
 	private static CursorFactory factory = null;
 
 	private String TABLE_PROPERTIES = "PROPERTIES",
-		TABLE_ID = "_id",
-		TABLE_PROP_ADDRESS = "re_address",
-		TABLE_PROP_BEDROOMS = "re_bedrooms";
-	
+			TABLE_ID = "_id",
+			TABLE_IMAGE = "re_image",
+			TABLE_PROP_ADDRESS = "re_address",
+			TABLE_PROP_BEDROOMS = "re_bedrooms",
+			TABLE_PROP_CONFIRMED = "re_confirmed",
+			TABLE_PROP_RATING_ID = "re_rating_id",
+			TABLE_PROP_OWNER_URI = "re_owner_uri",
+			TABLE_PROP_LATITUDE = "re_latitude",
+			TABLE_PROP_LONGITUDE = "re_longitude",
+			TABLE_PROP_TYPE_ID = "re_prop_type_id",
+			
+			TABLE_PROP_ID = "re_prop_id",
+			TABLE_ROOM_ID = "re_room_id",
+
+			TABLE_ROOM_TYPE_ID = "re_room_type_id";
+
 	private String DEFINE_PROPERTIES = "CREATE TABLE " + TABLE_PROPERTIES + "(" 
 			+ TABLE_ID + " INTEGER PRIMARY KEY, "
 			+ TABLE_PROP_ADDRESS + " TEXT NOT NULL, "
@@ -67,6 +79,35 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ " ON " + TABLE_ROOM_TYPES
 			+ "(" + TABLE_ROOM_TYPE_NAME + " ASC)";
 
+	private String TABLE_ROOMS = "ROOMS",
+			//id
+			TABLE_ROOM_X = "re_room_x",
+			TABLE_ROOM_Y = "re_room_y",
+			TABLE_ROOM_FLOORS = "re_floors",
+			TABLE_ROOM_DETAILS = "re_details";
+			//image
+	
+	private String DEFINE_ROOMS = "create table if not exists "
+			+ TABLE_ROOMS + "("
+			+ TABLE_ID + " integer primary key, "
+			+ TABLE_ROOM_TYPE_ID + " integer not null default 1, "
+			+ TABLE_ROOM_X + " real not null, "
+			+ TABLE_ROOM_Y + " real not null, "
+			+ TABLE_ROOM_FLOORS + " text, "
+			+ TABLE_ROOM_DETAILS + " text, "
+			+ TABLE_IMAGE + " text"
+			+ ");";
+	
+	private String TABLE_PROPS_ROOMS = "PROPS_ROOMS";			
+	
+	private String DEFINE_PROPS_ROOMS = "create table if not exists "
+			+ TABLE_PROPS_ROOMS + "("
+			+ TABLE_PROP_ID + " integer primary key, "
+			+ TABLE_ROOM_ID + " integer not null, "
+			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_PROP_ID + "),"
+			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ROOM_ID + ")"
+			+ ");";
+	
 	public DBHelper(Context context)
 	{
 		super(context, name, factory, version);
@@ -99,6 +140,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		upgradeToVersion6(db);
 		upgradeToVersion7(db);
 		upgradeToVersion8(db);
+		upgradeToVersion9(db);
 	}
 
 	@Override
@@ -181,20 +223,33 @@ public class DBHelper extends SQLiteOpenHelper {
 				Log.i(this.getClass().toString(), e.getMessage());
 			}
 		}
+		if (oldVersion < 9)
+		{
+			try
+			{
+				upgradeToVersion9(db);
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
+		}
 	}
 
 	@Override
-	public void onOpen(SQLiteDatabase db) {
+	public void onOpen(SQLiteDatabase db) 
+	{
 	    super.onOpen(db);
-	    if (!db.isReadOnly()) {
-	        // Enable foreign key constraints
+	    
+	    if (!db.isReadOnly()) 
+	    {
 	        db.execSQL("PRAGMA foreign_keys=ON;");
 	    }
 	}
 	
 	private void upgradeToVersion2(SQLiteDatabase db) 
 	{
-		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_confirmed INTEGER NOT NULL DEFAULT 0");
+		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD " + TABLE_PROP_CONFIRMED + " INTEGER NOT NULL DEFAULT 0");
 		
 		Log.i(this.getClass().toString(), "Update to version 2 complete");
 	}
@@ -275,8 +330,17 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
 				+ " VALUES (3, 'Dormitorio')");
 
-		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_room_type_id INTEGER NOT NULL DEFAULT 1");
+//		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_room_type_id INTEGER NOT NULL DEFAULT 1");
 		
 		Log.i(this.getClass().toString(), "Update to version 8 complete");
+	}
+	
+	private void upgradeToVersion9(SQLiteDatabase db)
+	{
+		db.execSQL(DEFINE_ROOMS);
+		
+		db.execSQL(DEFINE_PROPS_ROOMS);
+
+		Log.i(this.getClass().toString(), "Update to version 9 complete");
 	}
 }

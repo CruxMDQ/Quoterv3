@@ -154,49 +154,44 @@ public class PropDBAdapter extends DBAdapter
 		return c;
 	}
 	
-	/***
-	 * Inserts values into a new table record.
-	 * @param reg The set of values to insert.
-	 * @return 
-	 */
-	public long insert(ContentValues reg)
-	{
-		if (db == null)
-		{
-			open();
-		}
-		
-		return db.insert(C_TABLE_PROPERTIES, null, reg);
-	}
-	
-//	public PropDBAdapter open() throws SQLException
+//	/***
+//	 * Inserts values into a new table record.
+//	 * @param reg The set of values to insert.
+//	 * @return 
+//	 */
+//	public long insert(ContentValues reg)
 //	{
-//		return (PropDBAdapter) super.open();
+//		if (db == null)
+//		{
+//			open();
+//		}
+//		
+//		return db.insert(C_TABLE_PROPERTIES, null, reg);
 //	}
 //	
-	/***
-	 * Modifies an existing record on the database.
-	 * @param reg The set of values to be used for the update.
-	 * @return Code for database operation result.  
-	 */
-	public long update(ContentValues reg)
-	{
-		long result = 0;
-		
-		if (db == null)
-		{
-			open();
-		}
-		
-		if (reg.containsKey(C_COLUMN_ID))
-		{
-			long id = reg.getAsLong(C_COLUMN_ID);
-			
-			reg.remove(C_COLUMN_ID);
-			
-			result = db.update(C_TABLE_PROPERTIES, reg, "_id=" + id, null);
-		}
-		
-		return result;
-	}
+//	/***
+//	 * Modifies an existing record on the database.
+//	 * @param reg The set of values to be used for the update.
+//	 * @return Code for database operation result.  
+//	 */
+//	public long update(ContentValues reg)
+//	{
+//		long result = 0;
+//		
+//		if (db == null)
+//		{
+//			open();
+//		}
+//		
+//		if (reg.containsKey(C_COLUMN_ID))
+//		{
+//			long id = reg.getAsLong(C_COLUMN_ID);
+//			
+//			reg.remove(C_COLUMN_ID);
+//			
+//			result = db.update(this.getTableManaged(), reg, "_id=" + id, null);
+//		}
+//		
+//		return result;
+//	}
 }

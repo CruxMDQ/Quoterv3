@@ -70,4 +70,25 @@ public abstract class DBAdapter
 		
 		return this;
 	}
+	
+	public long update(ContentValues reg)
+	{
+		long result = 0;
+		
+		if (db == null)
+		{
+			open();
+		}
+		
+		if (reg.containsKey(C_COLUMN_ID))
+		{
+			long id = reg.getAsLong(C_COLUMN_ID);
+			
+			reg.remove(C_COLUMN_ID);
+			
+			result = db.update(this.getTableManaged(), reg, "_id=" + id, null);
+		}
+		
+		return result;
+	}
 }
