@@ -95,7 +95,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentRight="true"
 		        android:layout_alignParentTop="true"
-		        android:text="@string/new_prop_type" />
+		        android:text="@string/add_room" />
 
 		    	    
 	    </RelativeLayout>

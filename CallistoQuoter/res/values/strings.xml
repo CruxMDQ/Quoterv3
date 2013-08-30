@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="add_room">Add room</string>
     <string name="add_type_title">Create new room type</string>
     <string name="app_name">Estate Quoter v0.3</string>
     <string name="action_settings">Settings</string>

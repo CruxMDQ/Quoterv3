@@ -1172,6 +1172,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		btnPickOwner.setEnabled(option);
 		btnAddPropType.setEnabled(option);
+		btnAddRoom.setEnabled(option);
 		
 		txtAddress.setEnabled(option);
 		txtBedrooms.setEnabled(option);
@@ -1239,11 +1240,11 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		intent.setClass(this, RoomDetailTabhost.class);
 		
-		intent.putExtra("mPropId", mPropId);
+		intent.putExtra("mPropId", propId);
 		
-		intent.putExtra("mRoomTypeId", mRoomTypeId);
+		intent.putExtra("mRoomTypeId", roomTypeId);
 		
-//		intent.putExtra("roomType", roomType);
+		intent.putExtra("mRoomType", roomType);
 
 		startActivity(intent);
 	}

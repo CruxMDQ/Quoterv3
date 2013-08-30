@@ -67,6 +67,7 @@ public abstract class DBAdapter
 	{
 		dbHelper = new DBHelper(context);
 		db = dbHelper.getWritableDatabase();
+		
 		return this;
 	}
 }

@@ -71,7 +71,7 @@ public class RoomDetailActivity extends Activity
 //		TABLE_ROOMTYPES = 16;
 //	
 	// Clean up the spinners, both here and on the UI files
-	private Spinner spinnerRoomType, dialogRoomType;
+	private Spinner spinnerRoomType, spinnerDialogRoomType;
 	
 	private EditText daTxtWidthX, daTxtWidthY, daTxtFloors;
 	
@@ -90,9 +90,9 @@ public class RoomDetailActivity extends Activity
 		C_PICK_IMAGE = 70002;
 
 	private long 
-		daPropId, 
-		daRoomTypeId = -1, 
-		daRoomId = -1;
+		mPropId, 
+		mRoomTypeId = -1, 
+		mRoomId = -1;
 
 	private String initialRoomType;
 
@@ -104,197 +104,6 @@ public class RoomDetailActivity extends Activity
 
 	private Bitmap mBitmap;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_room_detail_tab);
-		
-		Bundle extras = getIntent().getExtras();
-	    
-	    if(extras == null) 
-	    {
-	        daPropId = 0;
-	    } 
-	    else 
-	    {
-	        daPropId = extras.getLong("propId");
-	        
-	        initialRoomType = extras.getString("roomType");
-	    }
-		
-		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
-		
-		daTxtWidthX = (EditText) findViewById(R.id.txtWidthX);
-		daTxtWidthY = (EditText) findViewById(R.id.txtWidthY);
-		daTxtFloors = (EditText) findViewById(R.id.txtFloors);
-
-		populateRoomTypes();
-		
-		mImageView = (ImageView) findViewById(R.id.imgDisplayImage);
-		
-		mImageView.setOnClickListener(new View.OnClickListener()
-		{			
-			@Override
-			public void onClick(View v)
-			{
-				Intent camera = new Intent();
-				
-				camera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-				
-				camera.putExtra("crop", "true");
-				
-				//File f = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-				
-				mCameraURI = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "myFile.jpg"));
-				
-				camera.putExtra(MediaStore.EXTRA_OUTPUT, mCameraURI);
-				
-				startActivityForResult(camera, C_PICK_IMAGE);
-			}
-		});
-
-		/* Log this: source for retrieval of row id:
-		 * http://stackoverflow.com/questions/11037256/get-the-row-id-of-an-spinner-item-populated-from-database
-		 */ 
-		
-		spinnerListener = new OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int pos, long id)
-			{
-				daRoomTypeId = id;
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) { }
-		};
-		
-		dialogRoomType.setOnItemSelectedListener(new OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int pos, long id)
-			{
-				daRoomTypeId = id;
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) { }
-		});
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		getMenuInflater().inflate(R.menu.menu_room_detail, menu);
-		return true;
-	}
-	
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
-		case R.id.menu_room_add_type:
-			addRoomType();
-		}
-		return (super.onOptionsItemSelected(item));
-	}
-	
-	private void addRoomType()
-	{
-		LayoutInflater inflater = LayoutInflater.from(this);
-		
-		View addView = inflater.inflate(R.layout.dialog_room_type_add, null);
-		
-		final AddTypeDialogWrapper wrapper = new AddTypeDialogWrapper(addView);
-		
-		new AlertDialog.Builder(this)
-			.setTitle(R.string.add_type_title)
-			.setView(addView)
-			.setPositiveButton(R.string.ok,
-				new DialogInterface.OnClickListener() 
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						processAddRoomType(wrapper); 
-					}
-				})
-			.setNegativeButton(R.string.cancel,
-				new DialogInterface.OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-	
-					}
-				}
-			).show();			
-	}
-
-	private void populateRoomTypes() 
-	{
-		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
-		
-		int[] to = new int[] { android.R.id.text1 };
-
-		mRoomTypes = new RoomTypesDBAdapter(this);
-		mRoomTypes.open();
-		
-		mCursorRoomTypes = mRoomTypes.getList();
-		
-		@SuppressWarnings("deprecation")
-		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
-				android.R.layout.simple_spinner_item, 
-				mCursorRoomTypes, 
-				from,		/*new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME }, */
-				to);		/*new int[] { android.R.id.text1 } */
-		
-		adapterRoomTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		
-		spinnerRoomType.setAdapter(adapterRoomTypes);
-	}
-	
-	private void processAddRoomType(AddTypeDialogWrapper wrapper) 
-	{
-	    ContentValues reg = new ContentValues();
-
-	    reg.put(RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME, wrapper.getName());
-	    
-	    mRoomTypes.insert(reg);
-	    
-		populateRoomTypes();
-	}
-	
-	class AddTypeDialogWrapper
-	{
-		EditText nameField = null;
-		View base = null;
-		
-		AddTypeDialogWrapper(View base)
-		{
-			this.base = base;
-			nameField = (EditText) base.findViewById(R.id.txtName);
-		}
-		
-		String getName()
-		{
-			return (getNameField().getText().toString());
-		}
-		
-		private EditText getNameField()
-		{
-			if (nameField == null)
-			{
-				nameField = (EditText) base.findViewById(R.id.txtName);
-			}
-			
-			return (nameField);
-		}
-	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -414,157 +223,250 @@ public class RoomDetailActivity extends Activity
 		}
 	}
 
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-//	{
-//		if (resultCode == Activity.RESULT_OK)
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_room_detail_tab);
+		
+		Bundle extras = getIntent().getExtras();
+	    
+	    if(extras == null) 
+	    {
+	        mPropId = 0;
+	    } 
+	    else 
+	    {
+	        mPropId = extras.getLong("mPropId");
+	        
+	        initialRoomType = extras.getString("mRoomType");
+	    }
+		
+		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
+		
+		daTxtWidthX = (EditText) findViewById(R.id.txtWidthX);
+		daTxtWidthY = (EditText) findViewById(R.id.txtWidthY);
+		daTxtFloors = (EditText) findViewById(R.id.txtFloors);
+
+		populateRoomTypes();
+		
+		mImageView = (ImageView) findViewById(R.id.imgDisplayImage);
+		
+		mImageView.setOnClickListener(new View.OnClickListener()
+		{			
+			@Override
+			public void onClick(View v)
+			{
+				Intent camera = new Intent();
+				
+				camera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+				
+				camera.putExtra("crop", "true");
+				
+				//File f = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+				
+//				mCameraURI = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "myFile.jpg"));
+				
+//				camera.putExtra(MediaStore.EXTRA_OUTPUT, mCameraURI);
+				
+				startActivityForResult(camera, C_PICK_IMAGE);
+			}
+		});
+
+		/* Log this: source for retrieval of row id:
+		 * http://stackoverflow.com/questions/11037256/get-the-row-id-of-an-spinner-item-populated-from-database
+		 */ 
+		
+		spinnerListener = new OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id)
+			{
+				mRoomTypeId = id;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) { }
+		};
+		
+//		dialogRoomType.setOnItemSelectedListener(new OnItemSelectedListener()
 //		{
-//			if (requestCode == PICK_IMAGE)
+//			@Override
+//			public void onItemSelected(AdapterView<?> parent, View view,
+//					int pos, long id)
 //			{
-//				Cursor cursor = getContentResolver().query(
-//						Media.EXTERNAL_CONTENT_URI, new String[]
-//								{
-//									Media.DATA, 
-//									Media.DATE_ADDED, 
-//									MediaStore.Images.ImageColumns.ORIENTATION
-//								}, 
-//								Media.DATE_ADDED, 
-//								null, 
-//								"date_added ASC"
-//				);
-//				
-//				if (cursor != null && cursor.moveToFirst())
-//				{
-//					do
-//					{
-//						daURI = Uri.parse(cursor.getString(cursor.getColumnIndex(Media.DATA)));
-//						daPhotoPath = daURI.toString();
-//					}
-//					while (cursor.moveToNext());
-//					cursor.close();
-//				}
-//				if (data != null)
-//				{
-//					if (data.hasExtra("data"))
-//					{
-//						Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-//						
-//						daImageView.setImageBitmap(thumbnail);
-//					}
-//					else
-//					{
-//						System.out.println("Room detail activity warning: ");
-//						System.out.println("Intent bundle does not have the 'data' Extra");
-//						
-//						int width = daImageView.getWidth();
-//						int height = daImageView.getHeight();
-//						
-//						BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
-//						
-//						factoryOptions.inJustDecodeBounds = true;
-//						
-//						BitmapFactory.decodeFile(/*mURI.getPath()*/ daPhotoPath, factoryOptions);
-//						
-//						int imageWidth = factoryOptions.outWidth;
-//						int imageHeight = factoryOptions.outHeight;
-//						
-//						// Determine how much to scale down the image
-//						int scaleFactor = Math.min(
-//								imageWidth/width,
-//								imageHeight/height
-//								);
-//						
-//						// Decode the image file into a Bitmap sized to fill view
-//						
-//						factoryOptions.inJustDecodeBounds = false;
-//						factoryOptions.inSampleSize = scaleFactor;
-//						factoryOptions.inPurgeable = true;
-//						
-//						Bitmap bitmap = BitmapFactory.decodeFile(/*mURI.getPath()*/ daPhotoPath, factoryOptions);
-//						
-//						daImageView.setImageBitmap(bitmap);
-//					}
-//				}
-//				if (!cursor.isClosed())
-//				{
-//					cursor.close();
-//				}
+//				daRoomTypeId = id;
 //			}
-//		}
-//		else 
-//		{
-//			System.out.println("Picture taking activity NOT returning RESULT_OK");
-//		}
-//	}
 //
-//	@Override
-//	protected void onPause()
-//	{
-//		super.onPause();
-//
+//			@Override
+//			public void onNothingSelected(AdapterView<?> parent) { }
+//		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		menu.add(Menu.NONE, ADD_ID, Menu.NONE, "New room type")
+//		.setIcon(R.drawable.add)
+		.setAlphabeticShortcut('t');
+
+		return (super.onCreateOptionsMenu(menu));
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+		case R.id.menu_room_add_type:
+			addRoomType();
+		}
+		return (super.onOptionsItemSelected(item));
+	}
+	
+	private void addRoomType()
+	{
+		LayoutInflater inflater = LayoutInflater.from(this);
+		
+		View addView = inflater.inflate(R.layout.dialog_room_type_add, null);
+		
+		final AddTypeDialogWrapper wrapper = new AddTypeDialogWrapper(addView);
+		
+		new AlertDialog.Builder(this)
+			.setTitle(R.string.add_type_title)
+			.setView(addView)
+			.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() 
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						processAddRoomType(wrapper); 
+					}
+				})
+			.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+	
+					}
+				}
+			).show();			
+	}
+
+	private void populateRoomTypes() 
+	{
+		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
+		
+		int[] to = new int[] { android.R.id.text1 };
+
+		mRoomTypes = new RoomTypesDBAdapter(this);
+		mRoomTypes.open();
+		
+		mCursorRoomTypes = mRoomTypes.getList();
+		
+		@SuppressWarnings("deprecation")
+		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
+				android.R.layout.simple_spinner_item, 
+				mCursorRoomTypes, 
+				from,		/*new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME }, */
+				to);		/*new int[] { android.R.id.text1 } */
+		
+		adapterRoomTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		
+		spinnerRoomType.setAdapter(adapterRoomTypes);
+	}
+	
+	private void processAddRoomType(AddTypeDialogWrapper wrapper) 
+	{
+	    ContentValues reg = new ContentValues();
+
+	    reg.put(RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME, wrapper.getName());
+	    
+	    mRoomTypes.insert(reg);
+	    
+		populateRoomTypes();
+	}
+	
+	class AddTypeDialogWrapper
+	{
+		EditText nameField = null;
+		View base = null;
+		
+		AddTypeDialogWrapper(View base)
+		{
+			this.base = base;
+			nameField = (EditText) base.findViewById(R.id.txtName);
+		}
+		
+		String getName()
+		{
+			return (getNameField().getText().toString());
+		}
+		
+		private EditText getNameField()
+		{
+			if (nameField == null)
+			{
+				nameField = (EditText) base.findViewById(R.id.txtName);
+			}
+			
+			return (nameField);
+		}
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+
 //		saveStuff();
-//	}
-//	
-//	// This is supposed to handle passage of room type id back to the parent RoomDetailTabhost class. Find out how.
-//	private void addRoom()
-//	{
-//		LayoutInflater inflater = LayoutInflater.from(this);
-//		
-//		View addView = inflater.inflate(R.layout.add_room, null);
-//		
-//		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
-//		
-//		daDialogRoomTypeSpinner = wrapper.getSpinner();
-//		
-//		daDialogRoomTypeSpinner.setOnItemSelectedListener(spinnerListener);
-//		
-//		populateRoomTypes();
-//		
-//		new AlertDialog.Builder(this)
-//			.setTitle("Select initial room")
-//			.setView(addView)
-//			.setPositiveButton(R.string.ok,
-//				new DialogInterface.OnClickListener() 
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) 
-//					{
-//						/*** "Urrr... 'ow ta get dis 'ere klass 'daRoomTypeId' fing back to dat uvver TabHost klass?"
-//						 * "Speculation: you need to find a way to send a message from a running activity to another running activity without ending it, meatbag."
-//						 * "I HEARZ DAT!"
-//						 */
-//						
-//					}
-//				})
-//			.setNegativeButton(R.string.cancel,
-//				new DialogInterface.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//	
-//					}
-//				}
-//			).show();			
-//	}
-//	
-//
-//	private void deleteRoomType()
-//	{
-//		
-//	}
-//
-//	
-//	private void processAddType(AddRoomTypeDialogWrapper wrapper) 
-//	{
-//	    ContentValues values = new ContentValues();
-//	    
-//	    values.put(TableRoomTypes.COLUMN_NAME, wrapper.getName());
-//	    
-//    	/*quoteUri = */ getContentResolver().insert(QuoterContentProvider.CONTENT_URI_ROOM_TYPES, values);
-//				
-//		populateRoomTypes();
-//	}
-//	
+	}
+	
+	// This is supposed to handle passage of room type id back to the parent RoomDetailTabhost class. Find out how.
+	private void addRoom()
+	{
+		LayoutInflater inflater = LayoutInflater.from(this);
+		
+		View addView = inflater.inflate(R.layout.dialog_room_add, null);
+		
+		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
+		
+		spinnerDialogRoomType = wrapper.getSpinner();
+		
+		spinnerDialogRoomType.setOnItemSelectedListener(spinnerListener);
+		
+		populateRoomTypes();
+		
+		new AlertDialog.Builder(this)
+			.setTitle("Select initial room")
+			.setView(addView)
+			.setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() 
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						/*** "Urrr... 'ow ta get dis 'ere klass 'daRoomTypeId' fing back to dat uvver TabHost klass?"
+						 * "Speculation: you need to find a way to send a message from a running activity to another running activity without ending it, meatbag."
+						 * "I HEARZ DAT!"
+						 */
+						
+					}
+				})
+			.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+	
+					}
+				}
+			).show();			
+	}
+
 //	private void saveStuff()
 //	{
 //		QuoterDBHelper DAO = new QuoterDBHelper(getApplicationContext());
@@ -769,4 +671,32 @@ public class RoomDetailActivity extends Activity
 //		}
 //		
 //	}
+
+	public class AddRoomDialogWrapper
+	{
+		Spinner spinnerType = null;
+		View base = null;
+		Object item;
+		
+		AddRoomDialogWrapper(View base)
+		{
+			this.base = base;
+			spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
+		}
+	
+		public Spinner getSpinner()
+		{
+			if (spinnerType == null)
+			{
+				spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
+			}
+			
+			return (spinnerType);
+		}
+		
+		public Object getSelectedItem()
+		{
+			return item;
+		}
+	}
 }
