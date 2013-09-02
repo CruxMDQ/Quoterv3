@@ -23,9 +23,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 // TODO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
 // COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
 
-// TODO Code data saving to database logic
-// TODO Code data retrieval from database logic
-
 /***
  *  ****** DEPRECATED: getting rooms from DB here is USELESS, actual room info must be grabbed by RoomDetailActivity ******
  * PSEUDOCODE FOR DATABASE RETRIEVAL LOGIC
@@ -98,7 +95,7 @@ public class RoomDetailTabhost extends TabActivity
 	private static final int
 		ADD_TAB = Menu.FIRST + 11,
 		DELETE_TAB = Menu.FIRST + 12,
-		TABLE_ROOMTYPES = 16;
+		CHANGE_ROOM_TYPE = Menu.FIRST + 13;
 
 	private int z = 0;
 
@@ -217,6 +214,9 @@ public class RoomDetailTabhost extends TabActivity
 //			.setIcon(R.drawable.add)
 			.setAlphabeticShortcut('a');
 		
+//		menu.add(Menu.NONE, CHANGE_ROOM_TYPE, Menu.NONE, "Change room type")
+//			.setAlphabeticShortcut('c');
+		
 		return (super.onCreateOptionsMenu(menu));
 	}
 
@@ -242,6 +242,12 @@ public class RoomDetailTabhost extends TabActivity
 	
 		case DELETE_TAB:
 			deleteTab();
+			
+			return (true);
+			
+		case CHANGE_ROOM_TYPE:
+//			TextView title = (TextView) tabHost.getTabWidget().getChildAt(tabId).findViewById(android.R.id.title);
+//			title.setText("xyz");
 			
 			return (true);
 		}
@@ -308,6 +314,48 @@ public class RoomDetailTabhost extends TabActivity
 				}
 			).show();			
 	}
+
+//	private void changeTabType()
+//	{
+//		LayoutInflater inflater = LayoutInflater.from(this);
+//		
+//		View addView = inflater.inflate(R.layout.dialog_room_type_change, null);
+//		
+//		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
+//		
+//		daSpinnerRoomTypes = wrapper.getSpinner();
+//		
+//		daSpinnerRoomTypes.setOnItemSelectedListener(spinnerListener);
+//		
+//		populateRoomTypes();
+//		
+//		new AlertDialog.Builder(this)
+//			.setTitle("Select room type")
+//			.setView(addView)
+//			.setPositiveButton(R.string.ok,
+//				new DialogInterface.OnClickListener()
+//				{
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) 
+//					{
+//						TextView t = (TextView) daSpinnerRoomTypes.getSelectedView();
+//						
+//						mRoomType = t.getText().toString();
+//						
+//						doTabGubbinz();
+//						//startRoomsActivity(daPropId, t.getText().toString());
+//					}
+//				})
+//			.setNegativeButton(R.string.cancel,
+//				new DialogInterface.OnClickListener()
+//				{
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//	
+//					}
+//				}
+//			).show();			
+//	}
 
 	// "Boss, we really cannot delete one a'dem tab fingz, so we hides 'em."
 	private void deleteTab() 

@@ -28,24 +28,6 @@
                 android:layout_height="fill_parent">
 
 	            <TextView
-	                android:id="@+id/lblType"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_alignParentLeft="true"
-	                android:layout_alignParentTop="true"
-	                android:layout_marginLeft="20dp"
-	                android:layout_marginTop="30dp"
-	                android:text="@string/room_type" />
-
-	            <Spinner
-	                android:id="@+id/spnPropType"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_alignBottom="@+id/lblType"
-	                android:layout_marginLeft="20dp"
-	                android:layout_toRightOf="@+id/lblType" />
-
-	            <TextView
 	                android:id="@+id/lblWidthX"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"

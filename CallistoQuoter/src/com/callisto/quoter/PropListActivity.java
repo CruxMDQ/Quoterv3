@@ -228,7 +228,6 @@ public class PropListActivity extends ListActivity
 //						@Override
 //						public void onClick(DialogInterface dialog, int which) 
 //						{
-//							// TODO Auto-generated method stub
 //							
 //						}
 //					})
@@ -298,7 +297,7 @@ public class PropListActivity extends ListActivity
 //		
 //		adapterRatings.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //		
-//		// TODO ASSIGN THIS ADAPTER TO A SPINNER!
+//		// TO DO ASSIGN THIS ADAPTER TO A SPINNER!
 //		//spinnerRating.setAdapter(adapterRatings);
 //		
 //	}
