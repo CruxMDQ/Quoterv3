@@ -33,6 +33,7 @@ import android.widget.TextView;
 import com.callisto.quoter.DB.PropsRoomsDBAdapter;
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
+import com.callisto.quoter.interfaces.Observer;
 import com.callisto.quoter.utils.ImageUtils;
 
 /***
@@ -55,7 +56,8 @@ import com.callisto.quoter.utils.ImageUtils;
  * 	}
  */
 
-public class RoomDetailActivity extends Activity // implements LoaderManager.LoaderCallbacks<Cursor>
+@SuppressWarnings({ "unused", "deprecation" })
+public class RoomDetailActivity extends Activity implements Observer // implements LoaderManager.LoaderCallbacks<Cursor>
 {
 //	private static final int 
 //		TABLE_PROP_ROOMS = 10,
@@ -69,16 +71,14 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 	private ImageView mImageView;
 	private Uri mCameraURI;
 
-	private String mPhotoPath, 
-		initialRoomType;
-
-	private SimpleCursorAdapter mAdapter;
+	private String mPhotoPath;
 
 	private static final int
 		ADD_ROOM_TYPE = Menu.FIRST + 12,
-		DELETE_ID = Menu.FIRST + 3,
-		ADD_TAB = Menu.FIRST + 11,
+//		DELETE_ID = Menu.FIRST + 3,
+//		ADD_TAB = Menu.FIRST + 11,
 		CHANGE_ROOM_TYPE = Menu.FIRST + 13,
+		ACT_SAVE = 10001,
 		C_PICK_IMAGE = 70002;
 
 	private long 
@@ -98,6 +98,14 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 	private Cursor mCursorRoomTypes;
 
 	private Bitmap mBitmap;
+	
+	private RoomDetailTabhost parent;
+	private TabHost parentTabHost;
+	private TabWidget vTabs;
+
+	/**
+	 * ACTIVITY LIFECYCLE OVERRIDES
+	 */
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -212,7 +220,15 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 		
 		Bundle extras = getIntent().getExtras();
 	    
-	    if(extras == null) 
+		// Source for referencing parent activity: http://stackoverflow.com/questions/5399324/how-to-reference-child-activity-from-tabhost-to-call-a-public-function 
+		
+		parent = (RoomDetailTabhost) getParent();
+		parentTabHost = parent.getTabHost();
+		vTabs = parentTabHost.getTabWidget();
+		
+		parent.registerObserver(this);
+
+		if(extras == null) 
 	    {
 	        mPropId = 0;
 	    } 
@@ -220,7 +236,7 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 	    {
 	        mPropId = extras.getLong("mPropId");
 	        
-	        initialRoomType = extras.getString("mRoomType");
+	        extras.getString("mRoomType");
 	    }
 		
 //		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
@@ -273,6 +289,14 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 	}
 
 	@Override
+		protected void onPause()
+		{
+			super.onPause();
+	
+	//		saveStuff();
+		}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
 		menu.add(Menu.NONE, ADD_ROOM_TYPE, Menu.NONE, "New room type")
@@ -301,6 +325,22 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 		return (super.onOptionsItemSelected(item));
 	}
 	
+	/**
+	 * OBSERVER/OBSERVABLE STUFF 
+	 */
+	
+	@Override
+	public void update(int code, String message) 
+	{
+		switch(code)
+		{
+			case ACT_SAVE:
+			{
+				save();
+			}
+		}
+	}
+
 	private void addRoomType()
 	{
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -331,14 +371,9 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 			).show();			
 	}
 	
+	// Source for changing tab title: http://stackoverflow.com/questions/2935781/modify-tab-indicator-dynamically-in-android
 	private void changeTabTitle()
 	{
-		@SuppressWarnings("deprecation")
-		TabActivity parent = (TabActivity) getParent();
-		@SuppressWarnings("deprecation")
-		final TabHost parentTabHost = parent.getTabHost();
-		final TabWidget vTabs = parentTabHost.getTabWidget();
-
 		LayoutInflater inflater = LayoutInflater.from(this);
 		
 		View addView = inflater.inflate(R.layout.dialog_room_type_change, null);
@@ -388,7 +423,6 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 		
 		mCursorRoomTypes = mRoomTypes.getList();
 		
-		@SuppressWarnings("deprecation")
 		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
 				android.R.layout.simple_spinner_item, 
 				mCursorRoomTypes, 
@@ -409,14 +443,6 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 	    mRoomTypes.insert(reg);
 	    
 //		populateRoomTypes(spinnerRoomType);
-	}
-	
-	@Override
-	protected void onPause()
-	{
-		super.onPause();
-
-//		saveStuff();
 	}
 	
 	// This is supposed to handle passage of room type id back to the parent RoomDetailTabhost class. Find out how.
@@ -530,6 +556,9 @@ public class RoomDetailActivity extends Activity // implements LoaderManager.Loa
 		}
 	}
 
+	/**
+	 * NESTED CLASSES
+	 */
 	class AddTypeDialogWrapper
 	{
 		EditText nameField = null;

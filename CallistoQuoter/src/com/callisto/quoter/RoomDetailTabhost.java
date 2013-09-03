@@ -1,6 +1,10 @@
 package com.callisto.quoter;
 
+import java.util.ArrayList;
+
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
+import com.callisto.quoter.interfaces.Observable;
+import com.callisto.quoter.interfaces.Observer;
 
 import android.app.AlertDialog;
 import android.app.TabActivity;
@@ -20,7 +24,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-// TODO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
+// DONE Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
 // COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
 
 /***
@@ -88,36 +92,41 @@ import android.widget.AdapterView.OnItemSelectedListener;
  */
 
 @SuppressWarnings("deprecation")
-public class RoomDetailTabhost extends TabActivity
+public class RoomDetailTabhost extends TabActivity implements Observable
 {
 	private TabHost tabHost;
 	
 	private static final int
 		ADD_TAB = Menu.FIRST + 11,
 		DELETE_TAB = Menu.FIRST + 12,
-		CHANGE_ROOM_TYPE = Menu.FIRST + 13;
+		SAVE_ALL = Menu.FIRST + 13,
+		ACT_SAVE = 10001;
 
 	private int z = 0;
 
 	private long 
 		mPropId, 
-		daRoomTypeIdTemporary,	// "Zoggin' bad setup, boss, I know, but I can think a' no better right now."
+		mRoomTypeIdTemporary,	// "Zoggin' bad setup, boss, I know, but I can think a' no better right now."
 		mRoomTypeId;
 	
 	private String mRoomType;
 	
 	private Spinner daSpinnerRoomTypes;
 	
-	private SimpleCursorAdapter daRoomTypesAdapter;
+//	private SimpleCursorAdapter daRoomTypesAdapter;
 	
-	Object daSpinnerSelekshun;
-
-	OnItemSelectedListener spinnerListener;
+	private OnItemSelectedListener spinnerListener;
 
 	private RoomTypesDBAdapter mRoomTypes;
 
 	private Cursor mCursorRoomTypes;
 
+	private ArrayList<Observer> observers;
+	
+	/**
+	 * ACTIVITY LIFECYCLE OVERRIDES
+	 */
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -170,7 +179,7 @@ public class RoomDetailTabhost extends TabActivity
 			public void onNothingSelected(AdapterView<?> parent) { }
 		};
 		
-//		/*** TODO Log this: source for retrieval of row id:
+//		/*** Log this: source for retrieval of row id:
 //		 * http://stackoverflow.com/questions/11037256/get-the-row-id-of-an-spinner-item-populated-from-database
 //		 */ 
 //		daSpinnerRoomTypes.setOnItemSelectedListener(new OnItemSelectedListener()
@@ -189,6 +198,14 @@ public class RoomDetailTabhost extends TabActivity
 //			}
 //		});
 		
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		notifyObservers();
+		
+		super.onDestroy();
 	}
 	
 	@Override
@@ -214,20 +231,11 @@ public class RoomDetailTabhost extends TabActivity
 //			.setIcon(R.drawable.add)
 			.setAlphabeticShortcut('a');
 		
+		menu.add(Menu.NONE, SAVE_ALL, Menu.NONE, "Save property");
 //		menu.add(Menu.NONE, CHANGE_ROOM_TYPE, Menu.NONE, "Change room type")
 //			.setAlphabeticShortcut('c');
 		
 		return (super.onCreateOptionsMenu(menu));
-	}
-
-	public long getDaRoomTypeId()
-	{
-		return mRoomTypeId;
-	}
-
-	public void setDaRoomTypeId(long daRoomTypeId)
-	{
-		this.mRoomTypeId = daRoomTypeId;
 	}
 
 	@Override
@@ -245,14 +253,25 @@ public class RoomDetailTabhost extends TabActivity
 			
 			return (true);
 			
-		case CHANGE_ROOM_TYPE:
+		case SAVE_ALL:
+			finish();
 //			TextView title = (TextView) tabHost.getTabWidget().getChildAt(tabId).findViewById(android.R.id.title);
 //			title.setText("xyz");
 			
-			return (true);
+//			return (true);
 		}
 		
 		return (super.onOptionsItemSelected(item));
+	}
+
+	public long getDaRoomTypeId()
+	{
+		return mRoomTypeId;
+	}
+
+	public void setDaRoomTypeId(long daRoomTypeId)
+	{
+		this.mRoomTypeId = daRoomTypeId;
 	}
 
 	private void addTab()
@@ -314,48 +333,6 @@ public class RoomDetailTabhost extends TabActivity
 				}
 			).show();			
 	}
-
-//	private void changeTabType()
-//	{
-//		LayoutInflater inflater = LayoutInflater.from(this);
-//		
-//		View addView = inflater.inflate(R.layout.dialog_room_type_change, null);
-//		
-//		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
-//		
-//		daSpinnerRoomTypes = wrapper.getSpinner();
-//		
-//		daSpinnerRoomTypes.setOnItemSelectedListener(spinnerListener);
-//		
-//		populateRoomTypes();
-//		
-//		new AlertDialog.Builder(this)
-//			.setTitle("Select room type")
-//			.setView(addView)
-//			.setPositiveButton(R.string.ok,
-//				new DialogInterface.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) 
-//					{
-//						TextView t = (TextView) daSpinnerRoomTypes.getSelectedView();
-//						
-//						mRoomType = t.getText().toString();
-//						
-//						doTabGubbinz();
-//						//startRoomsActivity(daPropId, t.getText().toString());
-//					}
-//				})
-//			.setNegativeButton(R.string.cancel,
-//				new DialogInterface.OnClickListener()
-//				{
-//					@Override
-//					public void onClick(DialogInterface dialog, int which) {
-//	
-//					}
-//				}
-//			).show();			
-//	}
 
 	// "Boss, we really cannot delete one a'dem tab fingz, so we hides 'em."
 	private void deleteTab() 
@@ -444,18 +421,6 @@ public class RoomDetailTabhost extends TabActivity
 		daSpinnerRoomTypes.setAdapter(adapterRoomTypes);
 	}
 	
-	private void getRoomsOnProperty(int propId)
-	{
-		
-		/***
-		 * PSEUDOCODE
-		 * 
-		 * - Declare an array to store room identifiers
-		 * - Run query on DB
-		 * - 
-		 */
-	}
-
 	private void spawnTypeRequestDialog()
 	{
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -477,14 +442,14 @@ public class RoomDetailTabhost extends TabActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which) 
 					{
-						// TODO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
+						// DONE Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
 						// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
 						
 						TextView t = (TextView) daSpinnerRoomTypes.getSelectedView();
 						
 						mRoomType = t.getText().toString();
 						
-						mRoomTypeId = daRoomTypeIdTemporary;
+						mRoomTypeId = mRoomTypeIdTemporary;
 					}
 				})
 			.setNegativeButton(R.string.cancel,
@@ -497,6 +462,37 @@ public class RoomDetailTabhost extends TabActivity
 				}
 			).show();			
 	}
+
+	/**
+	 * OBSERVER/OBSERVABLE STUFF 
+	 */
+	
+	@Override
+	public void registerObserver(Observer o) 
+	{
+		observers.add(o);		
+	}
+
+	@Override
+	public void removeObserver(Observer o) 
+	{
+		int i = observers.indexOf(o);
+		if (i >= 0)
+		{
+			observers.remove(i);
+		}
+	}
+
+	@Override
+	public void notifyObservers() 
+	{
+		for (int i = 0; i < observers.size(); i++)
+		{
+			Observer observer = (Observer) observers.get(i);
+			observer.update(ACT_SAVE, "Save");
+		}
+		
+	}	
 
 	public class AddRoomDialogWrapper
 	{
@@ -524,5 +520,5 @@ public class RoomDetailTabhost extends TabActivity
 		{
 			return item;
 		}
-	}	
+	}
 }
