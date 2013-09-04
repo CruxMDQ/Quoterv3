@@ -1,5 +1,6 @@
 package com.callisto.quoter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
@@ -25,7 +26,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 // DONE Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
-// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
+// http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
 
 /***
  *  ****** DEPRECATED: getting rooms from DB here is USELESS, actual room info must be grabbed by RoomDetailActivity ******
@@ -133,6 +134,8 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_room_detail_tabhost);
 		
+		observers = new ArrayList<Observer>();
+
 		this.tabHost = getTabHost();
 
 		Bundle extras = getIntent().getExtras();
@@ -145,7 +148,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	    {
 	        mPropId = extras.getLong("mPropId");
 	        
-	        // DONE Code this on PropDetailActivity
 	        mRoomTypeId = extras.getLong("mRoomTypeId");
 	        
 	        mRoomType = extras.getString("mRoomType");
@@ -178,26 +180,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		};
-		
-//		/*** Log this: source for retrieval of row id:
-//		 * http://stackoverflow.com/questions/11037256/get-the-row-id-of-an-spinner-item-populated-from-database
-//		 */ 
-//		daSpinnerRoomTypes.setOnItemSelectedListener(new OnItemSelectedListener()
-//		{
-//			@Override
-//			public void onItemSelected(AdapterView<?> parent, View view,
-//					int pos, long id)
-//			{
-//				daRoomTypeIdTemporary = id;
-//			}
-//
-//			@Override
-//			public void onNothingSelected(AdapterView<?> parent)
-//			{
-//				
-//			}
-//		});
-		
 	}
 
 	@Override
@@ -212,16 +194,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	protected void onPause()
 	{
 		super.onPause();
-		
-		/***
-		 * PSEUDOCODE
-		 * 
-		 * - Get writable database
-		 * - Prepare content values
-		 * - Write stuff to database (uses daPropId)
-		 * - Assign row id to daRoomId field
-		 * - Close database
-		 */
 	}
 	
 	@Override
@@ -264,14 +236,56 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 		return (super.onOptionsItemSelected(item));
 	}
 
-	public long getDaRoomTypeId()
+	@Override
+	public void onSaveInstanceState(Bundle outState)
 	{
-		return mRoomTypeId;
-	}
+		super.onSaveInstanceState(outState);
+		
+		outState.putLong("mPropId", mPropId);
+        
+        outState.putLong("mRoomTypeId", mRoomTypeId);
+        
+        outState.putString("mRoomType", mRoomType);
 
-	public void setDaRoomTypeId(long daRoomTypeId)
+        try
+        {
+        for (int i = 0; i < observers.size(); i++)
+		{
+			outState.putSerializable("observer" + i, (Serializable) observers.get(i));
+		}
+
+		outState.putInt("qObservers", observers.size());
+        }
+        catch(Exception E)
+        {
+			Log.i(this.getClass().toString(), "onSaveInstanceState: cannot save content - " + E.getMessage());
+        }
+	}
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
 	{
-		this.mRoomTypeId = daRoomTypeId;
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		mPropId = savedInstanceState.getLong("mPropId");
+
+		mRoomTypeId = savedInstanceState.getLong("mRoomTypeId");
+
+		mRoomType = savedInstanceState.getString("mRoomType");
+		
+		int q = savedInstanceState.getInt("qObservers");
+		
+		try
+		{
+			for (int i = 0; i < q; i++)
+			{
+				observers.add((Observer) savedInstanceState.getSerializable("observer" + i));
+			}
+		}
+		catch(Exception E)
+		{
+			Log.i(this.getClass().toString(), "onRestoreInstanceState: cannot restore observers - " + E.getMessage());
+		}
 	}
 
 	private void addTab()
@@ -375,15 +389,15 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	{
 		spawnTypeRequestDialog();
 		
-		Intent newTab = new Intent();
-		
-		newTab.putExtra("propId", this.mPropId);
-	
 		/*** "YA GIT, DIS AIN'T GONNA DO DA JOB WITH NEW TAB GUBBINZ! Ya'z havin' to cook up sumfin' elze, or me Squiggof's eatin' tonight!"
 		 * (KUFF!) "OWWWW! I hearz ya, boss... methinks somehow tellin' it da new value a' dat room type fing could work..."
 		 * Follow-up:
 		 * "Boss, we'z tryin' dis up: I've set up one a' dem 'AlertDialog' fings to ask up for da room type, as I did wiv da PropDetailActivity fing."
 		 */
+		Intent newTab = new Intent();
+		
+		newTab.putExtra("propId", this.mPropId);
+	
 		newTab.putExtra("roomTypeId", this.mRoomTypeId);
 		
 		newTab.setClass(this, RoomDetailActivity.class);
@@ -468,6 +482,17 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	 */
 	
 	@Override
+	public void notifyObservers() 
+	{
+		for (int i = 0; i < observers.size(); i++)
+		{
+			Observer observer = (Observer) observers.get(i);
+			observer.update(ACT_SAVE, "Save");
+		}
+		
+	}	
+
+	@Override
 	public void registerObserver(Observer o) 
 	{
 		observers.add(o);		
@@ -482,17 +507,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 			observers.remove(i);
 		}
 	}
-
-	@Override
-	public void notifyObservers() 
-	{
-		for (int i = 0; i < observers.size(); i++)
-		{
-			Observer observer = (Observer) observers.get(i);
-			observer.update(ACT_SAVE, "Save");
-		}
-		
-	}	
 
 	public class AddRoomDialogWrapper
 	{

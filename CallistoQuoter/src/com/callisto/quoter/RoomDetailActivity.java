@@ -1,5 +1,7 @@
 package com.callisto.quoter;
 
+import java.io.Serializable;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TabActivity;
@@ -56,15 +58,17 @@ import com.callisto.quoter.utils.ImageUtils;
  * 	}
  */
 
+// Serialization source: http://stackoverflow.com/questions/4670215/how-to-serialize-arraylist-on-android
+
 @SuppressWarnings({ "unused", "deprecation" })
-public class RoomDetailActivity extends Activity implements Observer // implements LoaderManager.LoaderCallbacks<Cursor>
+public class RoomDetailActivity extends Activity implements Observer, Serializable
 {
-//	private static final int 
-//		TABLE_PROP_ROOMS = 10,
-//		TABLE_ROOMS = 15,
-//		TABLE_ROOMTYPES = 16;
-//	
-	private EditText daTxtWidthX, daTxtWidthY, daTxtFloors;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7026922258247398827L;
+
+	private EditText txtWidthX, txtWidthY, txtFloors;
 	
 //	/*** "Dis 'ere gubbinz are fer da kamera to do work propa."
 //	 */
@@ -226,8 +230,6 @@ public class RoomDetailActivity extends Activity implements Observer // implemen
 		parentTabHost = parent.getTabHost();
 		vTabs = parentTabHost.getTabWidget();
 		
-		parent.registerObserver(this);
-
 		if(extras == null) 
 	    {
 	        mPropId = 0;
@@ -241,9 +243,9 @@ public class RoomDetailActivity extends Activity implements Observer // implemen
 		
 //		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
 		
-		daTxtWidthX = (EditText) findViewById(R.id.txtWidthX);
-		daTxtWidthY = (EditText) findViewById(R.id.txtWidthY);
-		daTxtFloors = (EditText) findViewById(R.id.txtFloors);
+		txtWidthX = (EditText) findViewById(R.id.txtWidthX);
+		txtWidthY = (EditText) findViewById(R.id.txtWidthY);
+		txtFloors = (EditText) findViewById(R.id.txtFloors);
 
 //		populateRoomTypes(spinnerRoomType);
 		
@@ -286,6 +288,8 @@ public class RoomDetailActivity extends Activity implements Observer // implemen
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) { }
 		};
+
+		parent.registerObserver(this);
 	}
 
 	@Override
@@ -325,6 +329,49 @@ public class RoomDetailActivity extends Activity implements Observer // implemen
 		return (super.onOptionsItemSelected(item));
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+
+		outState.putString("txtWidthY", txtWidthY.getText().toString());
+
+		outState.putString("txtWidthX", txtWidthY.getText().toString());
+
+		outState.putString("txtFloors", txtWidthY.getText().toString());
+
+		try
+		{
+			outState.putByteArray("mImageView", ImageUtils.bitmapToByteArray(mBitmap));
+		}
+		catch(Exception E)
+		{
+			Log.i(this.getClass().toString(), "onSaveInstanceState: cannot save image - " + E.getMessage());
+		}
+	}
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+
+		try
+		{
+			txtWidthY.setText(savedInstanceState.getString("txtWidthY"));
+			
+			txtWidthX.setText(savedInstanceState.getString("txtWidthX"));
+	
+			txtFloors.setText(savedInstanceState.getString("txtFloors"));
+			
+			Bitmap tBitmap = ImageUtils.byteToBitmap(savedInstanceState.getByteArray("mImageView"));
+	        mImageView.setImageBitmap(tBitmap);
+		}
+		catch(Exception E)
+		{
+			Log.i(this.getClass().toString(), "onRestoreInstanceState: cannot restore content - " + E.getMessage());
+		}
+	}
+
 	/**
 	 * OBSERVER/OBSERVABLE STUFF 
 	 */
@@ -494,20 +541,20 @@ public class RoomDetailActivity extends Activity implements Observer // implemen
 		/* Log research about casting from string to float found at: 
 		 * stackoverflow.com/questions/4229710/string-from-edittext-to-float
 		 */
-		String s1 = daTxtWidthX.getText().toString();
-		String s2 = daTxtWidthY.getText().toString();
+		String s1 = txtWidthX.getText().toString();
+		String s2 = txtWidthY.getText().toString();
 		
 		if (/*daTxtWidthX.getText().toString()*/ !s1.equals(""))
 		{
-			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, Float.valueOf(daTxtWidthX.getText().toString()));
+			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, Float.valueOf(txtWidthX.getText().toString()));
 		}
 		
 		if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
 		{
-			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(daTxtWidthX.getText().toString()));
+			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(txtWidthX.getText().toString()));
 		}
 		
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, daTxtFloors.getText().toString());
+		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, txtFloors.getText().toString());
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
 		reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
