@@ -17,7 +17,7 @@ public class RoomTypesDBAdapter extends DBAdapter
 
 	public RoomTypesDBAdapter(Context context) {
 		super(context);
-		this.setTableManaged(C_TABLE_ROOM_TYPES);
+		this.setManagedTable(C_TABLE_ROOM_TYPES);
 		this.setColumns(new String[] { C_COLUMN_ID,
 				C_COLUMN_ROOM_TYPES_NAME });
 	}

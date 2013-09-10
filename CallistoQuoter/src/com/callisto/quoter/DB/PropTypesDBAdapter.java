@@ -19,7 +19,7 @@ public class PropTypesDBAdapter extends DBAdapter
 	public PropTypesDBAdapter(Context context)
 	{
 		super(context);
-		this.setTableManaged(C_TABLE_PROP_TYPES);
+		this.setManagedTable(C_TABLE_PROP_TYPES);
 		this.setColumns(new String[] { C_COLUMN_ID,
 			C_COLUMN_PROP_TYPES_NAME });
 	}

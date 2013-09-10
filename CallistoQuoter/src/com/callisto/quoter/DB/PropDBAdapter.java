@@ -1,6 +1,5 @@
 package com.callisto.quoter.DB;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -68,7 +67,7 @@ public class PropDBAdapter extends DBAdapter
 	public PropDBAdapter(Context context)
 	{
 		super(context);
-		this.setTableManaged(C_TABLE_PROPERTIES);
+		this.setManagedTable(C_TABLE_PROPERTIES);
 		this.setColumns(new String[] 
 		{ 
 			C_COLUMN_ID, 
@@ -136,24 +135,24 @@ public class PropDBAdapter extends DBAdapter
 		return c;
 	}
 	
-	/***
-	 * Fetch a specific record from the database.
-	 * @param id Row identifier.
-	 * @return Cursor containing the requested row.
-	 * @throws SQLException
-	 */
-	public Cursor getRecord(long id) throws SQLException
-	{
-		Cursor c = db.query(true, C_TABLE_PROPERTIES, columns, C_COLUMN_ID + "=" + id, null, null, null, null, null);
-		
-		if (c != null)
-		{
-			c.moveToFirst();
-		}
-		
-		return c;
-	}
-	
+//	/***
+//	 * Fetch a specific record from the database.
+//	 * @param id Row identifier.
+//	 * @return Cursor containing the requested row.
+//	 * @throws SQLException
+//	 */
+//	public Cursor getRecord(long id) throws SQLException
+//	{
+//		Cursor c = db.query(true, C_TABLE_PROPERTIES, columns, C_COLUMN_ID + "=" + id, null, null, null, null, null);
+//		
+//		if (c != null)
+//		{
+//			c.moveToFirst();
+//		}
+//		
+//		return c;
+//	}
+//	
 //	/***
 //	 * Inserts values into a new table record.
 //	 * @param reg The set of values to insert.

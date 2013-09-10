@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
+import com.callisto.quoter.DB.RoomsDBAdapter;
 import com.callisto.quoter.interfaces.Observable;
 import com.callisto.quoter.interfaces.Observer;
 
@@ -119,8 +120,10 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	private OnItemSelectedListener spinnerListener;
 
 	private RoomTypesDBAdapter mRoomTypes;
+	private RoomsDBAdapter mRooms;
 
-	private Cursor mCursorRoomTypes;
+	private Cursor mCursorRoomTypes,
+		mCursorRooms;
 
 	private ArrayList<Observer> observers;
 	
@@ -128,6 +131,7 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	 * ACTIVITY LIFECYCLE OVERRIDES
 	 */
 	
+	// TODO Implement logic change: create a new tab for every room on mCursorRooms.
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -152,21 +156,13 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	        
 	        mRoomType = extras.getString("mRoomType");
 	    }
+	    
+	    mRooms = new RoomsDBAdapter(this);
+	    mRooms.open();
+	    
+	    mCursorRooms = mRooms.getRoomsForProperty(mPropId);
 		
-		Intent newTab = new Intent();
-
-		newTab.putExtra("mPropId", this.mPropId);
-		
-		// "We'z needin' dis 'ere fing to add up da new room into yer databaze, boss: da type indikator cannot be, um, 'null'."
-		newTab.putExtra("mRoomTypeId", this.mRoomTypeId);
-		
-		newTab.setClass(this, RoomDetailActivity.class);
-		
-		tabHost.addTab(
-				tabHost.newTabSpec("Main")
-				.setIndicator(mRoomType)
-				.setContent(newTab)
-				);
+		createTab();
 		
 		spinnerListener = new OnItemSelectedListener()
 		{
@@ -185,7 +181,7 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	@Override
 	protected void onDestroy()
 	{
-		notifyObservers();
+		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
 		
 		super.onDestroy();
 	}
@@ -193,7 +189,17 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	@Override
 	protected void onPause()
 	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onPause() called");
+		
 		super.onPause();
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onResume() called");
+		
+		super.onResume();
 	}
 	
 	@Override
@@ -226,11 +232,10 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 			return (true);
 			
 		case SAVE_ALL:
+			notifyObservers();
 			finish();
-//			TextView title = (TextView) tabHost.getTabWidget().getChildAt(tabId).findViewById(android.R.id.title);
-//			title.setText("xyz");
-			
-//			return (true);
+
+			return(true);
 		}
 		
 		return (super.onOptionsItemSelected(item));
@@ -249,12 +254,12 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 
         try
         {
-        for (int i = 0; i < observers.size(); i++)
-		{
-			outState.putSerializable("observer" + i, (Serializable) observers.get(i));
-		}
-
-		outState.putInt("qObservers", observers.size());
+	        for (int i = 0; i < observers.size(); i++)
+			{
+				outState.putSerializable("observer" + i, (Serializable) observers.get(i));
+			}
+	
+			outState.putInt("qObservers", observers.size());
         }
         catch(Exception E)
         {
@@ -300,24 +305,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 		
 		daSpinnerRoomTypes.setOnItemSelectedListener(spinnerListener);
 		
-//		daSpinnerRoomTypes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-//		{
-//			@Override
-//			public void onItemSelected(AdapterView<?> parent, View view,
-//					int pos, long id)
-//			{
-//				daSpinnerSelekshun = parent.getItemAtPosition(pos);
-//				
-//				System.out.println(daSpinnerSelekshun.toString());
-//			}
-//
-//			@Override
-//			public void onNothingSelected(AdapterView<?> arg0)
-//			{
-//				// "Nothing 'appens 'ere, boss."
-//			}
-//		});
-		
 		populateRoomTypes();
 		
 		new AlertDialog.Builder(this)
@@ -346,6 +333,23 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 					}
 				}
 			).show();			
+	}
+
+	private void createTab()
+	{
+		Intent newTab = new Intent();
+	
+		newTab.putExtra("mPropId", this.mPropId);
+		
+		newTab.putExtra("mRoomTypeId", this.mRoomTypeId);
+		
+		newTab.setClass(this, RoomDetailActivity.class);
+		
+		tabHost.addTab(
+				tabHost.newTabSpec("Main")
+				.setIndicator(mRoomType)
+				.setContent(newTab)
+				);
 	}
 
 	// "Boss, we really cannot delete one a'dem tab fingz, so we hides 'em."

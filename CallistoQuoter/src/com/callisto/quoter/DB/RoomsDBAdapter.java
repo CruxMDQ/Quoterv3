@@ -1,6 +1,7 @@
 package com.callisto.quoter.DB;
 
 import android.content.Context;
+import android.database.Cursor;
 
 public class RoomsDBAdapter extends DBAdapter 
 {
@@ -22,7 +23,7 @@ public class RoomsDBAdapter extends DBAdapter
 
 	public RoomsDBAdapter(Context context) {
 		super(context);
-		this.setTableManaged(C_TABLE_ROOMS);
+		this.setManagedTable(C_TABLE_ROOMS);
 		this.setColumns(new String[] { C_COLUMN_ID,
 				C_COLUMN_ROOM_TYPE_ID,
 				C_COLUMN_ROOM_X,
@@ -32,4 +33,11 @@ public class RoomsDBAdapter extends DBAdapter
 				C_COLUMN_IMAGE });
 	}
 
+	public Cursor getRoomsForProperty(long mPropId)
+	{
+		return db.rawQuery("select * from " + C_TABLE_ROOMS + 
+				" inner join " + PropsRoomsDBAdapter.C_TABLE_PROPS_ROOMS + 
+				" on " + RoomsDBAdapter.C_COLUMN_ID + " = " + PropsRoomsDBAdapter.C_COLUMN_ROOM_ID + 
+				" where " + PropsRoomsDBAdapter.C_COLUMN_PROP_ID + " = " + mPropId, null);
+	}
 }

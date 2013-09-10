@@ -16,12 +16,17 @@ public abstract class DBAdapter
 	protected String managedTable;
 	protected String[] columns;
 	
-	public String getTableManaged() 
+	public SQLiteDatabase getDb()
+	{
+		return db;
+	}
+
+	public String getManagedTable() 
 	{
 		return managedTable;
 	}
 
-	public void setTableManaged(String managedTable) 
+	public void setManagedTable(String managedTable) 
 	{
 		this.managedTable = managedTable;
 	}
@@ -49,6 +54,24 @@ public abstract class DBAdapter
 	}
 	
 	/***
+	 * Fetch a specific record from the database.
+	 * @param id Row identifier.
+	 * @return Cursor containing the requested row.
+	 * @throws SQLException
+	 */
+	public Cursor getRecord(long id) throws SQLException
+	{
+		Cursor c = db.query(true, this.getManagedTable(), columns, C_COLUMN_ID + "=" + id, null, null, null, null, null);
+		
+		if (c != null)
+		{
+			c.moveToFirst();
+		}
+		
+		return c;
+	}
+	
+	/***
 	 * Inserts values into a new table record.
 	 * @param reg The set of values to insert.
 	 * @return 
@@ -60,7 +83,7 @@ public abstract class DBAdapter
 			open();
 		}
 		
-		return db.insert(this.getTableManaged(), null, reg);
+		return db.insert(this.getManagedTable(), null, reg);
 	}
 
 	public DBAdapter open() throws SQLException
@@ -86,7 +109,7 @@ public abstract class DBAdapter
 			
 			reg.remove(C_COLUMN_ID);
 			
-			result = db.update(this.getTableManaged(), reg, "_id=" + id, null);
+			result = db.update(this.getManagedTable(), reg, "_id=" + id, null);
 		}
 		
 		return result;

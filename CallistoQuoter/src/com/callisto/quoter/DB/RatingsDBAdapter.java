@@ -18,7 +18,7 @@ public class RatingsDBAdapter extends DBAdapter
 	public RatingsDBAdapter(Context context)
 	{
 		super(context);
-		this.setTableManaged(C_TABLE_RATINGS);
+		this.setManagedTable(C_TABLE_RATINGS);
 		this.setColumns(new String[] { C_COLUMN_ID,
 			C_COLUMN_RATING_NAME });
 //		this.context = context;

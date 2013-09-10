@@ -104,8 +104,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ TABLE_PROPS_ROOMS + "("
 			+ TABLE_PROP_ID + " integer primary key, "
 			+ TABLE_ROOM_ID + " integer not null, "
-			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_PROP_ID + "),"
-			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ROOM_ID + ")"
+			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_ID + "),"
+			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ID + ")"
 			+ ");";
 	
 	public DBHelper(Context context)

@@ -32,6 +32,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.callisto.quoter.DB.PropDBAdapter;
 import com.callisto.quoter.DB.PropsRoomsDBAdapter;
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
@@ -70,9 +71,13 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 
 	private EditText txtWidthX, txtWidthY, txtFloors;
 	
-//	/*** "Dis 'ere gubbinz are fer da kamera to do work propa."
-//	 */
-	private ImageView mImageView;
+	/***
+	 * CAMERA STUFF
+	 * 
+	 * TRANSIENT OPERATOR REQUIRED FOR NON-SERIALIZABLE OBJECTS! They will be just skipped.
+	 */
+	
+	private transient ImageView mImageView;	
 	private Uri mCameraURI;
 
 	private String mPhotoPath;
@@ -99,7 +104,8 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	private RoomsDBAdapter mRooms;
 	private PropsRoomsDBAdapter mPropRooms;
 
-	private Cursor mCursorRoomTypes;
+	private Cursor mCursorRooms,
+		mCursorRoomTypes;
 
 	private Bitmap mBitmap;
 	
@@ -241,6 +247,15 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	        extras.getString("mRoomType");
 	    }
 		
+		/*
+		 * Get record ID if provided
+		 */
+		if (extras.containsKey(RoomsDBAdapter.C_COLUMN_ID))
+		{
+			mRoomId = extras.getLong(RoomsDBAdapter.C_COLUMN_ID);
+			query(mRoomId);
+		}
+		
 //		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
 		
 		txtWidthX = (EditText) findViewById(R.id.txtWidthX);
@@ -293,13 +308,29 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	}
 
 	@Override
-		protected void onPause()
-		{
-			super.onPause();
+	protected void onDestroy()
+	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
+		
+		super.onDestroy();
+	}
 	
-	//		saveStuff();
-		}
-
+	@Override
+	protected void onPause()
+	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onPause() called");
+		
+		super.onPause();
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onResume() called");
+		
+		super.onResume();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
@@ -534,6 +565,34 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 			).show();			
 	}
 
+	/***
+	 * Queries database for details on the row matching the provided ID and fills up form text boxes.
+	 * @param id identifier of the row to retrieve data from.
+	 */
+	private void query(long id) 
+	{
+		mCursorRooms = mRooms.getRecord(id);
+		
+		txtWidthX.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X)));
+		txtWidthY.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y)));
+		txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
+		
+		try
+		{
+			mBitmap = ImageUtils.byteToBitmap(mCursorRooms.getBlob(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_IMAGE)));
+
+			mImageView.setImageBitmap(mBitmap);
+		}
+		catch(SQLException e)
+		{
+			Log.i(this.getClass().toString() + ".query", "Cannot retrieve image from database");
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString() + ".query", "Cannot process image");
+		}
+	}
+
 	private void save()
 	{
 		ContentValues reg = new ContentValues();
@@ -561,12 +620,35 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	
 		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
 		
+//		// Model code from PropDetailActivity
+//		try
+//		{
+//			if (mFormMode == PropListActivity.C_CREATE)
+//			{
+//				mHouses.insert(reg);
+//				Toast.makeText(PropDetailActivity.this, R.string.house_create_notice, Toast.LENGTH_LONG).show();
+//			}
+//			else if (mFormMode == PropListActivity.C_EDIT)
+//			{
+//				Toast.makeText(PropDetailActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
+//		
+//				reg.put(PropDBAdapter.C_COLUMN_ID, mPropId);
+//				
+//				long resultCode = mHouses.update(reg);
+//				Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			
+//			}
+//		}
+//		catch(SQLException e)
+//		{
+//			Log.i(this.getClass().toString(), e.getMessage());
+//		}
+
 		if (mRoomId == -1)
 		{
 			try
 			{
 				Log.i(this.getClass().toString(), "Performing room insertion");
-				mRooms.insert(reg);
+				mRoomId = mRooms.insert(reg);
 			}
 			catch(SQLException S)
 			{
