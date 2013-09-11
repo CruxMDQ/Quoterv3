@@ -66,8 +66,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		mCursorRatings,
 		mCursorPropTypes,
 		mCursorRoomTypes,
-		mCursorRooms,
-		mCursorPropRooms;
+		mCursorRooms;
 	
 	/*
 	 * Form mode
@@ -471,7 +470,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 		spnLstPropType = new AdapterView.OnItemSelectedListener()
 		{
-
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) 
@@ -498,14 +496,13 @@ public class PropDetailActivity extends Activity implements LocationListener
 			
 		};
 		
-		spnLstRating = new AdapterView.OnItemSelectedListener() {
-
+		spnLstRating = new AdapterView.OnItemSelectedListener() 
+		{
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) 
 			{
 				mRatingId = id;
-				
 			}
 
 			@Override
@@ -741,6 +738,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 					}
 				).show();			
 		}
+		else startRoomsActivity(mPropId);
 	}
 
 	private void cancel() 
@@ -1390,6 +1388,17 @@ public class PropDetailActivity extends Activity implements LocationListener
 			this.setTitle(R.string.house_edit_title);
 			this.setEditable(true);
 		}
+	}
+
+	private void startRoomsActivity(long mPropId) 
+	{
+		Intent intent = new Intent();
+		
+		intent.setClass(this, RoomDetailTabhost.class);
+		
+		intent.putExtra("mPropId", mPropId);
+		
+		startActivity(intent);
 	}
 	
 	/***

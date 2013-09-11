@@ -2,6 +2,7 @@ package com.callisto.quoter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
@@ -94,7 +95,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
  */
 
 @SuppressWarnings("deprecation")
-public class RoomDetailTabhost extends TabActivity implements Observable
+public class RoomDetailTabhost extends TabActivity //implements Observable
 {
 	private TabHost tabHost;
 	
@@ -125,7 +126,9 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	private Cursor mCursorRoomTypes,
 		mCursorRooms;
 
-	private ArrayList<Observer> observers;
+//	private ArrayList<Observer> observers;
+	
+	public ArrayList<Object> children;
 	
 	/**
 	 * ACTIVITY LIFECYCLE OVERRIDES
@@ -138,12 +141,23 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_room_detail_tabhost);
 		
-		observers = new ArrayList<Observer>();
-
+		//observers = new ArrayList<Observer>();
+		children = new ArrayList<Object>();
+		
 		this.tabHost = getTabHost();
 
 		Bundle extras = getIntent().getExtras();
 	    
+	    mRooms = new RoomsDBAdapter(this);
+	    mRooms.open();
+	    
+		mRoomTypes = new RoomTypesDBAdapter(this);
+		mRoomTypes.open();
+		
+		mCursorRoomTypes = mRoomTypes.getList();
+		
+	    mCursorRooms = mRooms.getRoomsForProperty(mPropId);
+
 	    if(extras == null) 
 	    {
 	        mPropId = 0;
@@ -156,13 +170,15 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	        
 	        mRoomType = extras.getString("mRoomType");
 	    }
-	    
-	    mRooms = new RoomsDBAdapter(this);
-	    mRooms.open();
-	    
-	    mCursorRooms = mRooms.getRoomsForProperty(mPropId);
 		
-		createTab();
+	    if (mCursorRooms.getCount() == 0)
+	    {
+	    	createSingleTab(mPropId, mRoomTypeId);
+	    }
+	    else
+	    {
+    		createMultipleTabs(mPropId, mCursorRooms);
+	    }
 		
 		spinnerListener = new OnItemSelectedListener()
 		{
@@ -232,7 +248,14 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 			return (true);
 			
 		case SAVE_ALL:
-			notifyObservers();
+//			notifyObservers();
+			
+			Iterator<Object> i = children.iterator();
+			
+			while (i.hasNext())
+			{
+				finishActivity(i.next().hashCode());
+			}
 			finish();
 
 			return(true);
@@ -252,19 +275,19 @@ public class RoomDetailTabhost extends TabActivity implements Observable
         
         outState.putString("mRoomType", mRoomType);
 
-        try
-        {
-	        for (int i = 0; i < observers.size(); i++)
-			{
-				outState.putSerializable("observer" + i, (Serializable) observers.get(i));
-			}
-	
-			outState.putInt("qObservers", observers.size());
-        }
-        catch(Exception E)
-        {
-			Log.i(this.getClass().toString(), "onSaveInstanceState: cannot save content - " + E.getMessage());
-        }
+//        try
+//        {
+//	        for (int i = 0; i < observers.size(); i++)
+//			{
+//				outState.putSerializable("observer" + i, (Serializable) observers.get(i));
+//			}
+//	
+//			outState.putInt("qObservers", observers.size());
+//        }
+//        catch(Exception E)
+//        {
+//			Log.i(this.getClass().toString(), "onSaveInstanceState: cannot save content - " + E.getMessage());
+//        }
 	}
 	
 	@Override
@@ -278,19 +301,19 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 
 		mRoomType = savedInstanceState.getString("mRoomType");
 		
-		int q = savedInstanceState.getInt("qObservers");
-		
-		try
-		{
-			for (int i = 0; i < q; i++)
-			{
-				observers.add((Observer) savedInstanceState.getSerializable("observer" + i));
-			}
-		}
-		catch(Exception E)
-		{
-			Log.i(this.getClass().toString(), "onRestoreInstanceState: cannot restore observers - " + E.getMessage());
-		}
+//		int q = savedInstanceState.getInt("qObservers");
+//		
+//		try
+//		{
+//			for (int i = 0; i < q; i++)
+//			{
+//				observers.add((Observer) savedInstanceState.getSerializable("observer" + i));
+//			}
+//		}
+//		catch(Exception E)
+//		{
+//			Log.i(this.getClass().toString(), "onRestoreInstanceState: cannot restore observers - " + E.getMessage());
+//		}
 	}
 
 	private void addTab()
@@ -335,14 +358,40 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 			).show();			
 	}
 
-	private void createTab()
+	private void createMultipleTabs(long propId, Cursor cursorRooms) 
+	{
+		while(cursorRooms.moveToNext())
+		{
+			Intent newTab = new Intent();
+			
+			newTab.putExtra("mPropId", propId);
+			
+			newTab.putExtra("mRoomId", cursorRooms.getLong(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ID)));
+
+//			newTab.putExtra("roomX", cursorRooms.getLong(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X)));
+//			newTab.putExtra("roomY", cursorRooms.getLong(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y)));
+//			newTab.putExtra("roomFloors", cursorRooms.getString(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
+//			newTab.putExtra("roomDetails", cursorRooms.getString(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
+//			newTab.putExtra("roomImage", cursorRooms.getString(cursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_IMAGE)));
+			
+			newTab.setClass(this, RoomDetailActivity.class);
+
+			tabHost.addTab(
+					tabHost.newTabSpec("Main")
+					.setIndicator(mCursorRoomTypes.getString(mCursorRoomTypes.getColumnIndex(RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME)))
+					.setContent(newTab)
+					);
+		}
+	}
+
+	private void createSingleTab(long propId, long roomTypeId)
 	{
 		Intent newTab = new Intent();
 	
-		newTab.putExtra("mPropId", this.mPropId);
+		newTab.putExtra("mPropId", propId);
 		
-		newTab.putExtra("mRoomTypeId", this.mRoomTypeId);
-		
+		newTab.putExtra("mRoomTypeId", roomTypeId);
+	
 		newTab.setClass(this, RoomDetailActivity.class);
 		
 		tabHost.addTab(
@@ -423,11 +472,6 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 		
 		int[] to = new int[] { android.R.id.text1 };
 	
-		mRoomTypes = new RoomTypesDBAdapter(this);
-		mRoomTypes.open();
-		
-		mCursorRoomTypes = mRoomTypes.getList();
-		
 		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
 				android.R.layout.simple_spinner_item, 
 				mCursorRoomTypes, 
@@ -485,32 +529,32 @@ public class RoomDetailTabhost extends TabActivity implements Observable
 	 * OBSERVER/OBSERVABLE STUFF 
 	 */
 	
-	@Override
-	public void notifyObservers() 
-	{
-		for (int i = 0; i < observers.size(); i++)
-		{
-			Observer observer = (Observer) observers.get(i);
-			observer.update(ACT_SAVE, "Save");
-		}
-		
-	}	
-
-	@Override
-	public void registerObserver(Observer o) 
-	{
-		observers.add(o);		
-	}
-
-	@Override
-	public void removeObserver(Observer o) 
-	{
-		int i = observers.indexOf(o);
-		if (i >= 0)
-		{
-			observers.remove(i);
-		}
-	}
+//	@Override
+//	public void notifyObservers() 
+//	{
+//		for (int i = 0; i < observers.size(); i++)
+//		{
+//			Observer observer = (Observer) observers.get(i);
+//			observer.update(ACT_SAVE, "Save");
+//		}
+//		
+//	}	
+//
+//	@Override
+//	public void registerObserver(Observer o) 
+//	{
+//		observers.add(o);		
+//	}
+//
+//	@Override
+//	public void removeObserver(Observer o) 
+//	{
+//		int i = observers.indexOf(o);
+//		if (i >= 0)
+//		{
+//			observers.remove(i);
+//		}
+//	}
 
 	public class AddRoomDialogWrapper
 	{

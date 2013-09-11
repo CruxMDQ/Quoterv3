@@ -62,12 +62,12 @@ import com.callisto.quoter.utils.ImageUtils;
 // Serialization source: http://stackoverflow.com/questions/4670215/how-to-serialize-arraylist-on-android
 
 @SuppressWarnings({ "unused", "deprecation" })
-public class RoomDetailActivity extends Activity implements Observer, Serializable
+public class RoomDetailActivity extends Activity //implements Observable, Serializable
 {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7026922258247398827L;
+//	private static final long serialVersionUID = 7026922258247398827L;
 
 	private EditText txtWidthX, txtWidthY, txtFloors;
 	
@@ -92,8 +92,8 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 
 	private long 
 		mPropId, 
-		mRoomTypeId = -1, 
-		mRoomId = -1;
+		mRoomTypeId, 
+		mRoomId;
 
 	// Clean up the spinners, both here and on the UI files
 	private Spinner spinnerDialogRoomType;
@@ -236,6 +236,8 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 		parentTabHost = parent.getTabHost();
 		vTabs = parentTabHost.getTabWidget();
 		
+		parent.children.add(this.hashCode());
+
 		if(extras == null) 
 	    {
 	        mPropId = 0;
@@ -250,7 +252,10 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 		/*
 		 * Get record ID if provided
 		 */
-		if (extras.containsKey(RoomsDBAdapter.C_COLUMN_ID))
+		if (
+				(extras.containsKey(RoomsDBAdapter.C_COLUMN_ID)) || 
+				(extras.containsKey("mRoomId"))
+			)
 		{
 			mRoomId = extras.getLong(RoomsDBAdapter.C_COLUMN_ID);
 			query(mRoomId);
@@ -304,13 +309,22 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 			public void onNothingSelected(AdapterView<?> parent) { }
 		};
 
-		parent.registerObserver(this);
+//		parent.registerObserver(this);
 	}
 
 	@Override
 	protected void onDestroy()
 	{
 		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
+		
+		try
+		{
+			save();
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString(), "Cannot save content to DB");
+		}
 		
 		super.onDestroy();
 	}
@@ -319,6 +333,15 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	protected void onPause()
 	{
 		Log.i(this.getClass().toString(), "LIFECYCLE: onPause() called");
+		
+		try
+		{
+			save();
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString(), "Cannot save content to DB");
+		}
 		
 		super.onPause();
 	}
@@ -407,18 +430,18 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 	 * OBSERVER/OBSERVABLE STUFF 
 	 */
 	
-	@Override
-	public void update(int code, String message) 
-	{
-		switch(code)
-		{
-			case ACT_SAVE:
-			{
-				save();
-			}
-		}
-	}
-
+//	@Override
+//	public void update(int code, String message) 
+//	{
+//		switch(code)
+//		{
+//			case ACT_SAVE:
+//			{
+//				save();
+//			}
+//		}
+//	}
+//
 	private void addRoomType()
 	{
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -576,6 +599,7 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 		txtWidthX.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X)));
 		txtWidthY.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y)));
 		txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
+		//txtDetails.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
 		
 		try
 		{
@@ -643,7 +667,7 @@ public class RoomDetailActivity extends Activity implements Observer, Serializab
 //			Log.i(this.getClass().toString(), e.getMessage());
 //		}
 
-		if (mRoomId == -1)
+		if (mRoomId == 0)
 		{
 			try
 			{
