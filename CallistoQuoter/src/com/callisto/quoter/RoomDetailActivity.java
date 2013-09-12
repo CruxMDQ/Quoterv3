@@ -238,6 +238,12 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		parent.children.add(this.hashCode());
 
+		mRooms = new RoomsDBAdapter(this);
+		mRooms.open();
+		
+		mPropRooms = new PropsRoomsDBAdapter(this);
+		mPropRooms.open();
+		
 		if(extras == null) 
 	    {
 	        mPropId = 0;
@@ -323,7 +329,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		}
 		catch(Exception e)
 		{
-			Log.i(this.getClass().toString(), "Cannot save content to DB");
+			Log.i(this.getClass().toString(), e.getMessage());
 		}
 		
 		super.onDestroy();
@@ -340,7 +346,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		}
 		catch(Exception e)
 		{
-			Log.i(this.getClass().toString(), "Cannot save content to DB");
+			Log.i(this.getClass().toString(), e.getMessage());
 		}
 		
 		super.onPause();
@@ -706,6 +712,10 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		catch(SQLException S)
 		{
 			Log.i(this.getClass().toString(), S.getMessage());
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString(), " " + e.getMessage());
 		}
 	}
 

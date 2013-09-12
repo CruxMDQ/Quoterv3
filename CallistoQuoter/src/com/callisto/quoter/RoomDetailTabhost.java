@@ -1,13 +1,13 @@
 package com.callisto.quoter;
 
-import java.io.Serializable;
+//import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
-import com.callisto.quoter.interfaces.Observable;
-import com.callisto.quoter.interfaces.Observer;
+//import com.callisto.quoter.interfaces.Observable;
+//import com.callisto.quoter.interfaces.Observer;
 
 import android.app.AlertDialog;
 import android.app.TabActivity;
@@ -127,7 +127,12 @@ public class RoomDetailTabhost extends TabActivity //implements Observable
 		mCursorRooms;
 
 //	private ArrayList<Observer> observers;
-	
+
+	/**
+	 * SOURCES:
+	 * http://stackoverflow.com/questions/15654497/android-closing-child-activity-from-parent-acivity
+	 * http://stackoverflow.com/questions/11102967/unique-id-of-an-android-activity
+	 */
 	public ArrayList<Object> children;
 	
 	/**
