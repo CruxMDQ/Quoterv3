@@ -1,4 +1,4 @@
-package com.callisto.quoter;
+package com.callisto.quoter.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,6 +39,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.callisto.quoter.R;
 import com.callisto.quoter.DB.DBAdapter;
 import com.callisto.quoter.DB.PropDBAdapter;
 import com.callisto.quoter.DB.PropTypesDBAdapter;
@@ -46,6 +47,10 @@ import com.callisto.quoter.DB.PropsRoomsDBAdapter;
 import com.callisto.quoter.DB.RatingsDBAdapter;
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
+import com.callisto.quoter.R.id;
+import com.callisto.quoter.R.layout;
+import com.callisto.quoter.R.menu;
+import com.callisto.quoter.R.string;
 import com.callisto.quoter.utils.ImageUtils;
 
 public class PropDetailActivity extends Activity implements LocationListener

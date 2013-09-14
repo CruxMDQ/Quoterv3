@@ -1,8 +1,11 @@
-package com.callisto.quoter;
+package com.callisto.quoter.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.callisto.quoter.R;
+import com.callisto.quoter.R.id;
+import com.callisto.quoter.R.layout;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

@@ -1,4 +1,4 @@
-package com.callisto.quoter;
+package com.callisto.quoter.ui;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -19,7 +19,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.callisto.quoter.Config;
+import com.callisto.quoter.CustomCursorAdapter;
+import com.callisto.quoter.R;
 import com.callisto.quoter.DB.PropDBAdapter;
+import com.callisto.quoter.R.id;
+import com.callisto.quoter.R.layout;
+import com.callisto.quoter.R.menu;
+import com.callisto.quoter.R.string;
 
 public class PropListActivity extends ListActivity 
 {

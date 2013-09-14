@@ -1,11 +1,15 @@
-package com.callisto.quoter;
+package com.callisto.quoter.ui;
 
 //import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.callisto.quoter.R;
 import com.callisto.quoter.DB.RoomTypesDBAdapter;
 import com.callisto.quoter.DB.RoomsDBAdapter;
+import com.callisto.quoter.R.id;
+import com.callisto.quoter.R.layout;
+import com.callisto.quoter.R.string;
 //import com.callisto.quoter.interfaces.Observable;
 //import com.callisto.quoter.interfaces.Observer;
 
