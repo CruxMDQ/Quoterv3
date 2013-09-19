@@ -1,4 +1,4 @@
-package com.callisto.quoter.DB;
+package com.callisto.quoter.db;
 
 import android.content.Context;
 

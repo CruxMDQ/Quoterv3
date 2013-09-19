@@ -40,17 +40,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
-import com.callisto.quoter.DB.DBAdapter;
-import com.callisto.quoter.DB.PropDBAdapter;
-import com.callisto.quoter.DB.PropTypesDBAdapter;
-import com.callisto.quoter.DB.PropsRoomsDBAdapter;
-import com.callisto.quoter.DB.RatingsDBAdapter;
-import com.callisto.quoter.DB.RoomTypesDBAdapter;
-import com.callisto.quoter.DB.RoomsDBAdapter;
 import com.callisto.quoter.R.id;
 import com.callisto.quoter.R.layout;
 import com.callisto.quoter.R.menu;
 import com.callisto.quoter.R.string;
+import com.callisto.quoter.db.DBAdapter;
+import com.callisto.quoter.db.PropDBAdapter;
+import com.callisto.quoter.db.PropTypesDBAdapter;
+import com.callisto.quoter.db.PropsRoomsDBAdapter;
+import com.callisto.quoter.db.RatingsDBAdapter;
+import com.callisto.quoter.db.RoomTypesDBAdapter;
+import com.callisto.quoter.db.RoomsDBAdapter;
 import com.callisto.quoter.utils.ImageUtils;
 
 public class PropDetailActivity extends Activity implements LocationListener
@@ -1399,7 +1399,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		Intent intent = new Intent();
 		
-		intent.setClass(this, RoomDetailTabhost.class);
+//		intent.setClass(this, RoomDetailTabhost.class);
+		intent.setClass(this, RoomListActivity.class);
 		
 		intent.putExtra("mPropId", mPropId);
 		
@@ -1416,7 +1417,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		Intent intent = new Intent();
 		
-		intent.setClass(this, RoomDetailTabhost.class);
+//		intent.setClass(this, RoomDetailTabhost.class);
+		intent.setClass(this, RoomListActivity.class);
 		
 		intent.putExtra("mPropId", propId);
 		

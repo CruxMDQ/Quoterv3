@@ -1,4 +1,4 @@
-package com.callisto.quoter.DB;
+package com.callisto.quoter.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -46,6 +46,40 @@ public abstract class DBAdapter
 		dbHelper.close();
 	}
 
+	public long delete(long id) 
+	{
+		if (db == null)
+		{
+			open();
+		}
+		return db.delete(this.getManagedTable(), "_id=" + id, null);		
+	}
+
+	/***
+	 * 	
+	 * @return Cursor containing all table rows and columns.
+	 * @throws SQLException
+	 */
+	public Cursor getCursor() throws SQLException
+	{
+		Cursor c = db.query(true, this.getManagedTable(), columns, null, null, null, null, null, null);
+		
+		return c;
+	}
+	
+	/***
+	 * 
+	 * @param filter String value used to filter results.
+	 * @return Cursor containing filtered table rows and columns.
+	 * @throws SQLException
+	 */
+	public Cursor getCursor(String filter) throws SQLException
+	{
+		Cursor c = db.query(true, this.getManagedTable(), columns, filter, null, null, null, null, null);
+		
+		return c;
+	}
+	
 	public Cursor getList()
 	{
 		Cursor c = db.query(true, managedTable, columns, null, null, null, null, null, null);

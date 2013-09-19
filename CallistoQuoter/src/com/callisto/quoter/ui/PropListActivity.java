@@ -20,13 +20,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.callisto.quoter.Config;
-import com.callisto.quoter.CustomCursorAdapter;
 import com.callisto.quoter.R;
-import com.callisto.quoter.DB.PropDBAdapter;
 import com.callisto.quoter.R.id;
 import com.callisto.quoter.R.layout;
 import com.callisto.quoter.R.menu;
 import com.callisto.quoter.R.string;
+import com.callisto.quoter.db.PropCursorAdapter;
+import com.callisto.quoter.db.PropDBAdapter;
 
 public class PropListActivity extends ListActivity 
 {
@@ -42,7 +42,7 @@ public class PropListActivity extends ListActivity
 //	private PropTypesDBAdapter propTypesDBAdapter; 
 	private Cursor mCursorProperties;
 //	private Cursor mCursorPropTypes;
-	private CustomCursorAdapter cursorAdapter;
+	private PropCursorAdapter cursorAdapter;
 	private ListView list;
 	
 	private String filter;
@@ -325,7 +325,7 @@ public class PropListActivity extends ListActivity
 	{
 		mCursorProperties = dbAdapter.getCursor(filter);
 		startManagingCursor(mCursorProperties);
-		cursorAdapter = new CustomCursorAdapter(this, mCursorProperties);
+		cursorAdapter = new PropCursorAdapter(this, mCursorProperties);
 		list.setAdapter(cursorAdapter);
 	}
 	

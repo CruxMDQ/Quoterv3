@@ -1,4 +1,4 @@
-package com.callisto.quoter.DB;
+package com.callisto.quoter.db;
 
 import android.content.Context;
 import android.database.SQLException;
@@ -102,11 +102,16 @@ public class DBHelper extends SQLiteOpenHelper {
 	
 	private String DEFINE_PROPS_ROOMS = "create table if not exists "
 			+ TABLE_PROPS_ROOMS + "("
-			+ TABLE_PROP_ID + " integer primary key, "
+			+ TABLE_PROP_ID + " integer not null, "
 			+ TABLE_ROOM_ID + " integer not null, "
+			+ " PRIMARY KEY (" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + "), "
 			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_ID + "),"
 			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ID + ")"
 			+ ");";
+	
+	private String DEFINE_ROOMS_INDEX = "CREATE UNIQUE INDEX " + TABLE_ID
+			+ " ON " + TABLE_ROOMS
+			+ "(" + TABLE_ID + " ASC)";
 	
 	public DBHelper(Context context)
 	{
@@ -339,8 +344,50 @@ public class DBHelper extends SQLiteOpenHelper {
 	{
 		db.execSQL(DEFINE_ROOMS);
 		
+		db.execSQL(DEFINE_ROOMS_INDEX);
+		
 		db.execSQL(DEFINE_PROPS_ROOMS);
 
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (1, 1, 4, 4)");
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (2, 2, 3, 2)");
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (3, 3, 3, 4)");
+		
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (1, 1)");
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (1, 2)");
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (1, 3)");
+		
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (4, 1, 5, 3)");
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (5, 2, 2, 2)");
+		db.execSQL("INSERT INTO " + TABLE_ROOMS 
+				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_ID + ", " + TABLE_ROOM_X + ", " + TABLE_ROOM_Y + " )"
+				+ " VALUES (6, 3, 4, 4)");
+
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (2, 4)");
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (2, 5)");
+		db.execSQL("INSERT INTO " + TABLE_PROPS_ROOMS
+				+ "(" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + ")"
+				+ "VALUES (2, 6)");
+		
 		Log.i(this.getClass().toString(), "Update to version 9 complete");
 	}
 }

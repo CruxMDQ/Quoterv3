@@ -33,13 +33,13 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.callisto.quoter.R;
-import com.callisto.quoter.DB.PropDBAdapter;
-import com.callisto.quoter.DB.PropsRoomsDBAdapter;
-import com.callisto.quoter.DB.RoomTypesDBAdapter;
-import com.callisto.quoter.DB.RoomsDBAdapter;
 import com.callisto.quoter.R.id;
 import com.callisto.quoter.R.layout;
 import com.callisto.quoter.R.string;
+import com.callisto.quoter.db.PropDBAdapter;
+import com.callisto.quoter.db.PropsRoomsDBAdapter;
+import com.callisto.quoter.db.RoomTypesDBAdapter;
+import com.callisto.quoter.db.RoomsDBAdapter;
 import com.callisto.quoter.interfaces.Observer;
 import com.callisto.quoter.utils.ImageUtils;
 
@@ -113,10 +113,10 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 
 	private Bitmap mBitmap;
 	
-	private RoomDetailTabhost parent;
-	private TabHost parentTabHost;
-	private TabWidget vTabs;
-
+//	private RoomDetailTabhost parent;
+//	private TabHost parentTabHost;
+//	private TabWidget vTabs;
+//
 	/**
 	 * ACTIVITY LIFECYCLE OVERRIDES
 	 */
@@ -236,12 +236,12 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	    
 		// Source for referencing parent activity: http://stackoverflow.com/questions/5399324/how-to-reference-child-activity-from-tabhost-to-call-a-public-function 
 		
-		parent = (RoomDetailTabhost) getParent();
-		parentTabHost = parent.getTabHost();
-		vTabs = parentTabHost.getTabWidget();
-		
-		parent.children.add(this.hashCode());
-
+//		parent = (RoomDetailTabhost) getParent();
+//		parentTabHost = parent.getTabHost();
+//		vTabs = parentTabHost.getTabWidget();
+//		
+//		parent.children.add(this.hashCode());
+//
 		mRooms = new RoomsDBAdapter(this);
 		mRooms.open();
 		
@@ -385,10 +385,10 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			{	
 				addRoomType();
 			}
-			case CHANGE_ROOM_TYPE:
-			{
-				changeTabTitle();
-			}
+//			case CHANGE_ROOM_TYPE:
+//			{
+//				changeTabTitle();
+//			}
 		}
 		return (super.onOptionsItemSelected(item));
 	}
@@ -508,8 +508,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 				{
 					TextView t = (TextView) daSpinnerRoomTypes.getSelectedView();
 					
-					View indicatorView = vTabs.getChildAt(parentTabHost.getCurrentTab());
-					((TextView) indicatorView.findViewById(android.R.id.title)).setText(t.getText().toString());			
+//					View indicatorView = vTabs.getChildAt(parentTabHost.getCurrentTab());
+//					((TextView) indicatorView.findViewById(android.R.id.title)).setText(t.getText().toString());			
 				}
 			})
 		.setNegativeButton(R.string.cancel,
@@ -651,6 +651,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
 		reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
+		reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
 	
 		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
 		

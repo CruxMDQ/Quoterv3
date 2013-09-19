@@ -59,6 +59,9 @@
         <activity 
             android:name="com.callisto.quoter.ui.RoomDetailTabhost">
         </activity>
+        <activity
+            android:name="com.callisto.quoter.ui.RoomListActivity">
+        </activity>
         
     	<meta-data
             android:name="com.google.android.maps.v2.API_KEY"

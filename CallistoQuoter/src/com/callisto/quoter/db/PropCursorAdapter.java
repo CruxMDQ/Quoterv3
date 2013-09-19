@@ -1,6 +1,5 @@
-package com.callisto.quoter;
+package com.callisto.quoter.db;
 
-import com.callisto.quoter.DB.PropDBAdapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-public class CustomCursorAdapter extends CursorAdapter 
+public class PropCursorAdapter extends CursorAdapter 
 {
-	private PropDBAdapter dbAdapter = null;
+//	private PropDBAdapter dbAdapter = null;
+	private DBAdapter dbAdapter = null;
 	
 	@SuppressWarnings("deprecation")
-	public CustomCursorAdapter(Context context, Cursor c)
+	public PropCursorAdapter(Context context, Cursor c)
 	{
 		super(context, c);
 		dbAdapter = new PropDBAdapter(context);

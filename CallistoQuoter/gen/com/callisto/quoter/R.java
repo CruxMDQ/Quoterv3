@@ -248,6 +248,7 @@ containing a value of this type.
         public static final int menu_house_list=0x7f0a0002;
         public static final int menu_house_view=0x7f0a0003;
         public static final int menu_room_detail=0x7f0a0004;
+        public static final int menu_room_list=0x7f0a0005;
     }
     public static final class string {
         public static final int action_settings=0x7f070018;
@@ -279,7 +280,7 @@ containing a value of this type.
         public static final int auth_client_using_bad_version_title=0x7f07000f;
         public static final int btn_cancel=0x7f070019;
         public static final int btn_save=0x7f07001a;
-        public static final int cancel=0x7f070038;
+        public static final int cancel=0x7f07003b;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -340,7 +341,7 @@ containing a value of this type.
         public static final int floors=0x7f07001c;
         public static final int hint_dimension_room=0x7f07001d;
         public static final int hint_image=0x7f07001e;
-        public static final int hint_imgDisplayImage=0x7f07003b;
+        public static final int hint_imgDisplayImage=0x7f07003e;
         public static final int house_create_notice=0x7f07001f;
         public static final int house_create_title=0x7f070020;
         public static final int house_delete_confirm=0x7f070021;
@@ -353,19 +354,22 @@ containing a value of this type.
         public static final int label_house_bedrooms=0x7f07002f;
         public static final int label_house_rating=0x7f070030;
         public static final int label_pick_owner=0x7f070031;
-        public static final int label_prop_type=0x7f070039;
+        public static final int label_prop_type=0x7f07003c;
         public static final int menu_cancel=0x7f070026;
         public static final int menu_create_house=0x7f070027;
         public static final int menu_delete=0x7f070028;
         public static final int menu_edit=0x7f070029;
         public static final int menu_location=0x7f070034;
         public static final int menu_preferences=0x7f07002a;
-        public static final int menu_room_add_type=0x7f07003c;
+        public static final int menu_room_add_type=0x7f07003f;
         public static final int menu_save=0x7f07002b;
         public static final int menu_view=0x7f07002c;
-        public static final int new_prop_type=0x7f07003a;
-        public static final int ok=0x7f070037;
-        public static final int room_type=0x7f070036;
+        public static final int new_prop_type=0x7f07003d;
+        public static final int ok=0x7f07003a;
+        public static final int room_delete_confirm=0x7f070036;
+        public static final int room_delete_notice=0x7f070037;
+        public static final int room_delete_title=0x7f070038;
+        public static final int room_type=0x7f070039;
         public static final int title_activity_house_detail=0x7f070032;
         public static final int title_activity_house_location=0x7f070033;
     }

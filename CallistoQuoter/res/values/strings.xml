@@ -34,6 +34,9 @@
     <string name="title_activity_house_location">Property location</string>
     <string name="menu_location">View location on map</string>
     <string name="display_name">Name:</string>
+    <string name="room_delete_confirm">Are you sure you want to delete this room?</string>
+    <string name="room_delete_notice">Room deleted</string>
+    <string name="room_delete_title">Delete room</string>
     <string name="room_type">Room type</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
