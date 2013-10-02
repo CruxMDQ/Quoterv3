@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.TextView;
 
 public class RoomCursorAdapter extends CursorAdapter {
 
@@ -21,9 +22,12 @@ public class RoomCursorAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
-		// TODO Auto-generated method stub
-
+	public void bindView(View view, Context context, Cursor cursor) 
+	{
+		TextView tv = (TextView) view;
+		
+		// TODO FIX THIS REFERENCE! IT'S DANGEROUS!
+		tv.setText(cursor.getString(7));	
 	}
 
 	@Override

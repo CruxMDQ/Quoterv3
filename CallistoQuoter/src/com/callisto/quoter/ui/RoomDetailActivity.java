@@ -606,13 +606,20 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	{
 		mCursorRooms = mRooms.getRecord(id);
 		
-		txtWidthX.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X)));
-		txtWidthY.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y)));
-		txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
-		//txtDetails.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
-		
 		try
 		{
+			// Cast via data type required
+			float x = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X));
+			float y = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y));
+			
+			txtWidthX.setText(Float.toString(x));
+			txtWidthX.setText(Float.toString(y));			
+//			txtWidthX.setText(Float.toString(mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X))));
+//			txtWidthY.setText(Float.toString(mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y))));
+			
+			txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
+			//txtDetails.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
+			
 			mBitmap = ImageUtils.byteToBitmap(mCursorRooms.getBlob(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_IMAGE)));
 
 			mImageView.setImageBitmap(mBitmap);

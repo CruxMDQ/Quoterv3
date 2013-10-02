@@ -108,7 +108,7 @@ public class RoomListActivity extends ListActivity
 	public boolean onContextItemSelected(MenuItem item)
 	{
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		Intent i;
+//		Intent i;
 		
 		switch(item.getItemId())
 		{
@@ -124,12 +124,7 @@ public class RoomListActivity extends ListActivity
 			}		
 			case C_EDIT:
 			{
-				i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
-				i.putExtra(C_MODE, C_EDIT);
-				i.putExtra(PropDBAdapter.C_COLUMN_ID, info.id);
-				
-				startActivityForResult(i, C_EDIT);
-				return true;
+				return createNewRoom(item, C_EDIT);
 			}						
 		}
 		
@@ -140,7 +135,7 @@ public class RoomListActivity extends ListActivity
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_house_list);
+		setContentView(R.layout.activity_room_list);
 		
 		//getPreferences();
 	
@@ -164,8 +159,8 @@ public class RoomListActivity extends ListActivity
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-//		menu.setHeaderTitle(mCursorRooms.getString(mCursorProperties.getColumnIndex(PropDBAdapter.C_PROP_ADDRESS)));
-		menu.setHeaderTitle(mCursorRooms.getString(1));
+		// TODO FIX THIS REFERENCE! IT'S DANGEROUS!
+		menu.setHeaderTitle(mCursorRooms.getString(7));		
 		menu.add(Menu.NONE, C_VIEW, Menu.NONE, R.string.menu_view);
 		menu.add(Menu.NONE, C_EDIT, Menu.NONE, R.string.menu_edit);
 		menu.add(Menu.NONE, C_DELETE, Menu.NONE, R.string.menu_delete);
@@ -189,16 +184,11 @@ public class RoomListActivity extends ListActivity
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item)
 	{
-		Intent i;
-		
 		switch(item.getItemId())
 		{
 			case R.id.menu_create:
 			{
-				i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
-				i.putExtra(C_MODE, C_CREATE);
-				startActivityForResult(i, C_CREATE);
-				return true;
+				return createNewRoom(item, C_CREATE);
 			}
 //			case R.id.menu_preferences:
 //			{
@@ -209,6 +199,22 @@ public class RoomListActivity extends ListActivity
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
+	}
+
+	private boolean createNewRoom(MenuItem item, int mode)
+	{
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Intent i;
+
+		i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
+		
+		i.putExtra(C_MODE, mode);
+		i.putExtra("mPropId", mPropId);
+		i.putExtra("mRoomId", info.id);
+		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, info.id);
+
+		startActivityForResult(i, mode);
+		return true;
 	}
 	
 	private void delete(final long id)
@@ -273,7 +279,9 @@ public class RoomListActivity extends ListActivity
 	private void view(long id)
 	{
 		Intent i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
+
 		i.putExtra(C_MODE, C_VIEW);
+		i.putExtra("mPropId", mPropId);
 		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, id);
 		
 		startActivityForResult(i, C_VIEW);

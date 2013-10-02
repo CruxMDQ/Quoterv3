@@ -324,8 +324,11 @@ public class PropListActivity extends ListActivity
 	private void query() 
 	{
 		mCursorProperties = dbAdapter.getCursor(filter);
+		
 		startManagingCursor(mCursorProperties);
+		
 		cursorAdapter = new PropCursorAdapter(this, mCursorProperties);
+		
 		list.setAdapter(cursorAdapter);
 	}
 	
