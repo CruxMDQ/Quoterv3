@@ -54,12 +54,12 @@ public class RoomListActivity extends ListActivity
 			{
 				if (resultCode == RESULT_OK)
 				{
-					Log.i(this.getClass().toString(), "Notice: house created successfully");
+					Log.i(this.getClass().toString(), "Notice: room created successfully");
 					query();
 				}
 				else
 				{
-					Log.i(this.getClass().toString(), "WARNING: Failed to create new house!");
+					Log.i(this.getClass().toString(), "WARNING: Failed to create new room!");
 				}
 				
 				break;
@@ -199,6 +199,14 @@ public class RoomListActivity extends ListActivity
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		
+		query();
 	}
 
 	private boolean createNewRoom(MenuItem item, int mode)

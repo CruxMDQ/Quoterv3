@@ -1,5 +1,12 @@
 package com.callisto.quoter.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 
 import android.app.Activity;
@@ -15,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
 import android.util.Log;
@@ -248,29 +256,6 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		mPropRooms = new PropsRoomsDBAdapter(this);
 		mPropRooms.open();
 		
-		if(extras == null) 
-	    {
-	        mPropId = 0;
-	    } 
-	    else 
-	    {
-	        mPropId = extras.getLong("mPropId");
-	        
-	        extras.getString("mRoomType");
-	    }
-		
-		/*
-		 * Get record ID if provided
-		 */
-		if (
-				(extras.containsKey(RoomsDBAdapter.C_COLUMN_ID)) || 
-				(extras.containsKey("mRoomId"))
-			)
-		{
-			mRoomId = extras.getLong(RoomsDBAdapter.C_COLUMN_ID);
-			query(mRoomId);
-		}
-		
 //		spinnerRoomType = (Spinner) findViewById(R.id.spnPropType);
 		
 		txtWidthX = (EditText) findViewById(R.id.txtWidthX);
@@ -320,6 +305,31 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		};
 
 //		parent.registerObserver(this);
+		
+		if(extras == null) 
+	    {
+	        mPropId = 0;
+	    } 
+	    else 
+	    {
+	        mPropId = extras.getLong("mPropId");
+	        
+	        extras.getString("mRoomType");
+	    }
+		
+		/*
+		 * Get record ID if provided
+		 */
+		if (
+				(extras.containsKey(RoomsDBAdapter.C_COLUMN_ID)) || 
+				(extras.containsKey("mRoomId"))
+			)
+		{
+			mRoomId = extras.getLong(RoomsDBAdapter.C_COLUMN_ID);
+			query(mRoomId);
+		}
+		
+
 	}
 
 	@Override
@@ -612,10 +622,12 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			float x = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X));
 			float y = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y));
 			
-			txtWidthX.setText(Float.toString(x));
-			txtWidthX.setText(Float.toString(y));			
+//			txtWidthX.setText(Float.toString(x));
+//			txtWidthX.setText(Float.toString(y));			
 //			txtWidthX.setText(Float.toString(mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X))));
 //			txtWidthY.setText(Float.toString(mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y))));
+			txtWidthX.setText(String.valueOf(x));
+			txtWidthY.setText(String.valueOf(y));
 			
 			txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
 			//txtDetails.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
@@ -630,7 +642,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		}
 		catch(Exception e)
 		{
-			Log.i(this.getClass().toString() + ".query", "Cannot process image");
+			Log.i(this.getClass().toString() + ".query", "" + e.getMessage());
 		}
 	}
 
@@ -691,10 +703,21 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			{
 				Log.i(this.getClass().toString(), "Performing room insertion");
 				mRoomId = mRooms.insert(reg);
+
+				ContentValues propRooms = new ContentValues();
+				
+				propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
+				propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
+
+				mPropRooms.insert(propRooms);
 			}
 			catch(SQLException S)
 			{
 				Log.i(this.getClass().toString(), S.getMessage());
+			}
+			catch(Exception e)
+			{
+				Log.i(this.getClass().toString(), " " + e.getMessage());
 			}
 		}
 		else
@@ -712,23 +735,19 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			}
 		}
 			
-		ContentValues propRooms = new ContentValues();
-		
-		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
-		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
-		
-		try
-		{
-			mPropRooms.insert(propRooms);
-		}
-		catch(SQLException S)
-		{
-			Log.i(this.getClass().toString(), S.getMessage());
-		}
-		catch(Exception e)
-		{
-			Log.i(this.getClass().toString(), " " + e.getMessage());
-		}
+//		ContentValues propRooms = new ContentValues();
+//		
+//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
+//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
+//		
+//		try
+//		{
+//			mPropRooms.insert(propRooms);
+//		}
+//		catch(SQLException S)
+//		{
+//			Log.i(this.getClass().toString(), S.getMessage());
+//		}
 	}
 
 	/**
@@ -761,6 +780,42 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		}
 	}
 
+	public void copyDatabaseToSdCard()
+	{
+		Log.e("Databasehealper", "********************************");
+		try 
+		{
+			File f1 = new File("data/data/com.callisto.quoter/databases/redb");
+			if (f1.exists()) 
+			{
+				File f2 = new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+ "/redb");
+				f2.createNewFile();
+				InputStream in = new FileInputStream(f1);
+				OutputStream out = new FileOutputStream(f2);
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+				in.close();
+				out.close();
+			}
+		} 
+		catch (FileNotFoundException ex) 
+		{
+			System.out.println(ex.getMessage() + " in the specified directory.");
+			System.exit(0);
+			ex.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		Log.e("Databasehealper", "********************************");
+	}
+	
 	public class AddRoomDialogWrapper
 	{
 		Spinner spinnerType = null;
