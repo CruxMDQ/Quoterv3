@@ -674,29 +674,6 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	
 		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
 		
-//		// Model code from PropDetailActivity
-//		try
-//		{
-//			if (mFormMode == PropListActivity.C_CREATE)
-//			{
-//				mHouses.insert(reg);
-//				Toast.makeText(PropDetailActivity.this, R.string.house_create_notice, Toast.LENGTH_LONG).show();
-//			}
-//			else if (mFormMode == PropListActivity.C_EDIT)
-//			{
-//				Toast.makeText(PropDetailActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
-//		
-//				reg.put(PropDBAdapter.C_COLUMN_ID, mPropId);
-//				
-//				long resultCode = mHouses.update(reg);
-//				Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			
-//			}
-//		}
-//		catch(SQLException e)
-//		{
-//			Log.i(this.getClass().toString(), e.getMessage());
-//		}
-
 		if (mRoomId == 0)
 		{
 			try

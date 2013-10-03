@@ -124,7 +124,7 @@ public class RoomListActivity extends ListActivity
 			}		
 			case C_EDIT:
 			{
-				return createNewRoom(item, C_EDIT);
+				return editRoom(item, C_EDIT);
 			}						
 		}
 		
@@ -190,12 +190,6 @@ public class RoomListActivity extends ListActivity
 			{
 				return createNewRoom(item, C_CREATE);
 			}
-//			case R.id.menu_preferences:
-//			{
-//				i = new Intent(RoomListActivity.this, Config.class);
-//				startActivityForResult(i, C_CONFIG);
-//				return true;
-//			}
 		}
 		
 		return super.onMenuItemSelected(featureId, item);
@@ -211,6 +205,22 @@ public class RoomListActivity extends ListActivity
 
 	private boolean createNewRoom(MenuItem item, int mode)
 	{
+//		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Intent i;
+
+		i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
+		
+		i.putExtra(C_MODE, mode);
+		i.putExtra("mPropId", mPropId);
+//		i.putExtra("mRoomId", info.id);
+//		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, info.id);
+
+		startActivityForResult(i, mode);
+		return true;
+	}
+	
+	private boolean editRoom(MenuItem item, int mode)
+	{
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		Intent i;
 
@@ -224,7 +234,7 @@ public class RoomListActivity extends ListActivity
 		startActivityForResult(i, mode);
 		return true;
 	}
-	
+		
 	private void delete(final long id)
 	{
 		AlertDialog.Builder dialogDelete = new AlertDialog.Builder(this);
