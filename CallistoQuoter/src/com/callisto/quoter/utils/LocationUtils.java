@@ -13,10 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import android.location.Geocoder;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
 
 /***
  * Source for this class: http://stackoverflow.com/questions/3574644/how-can-i-find-the-latitude-and-longitude-from-address

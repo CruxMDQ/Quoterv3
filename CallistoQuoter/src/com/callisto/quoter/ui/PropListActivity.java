@@ -21,10 +21,6 @@ import android.widget.Toast;
 
 import com.callisto.quoter.Config;
 import com.callisto.quoter.R;
-import com.callisto.quoter.R.id;
-import com.callisto.quoter.R.layout;
-import com.callisto.quoter.R.menu;
-import com.callisto.quoter.R.string;
 import com.callisto.quoter.db.PropCursorAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
 

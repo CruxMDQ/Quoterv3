@@ -141,7 +141,7 @@ public abstract class DBAdapter
 		{
 			long id = reg.getAsLong(C_COLUMN_ID);
 			
-			reg.remove(C_COLUMN_ID);
+//			reg.remove(C_COLUMN_ID);
 			
 			result = db.update(this.getManagedTable(), reg, "_id=" + id, null);
 		}

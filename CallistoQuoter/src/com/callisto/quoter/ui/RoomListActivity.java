@@ -6,21 +6,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
-import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.RoomCursorAdapter;
+import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
+import com.callisto.quoter.utils.AddRoomDialogWrapper;
 
 public class RoomListActivity extends ListActivity 
 {
@@ -38,9 +43,18 @@ public class RoomListActivity extends ListActivity
 	private ListView list;
 
 	private Cursor mCursorRooms;
+	private Cursor mCursorRoomTypes; 
+
 	private RoomCursorAdapter cursorAdapter;
 
 	private RoomsDBAdapter roomsDBAdapter;
+	private RoomTypesDBAdapter roomTypesDBAdapter;
+
+	private Spinner spinnerRoomType;
+	
+	AdapterView.OnItemSelectedListener spnLstRoomType;
+
+	protected long mRoomTypeId;
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -148,7 +162,19 @@ public class RoomListActivity extends ListActivity
 		roomsDBAdapter = new RoomsDBAdapter(this);
 		roomsDBAdapter.open();
 		
-//	    mCursorRooms = roomsDBAdapter.getRoomsForProperty(mPropId);
+		spnLstRoomType = new AdapterView.OnItemSelectedListener() 
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int pos, long id) 
+			{
+				mRoomTypeId = id;
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) { }
+			
+		};
 
 	    query();
 		
@@ -203,19 +229,60 @@ public class RoomListActivity extends ListActivity
 		query();
 	}
 
-	private boolean createNewRoom(MenuItem item, int mode)
+	private boolean createNewRoom(MenuItem item, final int mode)
 	{
 //		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		Intent i;
 
 		i = new Intent(RoomListActivity.this, RoomDetailActivity.class);
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+
+		View addView = inflater.inflate(R.layout.dialog_room_add, null);
+
+		final AddRoomDialogWrapper wrapper = new AddRoomDialogWrapper(addView);
+
+		spinnerRoomType = wrapper.getSpinner();
+		
+		spinnerRoomType.setOnItemSelectedListener(spnLstRoomType);
+
+		populateRoomTypes();
+
+		new AlertDialog.Builder(this)
+		.setTitle("Select initial room")
+		.setView(addView)
+		.setPositiveButton(R.string.ok,
+			new DialogInterface.OnClickListener() 
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{
+					// TO DO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
+					// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
+					
+					// TO DO How to get the ID of a table row based on the text displayed on a spinner
+					
+					TextView t = (TextView) spinnerRoomType.getSelectedView();
+					
+					startRoomsActivity(mPropId, mRoomTypeId, mode, t.getText().toString());
+				}
+			})
+		.setNegativeButton(R.string.cancel,
+			new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			}
+		).show();			
 		
 		i.putExtra(C_MODE, mode);
 		i.putExtra("mPropId", mPropId);
 //		i.putExtra("mRoomId", info.id);
 //		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, info.id);
 
-		startActivityForResult(i, mode);
+//		startActivityForResult(i, mode);
 		return true;
 	}
 	
@@ -261,6 +328,29 @@ public class RoomListActivity extends ListActivity
 		
 	}
 	
+	private void populateRoomTypes() 
+	{
+		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
+		
+		int[] to = new int[] { android.R.id.text1 };
+
+		roomTypesDBAdapter = new RoomTypesDBAdapter(this);
+		roomTypesDBAdapter.open();
+		
+		mCursorRoomTypes = roomTypesDBAdapter.getList();
+		
+		@SuppressWarnings("deprecation")
+		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
+				android.R.layout.simple_spinner_item, 
+				mCursorRoomTypes, 
+				from,		/*new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME }, */
+				to);		/*new int[] { android.R.id.text1 } */
+		
+		adapterRoomTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		
+		spinnerRoomType.setAdapter(adapterRoomTypes);
+	}
+
 //	private void getPreferences()
 //	{
 //		/*
@@ -305,33 +395,26 @@ public class RoomListActivity extends ListActivity
 		startActivityForResult(i, C_VIEW);
 	}
 	
-	/**
-	 * NESTED CLASSES
+	/***
+	 * Starts room tab host activity. All parameters are bundled as extras with the same name.
+	 * @param propId ID of the property being quoted
+	 * @param roomTypeId First room type ID
+	 * @param roomType First room type name, used for titling the tab
 	 */
-	class AddTypeDialogWrapper
+	public void startRoomsActivity(long propId, long roomTypeId, int mode, String roomType)
 	{
-		EditText nameField = null;
-		View base = null;
+		Intent intent = new Intent();
 		
-		AddTypeDialogWrapper(View base)
-		{
-			this.base = base;
-			nameField = (EditText) base.findViewById(R.id.txtName);
-		}
+		intent.setClass(this, RoomDetailActivity.class);
+
+		intent.putExtra(C_MODE, mode);
 		
-		String getName()
-		{
-			return (getNameField().getText().toString());
-		}
+		intent.putExtra("mPropId", propId);
 		
-		private EditText getNameField()
-		{
-			if (nameField == null)
-			{
-				nameField = (EditText) base.findViewById(R.id.txtName);
-			}
-			
-			return (nameField);
-		}
+		intent.putExtra("mRoomTypeId", roomTypeId);
+		
+		intent.putExtra("mRoomType", roomType);
+
+		startActivity(intent);
 	}
 }

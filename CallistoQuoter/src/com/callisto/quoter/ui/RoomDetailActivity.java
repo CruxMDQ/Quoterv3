@@ -49,6 +49,8 @@ import com.callisto.quoter.db.PropsRoomsDBAdapter;
 import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
 import com.callisto.quoter.interfaces.Observer;
+import com.callisto.quoter.utils.AddRoomDialogWrapper;
+import com.callisto.quoter.utils.AddTypeDialogWrapper;
 import com.callisto.quoter.utils.ImageUtils;
 
 /***
@@ -314,6 +316,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	    {
 	        mPropId = extras.getLong("mPropId");
 	        
+	        mRoomTypeId = extras.getLong("mRoomTypeId");
+	        
 	        extras.getString("mRoomType");
 	    }
 		
@@ -566,7 +570,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 //		populateRoomTypes(spinnerRoomType);
 	}
 	
-	// This is supposed to handle passage of room type id back to the parent RoomDetailTabhost class. Find out how.
+	// This is supposed to handle passage of room type id back to the parent RoomListActivity class. Find out how.
 	private void addRoom()
 	{
 		LayoutInflater inflater = LayoutInflater.from(this);
@@ -593,8 +597,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 						/*** "Urrr... 'ow ta get dis 'ere klass 'daRoomTypeId' fing back to dat uvver TabHost klass?"
 						 * "Speculation: you need to find a way to send a message from a running activity to another running activity without ending it, meatbag."
 						 * "I HEARZ DAT!"
-						 */
-						
+						 */						
 					}
 				})
 			.setNegativeButton(R.string.cancel,
@@ -618,6 +621,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		try
 		{
+			mRoomTypeId = mCursorRooms.getLong(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID));
+			
 			// Cast via data type required
 			float x = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X));
 			float y = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y));
@@ -663,14 +668,14 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
 		{
-			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(txtWidthX.getText().toString()));
+			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(txtWidthY.getText().toString()));
 		}
 		
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, txtFloors.getText().toString());
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
 		reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
 		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
-		reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
+//		reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
 	
 		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
 		
@@ -701,59 +706,14 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		{
 			try
 			{
-				Log.i(this.getClass().toString(), "Updating existing room");
 				reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
 				
-				mRooms.update(reg);
+				Log.i(this.getClass().toString(), "Update operation returned " + mRooms.update(reg));
 			}
 			catch(SQLException S)
 			{
 				Log.i(this.getClass().toString(), S.getMessage());
 			}
-		}
-			
-//		ContentValues propRooms = new ContentValues();
-//		
-//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
-//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
-//		
-//		try
-//		{
-//			mPropRooms.insert(propRooms);
-//		}
-//		catch(SQLException S)
-//		{
-//			Log.i(this.getClass().toString(), S.getMessage());
-//		}
-	}
-
-	/**
-	 * NESTED CLASSES
-	 */
-	class AddTypeDialogWrapper
-	{
-		EditText nameField = null;
-		View base = null;
-		
-		AddTypeDialogWrapper(View base)
-		{
-			this.base = base;
-			nameField = (EditText) base.findViewById(R.id.txtName);
-		}
-		
-		String getName()
-		{
-			return (getNameField().getText().toString());
-		}
-		
-		private EditText getNameField()
-		{
-			if (nameField == null)
-			{
-				nameField = (EditText) base.findViewById(R.id.txtName);
-			}
-			
-			return (nameField);
 		}
 	}
 
@@ -791,33 +751,5 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			e.printStackTrace();
 		}
 		Log.e("Databasehealper", "********************************");
-	}
-	
-	public class AddRoomDialogWrapper
-	{
-		Spinner spinnerType = null;
-		View base = null;
-		Object item;
-		
-		AddRoomDialogWrapper(View base)
-		{
-			this.base = base;
-			spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-		}
-	
-		public Spinner getSpinner()
-		{
-			if (spinnerType == null)
-			{
-				spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-			}
-			
-			return (spinnerType);
-		}
-		
-		public Object getSelectedItem()
-		{
-			return item;
-		}
 	}
 }

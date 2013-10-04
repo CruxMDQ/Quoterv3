@@ -59,6 +59,7 @@ public class ImageUtils
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	static public Drawable byteToDrawable(byte[] data)
 	{
 		if (data == null)

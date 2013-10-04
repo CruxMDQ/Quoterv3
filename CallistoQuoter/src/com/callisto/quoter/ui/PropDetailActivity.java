@@ -40,10 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
-import com.callisto.quoter.R.id;
-import com.callisto.quoter.R.layout;
-import com.callisto.quoter.R.menu;
-import com.callisto.quoter.R.string;
 import com.callisto.quoter.db.DBAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.PropTypesDBAdapter;
@@ -51,6 +47,8 @@ import com.callisto.quoter.db.PropsRoomsDBAdapter;
 import com.callisto.quoter.db.RatingsDBAdapter;
 import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
+import com.callisto.quoter.utils.AddRoomDialogWrapper;
+import com.callisto.quoter.utils.AddTypeDialogWrapper;
 import com.callisto.quoter.utils.ImageUtils;
 
 public class PropDetailActivity extends Activity implements LocationListener
@@ -70,8 +68,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 	private Cursor mCursorHouses, 
 		mCursorRatings,
 		mCursorPropTypes,
-		mCursorRoomTypes,
-		mCursorRooms;
+		mCursorRoomTypes;
+//		mCursorRooms;
 	
 	/*
 	 * Form mode
@@ -140,7 +138,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	/*
 	 * ARRAY TO STORE IDs OF ROOMS BELONGING TO CURRENT PROPERTY
 	 */
-	private int[] mRoomIDs;
+//	private int[] mRoomIDs;
 
 	// **** VISIBLE METHODS AND OVERRIDES ****
 	
@@ -211,6 +209,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 				{
 					System.out.println("Cannot retrieve contact info");
 				}
+				break;
 			}
 			/*
 			 * CAMERA STUFF, STEP 3: Get pic off results from camera activity  
@@ -307,6 +306,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 				{
 					Log.i(this.getClass().toString() + ".onActivityResult -> " + C_PICK_IMAGE, e.getMessage());
 				}
+				break;
 			}
 			default:
 				break;			
@@ -487,8 +487,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 		};
 		spinnerPropType.setOnItemSelectedListener(spnLstPropType);
 
-		spnLstRoomType = new AdapterView.OnItemSelectedListener() {
-
+		spnLstRoomType = new AdapterView.OnItemSelectedListener() 
+		{
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int pos, long id) 
@@ -671,7 +671,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 				new DialogInterface.OnClickListener() 
 				{
 					@Override
-					public void onClick(DialogInterface dialog, int which) {
+					public void onClick(DialogInterface dialog, int which) 
+					{
 						processAddPropType(wrapper); 
 					}
 				})
@@ -687,7 +688,9 @@ public class PropDetailActivity extends Activity implements LocationListener
 	}
 
 	/*
-	 * TODO Change logic here: if this house has no rooms, bring up the popup with the spinner already coded, but if not, load the existing ones as new tabs
+	 * COMPLETED Change logic here: if this house has no rooms, bring up the popup with the spinner already coded, but if not, load the existing ones as new tabs
+	 * ---------
+	 * BEHAVIOR DEPRECATED! Now the room list will open up, regardless of how many rooms the house has
 	 */
 	private void viewRooms()
 	{
@@ -707,178 +710,88 @@ public class PropDetailActivity extends Activity implements LocationListener
 		mRooms.open();
 		
 		// Retrieve this property's rooms
-		mCursorRooms = mRooms.getRoomsForProperty(mPropId);
+//		mCursorRooms = mRooms.getRoomsForProperty(mPropId);
 		
 		// If this property has no rooms, ask for the type of the first one to be created
-		if (mCursorRooms.getCount() == 0)
-		{
-			new AlertDialog.Builder(this)
-				.setTitle("Select initial room")
-				.setView(addView)
-				.setPositiveButton(R.string.ok,
-					new DialogInterface.OnClickListener() 
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which) 
-						{
-							// TO DO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
-							// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
-							
-							// TO DO How to get the ID of a table row based on the text displayed on a spinner
-							
-							TextView t = (TextView) spinnerRoomType.getSelectedView();
-							
-							startRoomsActivity(mPropId, mRoomTypeId, t.getText().toString());
-							
-	//						startRoomsActivity(daPropId, t.getText().toString());
-						}
-					})
-				.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-		
-						}
-					}
-				).show();			
-		}
-		else startRoomsActivity(mPropId);
-	}
-
-	private void cancel() 
-	{
-//		private void save()
+		// BEHAVIOR DEPRECATED!
+//		if (mCursorRooms.getCount() == 0)
 //		{
-//			ContentValues reg = new ContentValues();
-//			
-//			/* Log research about casting from string to float found at: 
-//			 * stackoverflow.com/questions/4229710/string-from-edittext-to-float
-//			 */
-//			String s1 = txtWidthX.getText().toString();
-//			String s2 = txtWidthY.getText().toString();
-//			
-//			if (/*daTxtWidthX.getText().toString()*/ !s1.equals(""))
-//			{
-//				reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, Float.valueOf(txtWidthX.getText().toString()));
-//			}
-//			
-//			if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
-//			{
-//				reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(txtWidthX.getText().toString()));
-//			}
-//			
-//			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, txtFloors.getText().toString());
-//			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
-//			reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
-//			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
-	//	
-//			Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
-//			
-////			// Model code from PropDetailActivity
-////			try
-////			{
-////				if (mFormMode == PropListActivity.C_CREATE)
-////				{
-////					mHouses.insert(reg);
-////					Toast.makeText(PropDetailActivity.this, R.string.house_create_notice, Toast.LENGTH_LONG).show();
-////				}
-////				else if (mFormMode == PropListActivity.C_EDIT)
-////				{
-////					Toast.makeText(PropDetailActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
-////			
-////					reg.put(PropDBAdapter.C_COLUMN_ID, mPropId);
-////					
-////					long resultCode = mHouses.update(reg);
-////					Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			
-////				}
-////			}
-////			catch(SQLException e)
-////			{
-////				Log.i(this.getClass().toString(), e.getMessage());
-////			}
-	//
-//			if (mRoomId == -1)
-//			{
-//				try
-//				{
-//					Log.i(this.getClass().toString(), "Performing room insertion");
-//					mRoomId = mRooms.insert(reg);
-//				}
-//				catch(SQLException S)
-//				{
-//					Log.i(this.getClass().toString(), S.getMessage());
-//				}
-//			}
-//			else
-//			{
-//				try
-//				{
-//					Log.i(this.getClass().toString(), "Updating existing room");
-//					reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
-//					
-//					mRooms.update(reg);
-//				}
-//				catch(SQLException S)
-//				{
-//					Log.i(this.getClass().toString(), S.getMessage());
-//				}
-//			}
-//				
-//			ContentValues propRooms = new ContentValues();
-//			
-//			propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
-//			propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
-//			
-//			try
-//			{
-//				mPropRooms.insert(propRooms);
-//			}
-//			catch(SQLException S)
-//			{
-//				Log.i(this.getClass().toString(), S.getMessage());
-//			}
-		
-	}
-	
-	private long createRoom()
-	{
-		long roomId = 0;
-		
-		ContentValues reg = new ContentValues();
-		
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, 0);
-		
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, 0);
-		
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
-	
-		try
-		{
-			Log.i(this.getClass().toString(), "Performing room insertion");
-			roomId = mRooms.insert(reg);
-		}
-		catch(SQLException S)
-		{
-			Log.i(this.getClass().toString(), S.getMessage());
-		}
+//			new AlertDialog.Builder(this)
+//				.setTitle("Select initial room")
+//				.setView(addView)
+//				.setPositiveButton(R.string.ok,
+//					new DialogInterface.OnClickListener() 
+//					{
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) 
+//						{
+//							// TO DO Figure how to get text from a spinner linked to a database via an Adapter (note link to solution when done)
+//							// COMPLETED: http://stackoverflow.com/questions/5787809/get-spinner-selected-items-text
+//							
+//							// TO DO How to get the ID of a table row based on the text displayed on a spinner
+//							
+//							TextView t = (TextView) spinnerRoomType.getSelectedView();
+//							
+//							startRoomsActivity(mPropId, mRoomTypeId, t.getText().toString());
+//							
+//	//						startRoomsActivity(daPropId, t.getText().toString());
+//						}
+//					})
+//				.setNegativeButton(R.string.cancel,
+//					new DialogInterface.OnClickListener()
+//					{
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//		
+//						}
+//					}
+//				).show();			
+//		}
+//		else 
 
-		ContentValues propRooms = new ContentValues();
-		
-		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
-		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, roomId);
-		
-		try
-		{
-			mPropRooms.insert(propRooms);
-		}
-		catch(SQLException S)
-		{
-			Log.i(this.getClass().toString(), S.getMessage());
-		}
-		
-		return roomId;
+		startRoomsActivity(mPropId);
 	}
+
+	private void cancel() { }
+	
+//	private long createRoom()
+//	{
+//		long roomId = 0;
+//		
+//		ContentValues reg = new ContentValues();
+//		
+//		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, 0);
+//		
+//		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, 0);
+//		
+//		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
+//	
+//		try
+//		{
+//			Log.i(this.getClass().toString(), "Performing room insertion");
+//			roomId = mRooms.insert(reg);
+//		}
+//		catch(SQLException S)
+//		{
+//			Log.i(this.getClass().toString(), S.getMessage());
+//		}
+//
+//		ContentValues propRooms = new ContentValues();
+//		
+//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
+//		propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, roomId);
+//		
+//		try
+//		{
+//			mPropRooms.insert(propRooms);
+//		}
+//		catch(SQLException S)
+//		{
+//			Log.i(this.getClass().toString(), S.getMessage());
+//		}
+//		
+//		return roomId;
+//	}
 
 	private void delete(final long id) 
 	{
@@ -1427,61 +1340,5 @@ public class PropDetailActivity extends Activity implements LocationListener
 		intent.putExtra("mRoomType", roomType);
 
 		startActivity(intent);
-	}
-	
-	class AddTypeDialogWrapper
-	{
-		EditText nameField = null;
-		View base = null;
-		
-		AddTypeDialogWrapper(View base)
-		{
-			this.base = base;
-			nameField = (EditText) base.findViewById(R.id.txtName);
-		}
-		
-		String getName()
-		{
-			return (getNameField().getText().toString());
-		}
-		
-		private EditText getNameField()
-		{
-			if (nameField == null)
-			{
-				nameField = (EditText) base.findViewById(R.id.txtName);
-			}
-			
-			return (nameField);
-		}
-	}
-
-	class AddRoomDialogWrapper
-	{
-		Spinner spinnerType = null;
-		View base = null;
-		Object item;
-		
-		AddRoomDialogWrapper(View base)
-		{
-			this.base = base;
-			spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-		}
-
-//		@SuppressWarnings("unused")
-		private Spinner getSpinner()
-		{
-			if (spinnerType == null)
-			{
-				spinnerType = (Spinner) base.findViewById(R.id.spnRoomType);
-			}
-			
-			return (spinnerType);
-		}
-		
-		public Object getSelectedItem()
-		{
-			return item;
-		}
 	}
 }
