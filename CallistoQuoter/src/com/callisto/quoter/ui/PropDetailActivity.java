@@ -249,53 +249,54 @@ public class PropDetailActivity extends Activity implements LocationListener
 						 */
 						if (data.hasExtra("data"))
 						{
-							Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+							mBitmap = (Bitmap) data.getExtras().get("data");
+//							Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
 							
-				            mImageView.setImageBitmap(thumbnail);
-						}
-
-						else //This WILL fire up if the default photo taking activity is passed the MEDIA_OUTPUT extra. (Commented out.)
-						{
-							Log.i(this.getClass().toString() + ".onActivityResult", "Intent returned by picture taking activity does not have the 'data' Extra");
-							
-							int width = mImageView.getWidth();
-							int height = mImageView.getHeight();
-							
-							BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
-							
-							factoryOptions.inJustDecodeBounds = true;
-							
-							BitmapFactory.decodeFile(mPhotoPath, factoryOptions);
-							
-							int imageWidth = factoryOptions.outWidth;
-							int imageHeight = factoryOptions.outHeight;
-							
-							// Determine how much to scale down the image
-							int scaleFactor = Math.min(
-									imageWidth/width,
-									imageHeight/height
-									);
-							
-							// Decode the image file into a Bitmap sized to fill view
-							
-							factoryOptions.inJustDecodeBounds = false;
-							factoryOptions.inSampleSize = scaleFactor;
-							factoryOptions.inPurgeable = true;
-							
-							Bitmap bitmap = BitmapFactory.decodeFile(mPhotoPath, factoryOptions);
-
-							/*
-							 * MOAR PROTOTYPE CODE: partly working, image size is too small [FIXED: XML layout issue]
-							 * source: http://stackoverflow.com/questions/9015372/how-to-rotate-a-bitmap-90-degrees
-							 */
-					        Matrix matrix = new Matrix();
-					        matrix.postRotate(90);
-
-					        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-					        mBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 80, 80, true);
 				            mImageView.setImageBitmap(mBitmap);
 						}
+
+//						else //This WILL fire up if the default photo taking activity is passed the MEDIA_OUTPUT extra. (That's why it was commented out.)
+//						{
+//							Log.i(this.getClass().toString() + ".onActivityResult", "Intent returned by picture taking activity does not have the 'data' Extra");
+//							
+//							int width = mImageView.getWidth();
+//							int height = mImageView.getHeight();
+//							
+//							BitmapFactory.Options factoryOptions = new BitmapFactory.Options();
+//							
+//							factoryOptions.inJustDecodeBounds = true;
+//							
+//							BitmapFactory.decodeFile(mPhotoPath, factoryOptions);
+//							
+//							int imageWidth = factoryOptions.outWidth;
+//							int imageHeight = factoryOptions.outHeight;
+//							
+//							// Determine how much to scale down the image
+//							int scaleFactor = Math.min(
+//									imageWidth/width,
+//									imageHeight/height
+//									);
+//							
+//							// Decode the image file into a Bitmap sized to fill view
+//							
+//							factoryOptions.inJustDecodeBounds = false;
+//							factoryOptions.inSampleSize = scaleFactor;
+//							factoryOptions.inPurgeable = true;
+//							
+//							Bitmap bitmap = BitmapFactory.decodeFile(mPhotoPath, factoryOptions);
+//
+//							/*
+//							 * MOAR PROTOTYPE CODE: partly working, image size is too small [FIXED: XML layout issue]
+//							 * source: http://stackoverflow.com/questions/9015372/how-to-rotate-a-bitmap-90-degrees
+//							 */
+//					        Matrix matrix = new Matrix();
+//					        matrix.postRotate(90);
+//
+//					        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap , 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//
+//					        mBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 80, 80, true);
+//				            mImageView.setImageBitmap(mBitmap);
+//						}
 					}
 					if (!cursor.isClosed())
 					{
@@ -385,6 +386,12 @@ public class PropDetailActivity extends Activity implements LocationListener
 			public void onClick(View v) 
 			{
 				save();
+				
+				/*
+				 * Return application flow to main activity
+				 */
+				setResult(RESULT_OK);
+				finish();
 			}
 		});
 		
@@ -749,6 +756,11 @@ public class PropDetailActivity extends Activity implements LocationListener
 //		}
 //		else 
 
+		if (mPropId == 0)
+		{
+			save();
+		}	
+
 		startRoomsActivity(mPropId);
 	}
 
@@ -1029,7 +1041,9 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 */
 		try
 		{
-			mBitmap = ImageUtils.byteToBitmap(mCursorHouses.getBlob(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_IMAGE)));
+			byte[] rawImage = mCursorHouses.getBlob(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_IMAGE));
+			
+			mBitmap = ImageUtils.byteToBitmap(rawImage);
 
 			mImageView.setImageBitmap(mBitmap);
 		}
@@ -1217,10 +1231,10 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 */
 		try
 		{
-			if (mFormMode == PropListActivity.C_CREATE)
+			if (mFormMode == PropListActivity.C_CREATE && mPropId == 0)
 			{
-				mHouses.insert(reg);
-				Toast.makeText(PropDetailActivity.this, R.string.house_create_notice, Toast.LENGTH_LONG).show();
+				mPropId = mHouses.insert(reg);
+				Toast.makeText(PropDetailActivity.this, R.string.house_create_notice + " with ID = " + mPropId, Toast.LENGTH_LONG).show();
 			}
 			else if (mFormMode == PropListActivity.C_EDIT)
 			{
@@ -1236,12 +1250,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 		{
 			Log.i(this.getClass().toString(), e.getMessage());
 		}
-		
-		/*
-		 * Return application flow to main activity
-		 */
-		setResult(RESULT_OK);
-		finish();
 	}
 	
 	/***
@@ -1312,7 +1320,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		Intent intent = new Intent();
 		
-//		intent.setClass(this, RoomDetailTabhost.class);
 		intent.setClass(this, RoomListActivity.class);
 		
 		intent.putExtra("mPropId", mPropId);
@@ -1320,25 +1327,24 @@ public class PropDetailActivity extends Activity implements LocationListener
 		startActivity(intent);
 	}
 	
-	/***
-	 * Starts room tab host activity. All parameters are bundled as extras with the same name.
-	 * @param propId ID of the property being quoted
-	 * @param roomTypeId First room type ID
-	 * @param roomType First room type name, used for titling the tab
-	 */
-	public void startRoomsActivity(long propId, long roomTypeId, String roomType)
-	{
-		Intent intent = new Intent();
-		
-//		intent.setClass(this, RoomDetailTabhost.class);
-		intent.setClass(this, RoomListActivity.class);
-		
-		intent.putExtra("mPropId", propId);
-		
-		intent.putExtra("mRoomTypeId", roomTypeId);
-		
-		intent.putExtra("mRoomType", roomType);
-
-		startActivity(intent);
-	}
+//	/***
+//	 * Starts room tab host activity. All parameters are bundled as extras with the same name.
+//	 * @param propId ID of the property being quoted
+//	 * @param roomTypeId First room type ID
+//	 * @param roomType First room type name, used for titling the tab
+//	 */
+//	public void startRoomsActivity(long propId, long roomTypeId, String roomType)
+//	{
+//		Intent intent = new Intent();
+//		
+//		intent.setClass(this, RoomListActivity.class);	//	intent.setClass(this, RoomDetailTabhost.class);
+//		
+//		intent.putExtra("mPropId", propId);
+//		
+//		intent.putExtra("mRoomTypeId", roomTypeId);
+//		
+//		intent.putExtra("mRoomType", roomType);
+//
+//		startActivity(intent);
+//	}
 }

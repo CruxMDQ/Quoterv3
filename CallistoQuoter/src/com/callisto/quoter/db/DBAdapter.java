@@ -48,11 +48,17 @@ public abstract class DBAdapter
 
 	public long delete(long id) 
 	{
+		long result;
+		
 		if (db == null)
 		{
 			open();
 		}
-		return db.delete(this.getManagedTable(), "_id=" + id, null);		
+		result = db.delete(this.getManagedTable(), "_id=" + id, null);		
+		
+		close();
+		
+		return result;
 	}
 
 	/***
@@ -112,12 +118,18 @@ public abstract class DBAdapter
 	 */
 	public long insert(ContentValues reg)
 	{
+		long result;
+		
 		if (db == null)
 		{
 			open();
 		}
 		
-		return db.insert(this.getManagedTable(), null, reg);
+		result = db.insert(this.getManagedTable(), null, reg);
+		
+		close();
+		
+		return result;
 	}
 
 	public DBAdapter open() throws SQLException
@@ -145,6 +157,8 @@ public abstract class DBAdapter
 			
 			result = db.update(this.getManagedTable(), reg, "_id=" + id, null);
 		}
+		
+		close();
 		
 		return result;
 	}

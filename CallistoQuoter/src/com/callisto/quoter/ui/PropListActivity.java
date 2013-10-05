@@ -255,7 +255,7 @@ public class PropListActivity extends ListActivity
 						.show();
 					
 					setResult(RESULT_OK);
-					finish();
+//					finish();
 				}
 			})
 			.setNegativeButton(android.R.string.no, null)

@@ -185,8 +185,9 @@ public class RoomListActivity extends ListActivity
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-		// TODO FIX THIS REFERENCE! IT'S DANGEROUS!
-		menu.setHeaderTitle(mCursorRooms.getString(7));		
+		menu.setHeaderTitle(mCursorRooms.getString(7));		// TODO FIX THIS REFERENCE! IT'S DANGEROUS!
+
+		
 		menu.add(Menu.NONE, C_VIEW, Menu.NONE, R.string.menu_view);
 		menu.add(Menu.NONE, C_EDIT, Menu.NONE, R.string.menu_edit);
 		menu.add(Menu.NONE, C_DELETE, Menu.NONE, R.string.menu_delete);
@@ -343,38 +344,17 @@ public class RoomListActivity extends ListActivity
 		SimpleCursorAdapter adapterRoomTypes = new SimpleCursorAdapter(this, 
 				android.R.layout.simple_spinner_item, 
 				mCursorRoomTypes, 
-				from,		/*new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME }, */
-				to);		/*new int[] { android.R.id.text1 } */
+				from,		
+				to);		
 		
 		adapterRoomTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		
 		spinnerRoomType.setAdapter(adapterRoomTypes);
 	}
 
-//	private void getPreferences()
-//	{
-//		/*
-//		 * Retrieve preferences
-//		 */
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//		
-//		if (prefs.getBoolean("hide_unconfirmed_houses", false))
-//		{
-//			this.filter = RoomsDBAdapter.C_COLUMN_ID + " = " + mPropId;
-//		}
-//		else
-//		{
-//			this.filter = null;
-//		}			
-//	}
-
 	@SuppressWarnings("deprecation")
 	private void query() 
 	{
-//		mCursorRooms = dbAdapter.getCursor();
-//		this.filter = RoomsDBAdapter.C_COLUMN_ID + " = " + mPropId;
-//		mCursorRooms = roomsDBAdapter.getCursor(filter);
-
 		mCursorRooms = roomsDBAdapter.getRoomsForProperty(mPropId);
 
 		startManagingCursor(mCursorRooms);
