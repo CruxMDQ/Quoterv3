@@ -24,6 +24,10 @@ import com.callisto.quoter.R;
 import com.callisto.quoter.db.PropCursorAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
 
+/* TODO REMAINING TASKS: 
+ * - Implement email exporting feature: http://stackoverflow.com/questions/5401104/android-exporting-to-csv-and-sending-as-email-attachment
+ * */
+
 public class PropListActivity extends ListActivity 
 {
 	static public final String C_MODE = "mode";
@@ -255,6 +259,7 @@ public class PropListActivity extends ListActivity
 						.show();
 					
 					setResult(RESULT_OK);
+					query();
 //					finish();
 				}
 			})

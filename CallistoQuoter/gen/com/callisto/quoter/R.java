@@ -298,12 +298,13 @@ containing a value of this type.
         public static final int house_edit_title=0x7f060021;
         public static final int label_check_confirmed=0x7f060029;
         public static final int label_house_address=0x7f06002a;
-        public static final int label_house_bedrooms=0x7f06002b;
         public static final int label_house_rating=0x7f06002c;
+        public static final int label_house_rooms=0x7f06002b;
         public static final int label_pick_owner=0x7f06002d;
         public static final int label_prop_type=0x7f060038;
         public static final int menu_cancel=0x7f060022;
         public static final int menu_create_house=0x7f060023;
+        public static final int menu_create_room=0x7f06003c;
         public static final int menu_delete=0x7f060024;
         public static final int menu_edit=0x7f060025;
         public static final int menu_location=0x7f060030;

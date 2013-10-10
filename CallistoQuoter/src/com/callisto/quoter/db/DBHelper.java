@@ -105,8 +105,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ TABLE_PROP_ID + " integer not null, "
 			+ TABLE_ROOM_ID + " integer not null, "
 			+ " PRIMARY KEY (" + TABLE_PROP_ID + ", " + TABLE_ROOM_ID + "), "
-			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_ID + "),"
-			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ID + ")"
+			+ " FOREIGN KEY" + "(" + TABLE_PROP_ID + ")" + " REFERENCES " + TABLE_PROPERTIES + "(" + TABLE_ID + ") ON DELETE CASCADE,"
+			+ " FOREIGN KEY" + "(" + TABLE_ROOM_ID + ")" + " REFERENCES " + TABLE_ROOMS + "(" + TABLE_ID + ") ON DELETE CASCADE"
 			+ ");";
 	
 	private String DEFINE_ROOMS_INDEX = "CREATE UNIQUE INDEX " + TABLE_ID
@@ -265,11 +265,11 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		db.execSQL(DEFINE_RATING_INDEX);
 		
-		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(1, 'Poor')");
-		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(2, 'Average')");
-		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(3, 'Good')");
-		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(4, 'Very good')");
-		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(5, 'Excellent')");
+		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(1, 'Pobre')");
+		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(2, 'Regular')");
+		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(3, 'Bueno')");
+		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(4, 'Muy bueno')");
+		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(5, 'Excelente')");
 		
 		db.execSQL("ALTER TABLE " + TABLE_PROPERTIES + " ADD re_rating_id INTEGER NOT NULL DEFAULT 2");
 
@@ -327,7 +327,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		db.execSQL("INSERT INTO " + TABLE_ROOM_TYPES 
 				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
-				+ " VALUES (1, 'Living room')");
+				+ " VALUES (1, 'Sala de estar')");
 		db.execSQL("INSERT INTO " + TABLE_ROOM_TYPES 
 				+ "(" + TABLE_ID + ", " + TABLE_ROOM_TYPE_NAME + ")"
 				+ " VALUES (2, 'Cocina')");

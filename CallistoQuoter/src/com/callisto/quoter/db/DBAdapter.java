@@ -56,7 +56,7 @@ public abstract class DBAdapter
 		}
 		result = db.delete(this.getManagedTable(), "_id=" + id, null);		
 		
-		close();
+//		close();
 		
 		return result;
 	}
@@ -127,7 +127,7 @@ public abstract class DBAdapter
 		
 		result = db.insert(this.getManagedTable(), null, reg);
 		
-		close();
+//		close();
 		
 		return result;
 	}
@@ -158,7 +158,7 @@ public abstract class DBAdapter
 			result = db.update(this.getManagedTable(), reg, "_id=" + id, null);
 		}
 		
-		close();
+//		close();
 		
 		return result;
 	}

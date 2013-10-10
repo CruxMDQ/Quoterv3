@@ -15,6 +15,4 @@ public class BaseApp extends Application {
     public Status getObserver() {
         return mTest;
     }
-
 }
-

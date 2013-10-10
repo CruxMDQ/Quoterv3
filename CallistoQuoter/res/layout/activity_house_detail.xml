@@ -85,7 +85,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentLeft="true"
 		        android:layout_centerVertical="true"
-		        android:text="@string/label_house_bedrooms"
+		        android:text="@string/label_house_rooms"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 		    
 		    <Button

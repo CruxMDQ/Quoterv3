@@ -105,8 +105,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		C_PICK_IMAGE = 70002;
 
 	private long 
-		mPropId, 
-		mRoomTypeId, 
+		mPropId,
+		mRoomTypeId,
 		mRoomId;
 
 	// Clean up the spinners, both here and on the UI files
@@ -343,6 +343,9 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		try
 		{
+			mCursorRooms.close();
+			mCursorRoomTypes.close();
+			
 			save();
 		}
 		catch(Exception e)
@@ -414,9 +417,13 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 
 		outState.putString("txtWidthY", txtWidthY.getText().toString());
 
-		outState.putString("txtWidthX", txtWidthY.getText().toString());
+		outState.putString("txtWidthX", txtWidthX.getText().toString());
 
-		outState.putString("txtFloors", txtWidthY.getText().toString());
+		outState.putString("txtFloors", txtFloors.getText().toString());
+		
+		outState.putLong("mRoomId", mRoomId);
+		
+		outState.putLong("mPropId", mPropId);
 
 		try
 		{
@@ -440,6 +447,10 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			txtWidthX.setText(savedInstanceState.getString("txtWidthX"));
 	
 			txtFloors.setText(savedInstanceState.getString("txtFloors"));
+			
+			mRoomId = savedInstanceState.getLong("mRoomId");
+			
+			mPropId = savedInstanceState.getLong("mPropId");
 			
 			Bitmap tBitmap = ImageUtils.byteToBitmap(savedInstanceState.getByteArray("mImageView"));
 	        mImageView.setImageBitmap(tBitmap);

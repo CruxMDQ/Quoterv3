@@ -634,6 +634,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 		outState.putString("txtAddress", txtAddress.getText().toString());
 		
 		outState.putString("txtBedrooms", txtBedrooms.getText().toString());		
+		
+		outState.putLong("mPropId", mPropId);
 	}
 	
 	@Override
@@ -653,6 +655,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		txtAddress.setText(savedInstanceState.getString("txtAddress"));
 		txtBedrooms.setText(savedInstanceState.getString("txtBedrooms"));
+		
+		mPropId = savedInstanceState.getLong("mPropId");
 	}
 
 	@Override
@@ -1190,7 +1194,9 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 */
 		try
 		{
-			reg.put(PropDBAdapter.C_PROP_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
+			byte[] storedPic = ImageUtils.bitmapToByteArray(mBitmap);
+			
+			reg.put(PropDBAdapter.C_PROP_IMAGE, storedPic);
 		}
 		catch(Exception e)
 		{

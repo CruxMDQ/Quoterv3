@@ -201,6 +201,24 @@ public class RoomListActivity extends ListActivity
 	}
 	
 	@Override
+	protected void onDestroy()
+	{
+		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
+		
+		try
+		{
+			mCursorRooms.close();
+			mCursorRoomTypes.close();
+		}
+		catch(Exception e)
+		{
+			Log.i(this.getClass().toString(), e.getMessage());
+		}
+		
+		super.onDestroy();
+	}
+	
+	@Override
 	protected void onListItemClick(ListView l, View v, int pos, long id)
 	{
 		super.onListItemClick(l, v, pos, id);
