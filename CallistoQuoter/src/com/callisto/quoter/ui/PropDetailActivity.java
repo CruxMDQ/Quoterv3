@@ -925,7 +925,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 	private void populateRatings()
 	{
-		String[] from = new String[] { RatingsDBAdapter.C_COLUMN_RATING_NAME };
+		String[] from = new String[] { RatingsDBAdapter.C_RATING_NAME };
 		
 		int[] to = new int[] { android.R.id.text1 };
 
@@ -948,7 +948,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	
 	private void populatePropTypes()
 	{
-		String[] from = new String[] { PropTypesDBAdapter.C_COLUMN_PROP_TYPES_NAME };
+		String[] from = new String[] { PropTypesDBAdapter.C_PROP_TYPES_NAME };
 		
 		int[] to = new int[] { android.R.id.text1 };
 
@@ -971,7 +971,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 	private void populateRoomTypes() 
 	{
-		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
+		String[] from = new String[] { RoomTypesDBAdapter.C_ROOM_TYPES_NAME };
 		
 		int[] to = new int[] { android.R.id.text1 };
 
@@ -996,7 +996,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 	    ContentValues reg = new ContentValues();
 	    
-	    reg.put(PropTypesDBAdapter.C_COLUMN_PROP_TYPES_NAME, wrapper.getName());
+	    reg.put(PropTypesDBAdapter.C_PROP_TYPES_NAME, wrapper.getName());
 	    
 	    mPropTypes.insert(reg);
 	    
@@ -1022,12 +1022,12 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		mCursorHouses = mHouses.getRecord(id);
 		
-		txtAddress.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_ADDRESS)));
-		txtBedrooms.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_BEDROOMS)));
+		txtAddress.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_ADDRESS)));
+		txtBedrooms.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_BEDROOMS)));
 		
 		try
 		{
-			mContactUri = Uri.parse(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_OWNER_URI)));
+			mContactUri = Uri.parse(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
 		}
 		catch(Exception e)
 		{
@@ -1037,15 +1037,15 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * DATABASE VERSION 5
 		 */
-		mCurrentLat = mCursorHouses.getDouble(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_LATITUDE));
-		mCurrentLong = mCursorHouses.getDouble(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_LONGITUDE)); 
+		mCurrentLat = mCursorHouses.getDouble(mCursorHouses.getColumnIndex(PropDBAdapter.C_LATITUDE));
+		mCurrentLong = mCursorHouses.getDouble(mCursorHouses.getColumnIndex(PropDBAdapter.C_LONGITUDE)); 
 		
 		/*
 		 * DATABASE VERSION 6
 		 */
 		try
 		{
-			byte[] rawImage = mCursorHouses.getBlob(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_IMAGE));
+			byte[] rawImage = mCursorHouses.getBlob(mCursorHouses.getColumnIndex(PropDBAdapter.C_IMAGE));
 			
 			mBitmap = ImageUtils.byteToBitmap(rawImage);
 
@@ -1063,7 +1063,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * CHECKBOX IMPLEMENTED ON LESSON 9
 		 */
-		if (mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_CONFIRMED)) == 1)
+		if (mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_CONFIRMED)) == 1)
 		{
 			chkConfirmed.setChecked(true);
 		}
@@ -1078,7 +1078,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 
 		mRatingId = getItemPositionById(
 				mCursorRatings,
-				mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID),
+				mCursorHouses.getColumnIndex(PropDBAdapter.C_RATING_ID),
 				mRatings
 			);
 		
@@ -1087,7 +1087,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		spinnerRating.setSelection(
 			    getItemPositionById(
 			        mCursorRatings, 
-			        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_PROP_RATING_ID)),
+			        mCursorHouses.getInt(mCursorHouses.getColumnIndex(PropDBAdapter.C_RATING_ID)),
 			        mRatings
 			    )
 			);
@@ -1168,15 +1168,15 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 */
 		ContentValues reg = new ContentValues();
 		
-		reg.put(PropDBAdapter.C_PROP_ADDRESS, txtAddress.getText().toString());
-		reg.put(PropDBAdapter.C_PROP_BEDROOMS, Integer.parseInt(txtBedrooms.getText().toString()));
+		reg.put(PropDBAdapter.C_ADDRESS, txtAddress.getText().toString());
+		reg.put(PropDBAdapter.C_BEDROOMS, Integer.parseInt(txtBedrooms.getText().toString()));
 
 		/*
 		 * DATABASE VERSION 4
 		 */
 		try
 		{
-			reg.put(PropDBAdapter.C_PROP_OWNER_URI, mContactUri.toString());
+			reg.put(PropDBAdapter.C_OWNER_URI, mContactUri.toString());
 		}
 		catch(Exception e)
 		{
@@ -1186,8 +1186,8 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * DATABASE VERSION 5
 		 */
-		reg.put(PropDBAdapter.C_PROP_LATITUDE, mCurrentLat);
-		reg.put(PropDBAdapter.C_PROP_LONGITUDE, mCurrentLong);
+		reg.put(PropDBAdapter.C_LATITUDE, mCurrentLat);
+		reg.put(PropDBAdapter.C_LONGITUDE, mCurrentLong);
 		
 		/*
 		 * DATABASE VERSION 6
@@ -1196,7 +1196,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		{
 			byte[] storedPic = ImageUtils.bitmapToByteArray(mBitmap);
 			
-			reg.put(PropDBAdapter.C_PROP_IMAGE, storedPic);
+			reg.put(PropDBAdapter.C_IMAGE, storedPic);
 		}
 		catch(Exception e)
 		{
@@ -1208,18 +1208,18 @@ public class PropDetailActivity extends Activity implements LocationListener
 		 */		
 		if (chkConfirmed.isChecked())
 		{
-			reg.put(PropDBAdapter.C_PROP_CONFIRMED, 1);
+			reg.put(PropDBAdapter.C_CONFIRMED, 1);
 		}
 		else
 		{
-			reg.put(PropDBAdapter.C_PROP_CONFIRMED, 0);
+			reg.put(PropDBAdapter.C_CONFIRMED, 0);
 		}
 		
 		/*
 		 * SPINNER IMPLEMENTED ON LESSON 10
 		 */
 //		reg.put(PropDBAdapter.C_PROP_RATING_ID, spinnerRating.getSelectedItemId());
-		reg.put(PropDBAdapter.C_PROP_RATING_ID, mRatingId);
+		reg.put(PropDBAdapter.C_RATING_ID, mRatingId);
 
 		/*
 		 * MUST use the definition at this DB adapter because of differing column names

@@ -14,25 +14,25 @@ public class RoomsDBAdapter extends DBAdapter
 	/*
 	 * Define constants with column names
 	 */
-	static public final String C_COLUMN_ID = "_id",
-			C_COLUMN_ROOM_TYPE_ID = "re_room_type_id",
-			C_COLUMN_ROOM_X = "re_room_x",
-			C_COLUMN_ROOM_Y = "re_room_y",
-			C_COLUMN_ROOM_FLOORS = "re_floors",
-			C_COLUMN_ROOM_DETAILS = "re_details",
-			C_COLUMN_IMAGE = "re_image";
+	static public final String C_ID = "_id",
+			C_ROOM_TYPE_ID = "re_room_type_id",
+			C_ROOM_X = "re_room_x",
+			C_ROOM_Y = "re_room_y",
+			C_ROOM_FLOORS = "re_floors",
+			C_ROOM_DETAILS = "re_details",
+			C_IMAGE = "re_image";
 
 	public RoomsDBAdapter(Context context) 
 	{
 		super(context);
 		this.setManagedTable(C_TABLE_ROOMS);
-		this.setColumns(new String[] { C_COLUMN_ID,
-				C_COLUMN_ROOM_TYPE_ID,
-				C_COLUMN_ROOM_X,
-				C_COLUMN_ROOM_Y,
-				C_COLUMN_ROOM_FLOORS,
-				C_COLUMN_ROOM_DETAILS,
-				C_COLUMN_IMAGE });
+		this.setColumns(new String[] { C_ID,
+				C_ROOM_TYPE_ID,
+				C_ROOM_X,
+				C_ROOM_Y,
+				C_ROOM_FLOORS,
+				C_ROOM_DETAILS,
+				C_IMAGE });
 	}
 
 //	public Cursor getRoomsForProperty(long mPropId)
@@ -57,6 +57,9 @@ public class RoomsDBAdapter extends DBAdapter
 //				, null);
 
 		// "Um, boss... dis 'ere, um, 'query' fing'z un-Orky as a 'umie, but works."
+//		Cursor c = db.rawQuery("select R." + C_ID + ", " + 
+//				"R.");
+		
 		Cursor c = db.rawQuery("select R.*, RT.re_room_type FROM ROOMS as R, " +
 				"ROOM_TYPES as RT, " +
 				"PROPS_ROOMS as PR " +

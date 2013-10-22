@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,16 +21,21 @@ import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.inputmethodservice.Keyboard.Key;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Media;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
@@ -48,6 +54,7 @@ import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.PropsRoomsDBAdapter;
 import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
+import com.callisto.quoter.db.CursorWrapper;
 import com.callisto.quoter.interfaces.Observer;
 import com.callisto.quoter.utils.AddRoomDialogWrapper;
 import com.callisto.quoter.utils.AddTypeDialogWrapper;
@@ -175,7 +182,9 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 						{
 							Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
 							
-				            mImageView.setImageBitmap(thumbnail);
+							mBitmap = thumbnail;
+							
+				            mImageView.setImageBitmap(mBitmap);
 						}
 						else //This WILL fire up if the default photo taking activity is passed the MEDIA_OUTPUT extra. (Commented out.)
 						{
@@ -264,6 +273,57 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		txtWidthY = (EditText) findViewById(R.id.txtWidthY);
 		txtFloors = (EditText) findViewById(R.id.txtFloors);
 
+		txtFloors.setKeyListener(new KeyListener()
+		{
+			
+			@Override
+			public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event)
+			{
+				switch(keyCode)
+				{
+				
+				}
+				return false;
+			}
+			
+			@Override
+			public boolean onKeyOther(View view, Editable text, KeyEvent event)
+			{
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean onKeyDown(View view, Editable text, int keyCode,
+					KeyEvent event)
+			{
+				switch(keyCode)
+				{
+					case KeyEvent.KEYCODE_ENTER:
+					{
+						// "Dis 'ere fing'z cute, boss, but ain't workin' propa."
+//						hideKeyboard();
+						break;
+					}
+				}
+				return false;
+			}
+			
+			@Override
+			public int getInputType()
+			{
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public void clearMetaKeyState(View view, Editable content, int states)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 //		populateRoomTypes(spinnerRoomType);
 		
 		mImageView = (ImageView) findViewById(R.id.imgDisplayImage);
@@ -325,11 +385,11 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		 * Get record ID if provided
 		 */
 		if (
-				(extras.containsKey(RoomsDBAdapter.C_COLUMN_ID)) || 
+				(extras.containsKey(RoomsDBAdapter.C_ID)) || 
 				(extras.containsKey("mRoomId"))
 			)
 		{
-			mRoomId = extras.getLong(RoomsDBAdapter.C_COLUMN_ID);
+			mRoomId = extras.getLong(RoomsDBAdapter.C_ID);
 			query(mRoomId);
 		}
 		
@@ -340,18 +400,11 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	protected void onDestroy()
 	{
 		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
+
+		CursorWrapper.closeCursor(mCursorRooms);
+		CursorWrapper.closeCursor(mCursorRoomTypes);
 		
-		try
-		{
-			mCursorRooms.close();
-			mCursorRoomTypes.close();
-			
-			save();
-		}
-		catch(Exception e)
-		{
-			Log.i(this.getClass().toString(), e.getMessage());
-		}
+//		save();
 		
 		super.onDestroy();
 	}
@@ -367,7 +420,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		}
 		catch(Exception e)
 		{
-			Log.i(this.getClass().toString(), e.getMessage());
+			Log.i(this.getClass().toString(), "");
+			e.printStackTrace();
 		}
 		
 		super.onPause();
@@ -548,9 +602,15 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		).show();			
 	}
 	
+	private void hideKeyboard()
+	{
+		InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputManager.toggleSoftInput(0, 0);		
+	}
+	
 	private void populateRoomTypes(Spinner spinner) 
 	{
-		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
+		String[] from = new String[] { RoomTypesDBAdapter.C_ROOM_TYPES_NAME };
 		
 		int[] to = new int[] { android.R.id.text1 };
 
@@ -574,7 +634,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 	{
 	    ContentValues reg = new ContentValues();
 
-	    reg.put(RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME, wrapper.getName());
+	    reg.put(RoomTypesDBAdapter.C_ROOM_TYPES_NAME, wrapper.getName());
 	    
 	    mRoomTypes.insert(reg);
 	    
@@ -632,11 +692,11 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		try
 		{
-			mRoomTypeId = mCursorRooms.getLong(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID));
+			mRoomTypeId = mCursorRooms.getLong(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_ROOM_TYPE_ID));
 			
 			// Cast via data type required
-			float x = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_X));
-			float y = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_Y));
+			float x = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_ROOM_X));
+			float y = mCursorRooms.getFloat(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_ROOM_Y));
 			
 //			txtWidthX.setText(Float.toString(x));
 //			txtWidthX.setText(Float.toString(y));			
@@ -645,10 +705,10 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 			txtWidthX.setText(String.valueOf(x));
 			txtWidthY.setText(String.valueOf(y));
 			
-			txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS)));
+			txtFloors.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_ROOM_FLOORS)));
 			//txtDetails.setText(mCursorRooms.getString(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS)));
 			
-			mBitmap = ImageUtils.byteToBitmap(mCursorRooms.getBlob(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_COLUMN_IMAGE)));
+			mBitmap = ImageUtils.byteToBitmap(mCursorRooms.getBlob(mCursorRooms.getColumnIndex(RoomsDBAdapter.C_IMAGE)));
 
 			mImageView.setImageBitmap(mBitmap);
 		}
@@ -674,18 +734,18 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		
 		if (/*daTxtWidthX.getText().toString()*/ !s1.equals(""))
 		{
-			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_X, Float.valueOf(txtWidthX.getText().toString()));
+			reg.put(RoomsDBAdapter.C_ROOM_X, Float.valueOf(txtWidthX.getText().toString()));
 		}
 		
 		if (/*daTxtWidthY.getText().toString()*/ !s2.equals(""))
 		{
-			reg.put(RoomsDBAdapter.C_COLUMN_ROOM_Y, Float.valueOf(txtWidthY.getText().toString()));
+			reg.put(RoomsDBAdapter.C_ROOM_Y, Float.valueOf(txtWidthY.getText().toString()));
 		}
 		
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_FLOORS, txtFloors.getText().toString());
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_DETAILS, "TEST");
-		reg.put(RoomsDBAdapter.C_COLUMN_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
-		reg.put(RoomsDBAdapter.C_COLUMN_ROOM_TYPE_ID, mRoomTypeId);
+		reg.put(RoomsDBAdapter.C_ROOM_FLOORS, txtFloors.getText().toString());
+		reg.put(RoomsDBAdapter.C_ROOM_DETAILS, "TEST");
+		reg.put(RoomsDBAdapter.C_IMAGE, ImageUtils.bitmapToByteArray(mBitmap));
+		reg.put(RoomsDBAdapter.C_ROOM_TYPE_ID, mRoomTypeId);
 //		reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
 	
 		Log.i(this.getClass().toString(), "Room ID: " + mRoomId);
@@ -699,8 +759,8 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 
 				ContentValues propRooms = new ContentValues();
 				
-				propRooms.put(PropsRoomsDBAdapter.C_COLUMN_PROP_ID, mPropId);
-				propRooms.put(PropsRoomsDBAdapter.C_COLUMN_ROOM_ID, mRoomId);
+				propRooms.put(PropsRoomsDBAdapter.C_PROP_ID, mPropId);
+				propRooms.put(PropsRoomsDBAdapter.C_ROOM_ID, mRoomId);
 
 				mPropRooms.insert(propRooms);
 			}
@@ -717,7 +777,7 @@ public class RoomDetailActivity extends Activity //implements Observable, Serial
 		{
 			try
 			{
-				reg.put(RoomsDBAdapter.C_COLUMN_ID, mRoomId);
+				reg.put(RoomsDBAdapter.C_ID, mRoomId);
 				
 				Log.i(this.getClass().toString(), "Update operation returned " + mRooms.update(reg));
 			}

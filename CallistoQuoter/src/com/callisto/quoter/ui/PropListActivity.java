@@ -162,7 +162,7 @@ public class PropListActivity extends ListActivity
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
-		menu.setHeaderTitle(mCursorProperties.getString(mCursorProperties.getColumnIndex(PropDBAdapter.C_PROP_ADDRESS)));
+		menu.setHeaderTitle(mCursorProperties.getString(mCursorProperties.getColumnIndex(PropDBAdapter.C_ADDRESS)));
 		menu.add(Menu.NONE, C_VIEW, Menu.NONE, R.string.menu_view);
 		menu.add(Menu.NONE, C_EDIT, Menu.NONE, R.string.menu_edit);
 		menu.add(Menu.NONE, C_DELETE, Menu.NONE, R.string.menu_delete);
@@ -277,7 +277,7 @@ public class PropListActivity extends ListActivity
 		
 		if (prefs.getBoolean("hide_unconfirmed_houses", false))
 		{
-			this.filter = PropDBAdapter.C_PROP_CONFIRMED + " = 1";
+			this.filter = PropDBAdapter.C_CONFIRMED + " = 1";
 		}
 		else
 		{

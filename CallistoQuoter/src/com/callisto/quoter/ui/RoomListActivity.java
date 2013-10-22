@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
+import com.callisto.quoter.db.CursorWrapper;
 import com.callisto.quoter.db.RoomCursorAdapter;
 import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
@@ -187,7 +188,6 @@ public class RoomListActivity extends ListActivity
 	{
 		menu.setHeaderTitle(mCursorRooms.getString(7));		// TODO FIX THIS REFERENCE! IT'S DANGEROUS!
 
-		
 		menu.add(Menu.NONE, C_VIEW, Menu.NONE, R.string.menu_view);
 		menu.add(Menu.NONE, C_EDIT, Menu.NONE, R.string.menu_edit);
 		menu.add(Menu.NONE, C_DELETE, Menu.NONE, R.string.menu_delete);
@@ -205,15 +205,8 @@ public class RoomListActivity extends ListActivity
 	{
 		Log.i(this.getClass().toString(), "LIFECYCLE: onDestroy() called");
 		
-		try
-		{
-			mCursorRooms.close();
-			mCursorRoomTypes.close();
-		}
-		catch(Exception e)
-		{
-			Log.i(this.getClass().toString(), e.getMessage());
-		}
+		CursorWrapper.closeCursor(mCursorRooms);
+		CursorWrapper.closeCursor(mCursorRoomTypes);
 		
 		super.onDestroy();
 	}
@@ -315,7 +308,7 @@ public class RoomListActivity extends ListActivity
 		i.putExtra(C_MODE, mode);
 		i.putExtra("mPropId", mPropId);
 		i.putExtra("mRoomId", info.id);
-		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, info.id);
+		i.putExtra(RoomsDBAdapter.C_ID, info.id);
 
 		startActivityForResult(i, mode);
 		return true;
@@ -349,7 +342,7 @@ public class RoomListActivity extends ListActivity
 	
 	private void populateRoomTypes() 
 	{
-		String[] from = new String[] { RoomTypesDBAdapter.C_COLUMN_ROOM_TYPES_NAME };
+		String[] from = new String[] { RoomTypesDBAdapter.C_ROOM_TYPES_NAME };
 		
 		int[] to = new int[] { android.R.id.text1 };
 
@@ -388,7 +381,7 @@ public class RoomListActivity extends ListActivity
 
 		i.putExtra(C_MODE, C_VIEW);
 		i.putExtra("mPropId", mPropId);
-		i.putExtra(RoomsDBAdapter.C_COLUMN_ID, id);
+		i.putExtra(RoomsDBAdapter.C_ID, id);
 		
 		startActivityForResult(i, C_VIEW);
 	}

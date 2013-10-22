@@ -9,24 +9,24 @@ public class PropDBAdapter extends DBAdapter
 	/*
 	 * Define constant with table name
 	 */
-	static public final String C_TABLE_PROPERTIES = "PROPERTIES",
+	static public final String T_PROPERTIES = "PROPERTIES",
 	/*
 	 * Define constants with column names
 	 */
-		C_PROP_ADDRESS = "re_address",
-		C_PROP_BEDROOMS = "re_bedrooms",
+		C_ADDRESS = "re_address",
+		C_BEDROOMS = "re_bedrooms",
 	/*
 	 * NEW FIELD IMPLEMENTED ON DATABASE UPGRADE STEP (Lesson 9)
 	 */
-		C_PROP_CONFIRMED = "re_confirmed",
+		C_CONFIRMED = "re_confirmed",
 	/*
 	 * NEW FIELD IMPLEMENTED ON DATABASE UPGRADE STEP (Lesson 10)
 	 */
-		C_PROP_RATING_ID = "re_rating_id",
-		C_PROP_OWNER_URI = "re_owner_uri",
-		C_PROP_LATITUDE = "re_latitude",
-		C_PROP_LONGITUDE = "re_longitude",
-		C_PROP_IMAGE = "re_image",
+		C_RATING_ID = "re_rating_id",
+		C_OWNER_URI = "re_owner_uri",
+		C_LATITUDE = "re_latitude",
+		C_LONGITUDE = "re_longitude",
+		C_IMAGE = "re_image",
 		C_PROP_TYPE_ID = "re_prop_type_id";
 	
 //	private String[] columns = new String[] 
@@ -67,33 +67,33 @@ public class PropDBAdapter extends DBAdapter
 	public PropDBAdapter(Context context)
 	{
 		super(context);
-		this.setManagedTable(C_TABLE_PROPERTIES);
+		this.setManagedTable(T_PROPERTIES);
 		this.setColumns(new String[] 
 		{ 
 			C_COLUMN_ID, 
-			C_PROP_ADDRESS, 
-			C_PROP_BEDROOMS,
+			C_ADDRESS, 
+			C_BEDROOMS,
 			/*
 			 * NEW FIELD IMPLEMENTED ON DATABASE UPGRADE STEP (Lesson 9)
 			 */
-			C_PROP_CONFIRMED,
+			C_CONFIRMED,
 			/*
 			 * NEW FIELD IMPLEMENTED ON DATABASE UPGRADE STEP (Lesson 10)
 			 */
-			C_PROP_RATING_ID,
+			C_RATING_ID,
 			/*
 			 * DATABASE VERSION 4
 			 */
-			C_PROP_OWNER_URI,
+			C_OWNER_URI,
 			/*
 			 * DATABASE VERSION 5
 			 */
-			C_PROP_LATITUDE,
-			C_PROP_LONGITUDE,
+			C_LATITUDE,
+			C_LONGITUDE,
 			/*
 			 * DATABASE VERSION 6
 			 */
-			C_PROP_IMAGE,
+			C_IMAGE,
 			/*
 			 * DATABASE VERSION 7
 			 */
@@ -107,7 +107,7 @@ public class PropDBAdapter extends DBAdapter
 		{
 			open();
 		}
-		return db.delete(C_TABLE_PROPERTIES, "_id=" + id, null);		
+		return db.delete(T_PROPERTIES, "_id=" + id, null);		
 	}
 
 	/***
@@ -117,7 +117,7 @@ public class PropDBAdapter extends DBAdapter
 	 */
 	public Cursor getCursor() throws SQLException
 	{
-		Cursor c = db.query(true, C_TABLE_PROPERTIES, columns, null, null, null, null, null, null);
+		Cursor c = db.query(true, T_PROPERTIES, columns, null, null, null, null, null, null);
 		
 		return c;
 	}
@@ -130,7 +130,7 @@ public class PropDBAdapter extends DBAdapter
 	 */
 	public Cursor getCursor(String filter) throws SQLException
 	{
-		Cursor c = db.query(true, C_TABLE_PROPERTIES, columns, filter, null, null, null, null, null);
+		Cursor c = db.query(true, T_PROPERTIES, columns, filter, null, null, null, null, null);
 		
 		return c;
 	}

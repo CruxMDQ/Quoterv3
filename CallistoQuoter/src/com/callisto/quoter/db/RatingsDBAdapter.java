@@ -8,9 +8,9 @@ public class RatingsDBAdapter extends DBAdapter
 //	private DBHelper dbHelper;
 //	private SQLiteDatabase db;
 //
-	static public final String C_TABLE_RATINGS = "RATINGS";
+	static public final String T_RATINGS = "RATINGS";
 
-	static public final String C_COLUMN_RATING_NAME = "re_rating";
+	static public final String C_RATING_NAME = "re_rating";
 	
 //	private String[] columns = new String[] { C_COLUMN_ID,
 //			C_COLUMN_RATING_NAME };
@@ -18,9 +18,9 @@ public class RatingsDBAdapter extends DBAdapter
 	public RatingsDBAdapter(Context context)
 	{
 		super(context);
-		this.setManagedTable(C_TABLE_RATINGS);
+		this.setManagedTable(T_RATINGS);
 		this.setColumns(new String[] { C_COLUMN_ID,
-			C_COLUMN_RATING_NAME });
+			C_RATING_NAME });
 //		this.context = context;
 	}
 

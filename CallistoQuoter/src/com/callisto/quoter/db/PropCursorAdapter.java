@@ -28,12 +28,12 @@ public class PropCursorAdapter extends CursorAdapter
 	{
 		TextView tv = (TextView) view;
 		
-		tv.setText(cursor.getString(cursor.getColumnIndex(PropDBAdapter.C_PROP_ADDRESS)));
+		tv.setText(cursor.getString(cursor.getColumnIndex(PropDBAdapter.C_ADDRESS)));
 		
 		/*
 		 * FIELD COLORING IMPLEMENTED ON DATABASE UPGRADE STEP
 		 */
-		if (cursor.getInt(cursor.getColumnIndex(PropDBAdapter.C_PROP_CONFIRMED)) == 0)
+		if (cursor.getInt(cursor.getColumnIndex(PropDBAdapter.C_CONFIRMED)) == 0)
 		{
 			tv.setTextColor(Color.GRAY);
 		}

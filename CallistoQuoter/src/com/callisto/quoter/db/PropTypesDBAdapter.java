@@ -8,20 +8,20 @@ public class PropTypesDBAdapter extends DBAdapter
 	/*
 	 * Define constant with table name
 	 */
-	static public final String C_TABLE_PROP_TYPES = "PROP_TYPES";
+	static public final String T_PROP_TYPES = "PROP_TYPES";
 	
 	/*
 	 * Define constants with column names
 	 */
-	static public final String C_COLUMN_ID = "_id",
-		C_COLUMN_PROP_TYPES_NAME = "re_prop_type";
+	static public final String C_ID = "_id",
+		C_PROP_TYPES_NAME = "re_prop_type";
 	
 	public PropTypesDBAdapter(Context context)
 	{
 		super(context);
-		this.setManagedTable(C_TABLE_PROP_TYPES);
-		this.setColumns(new String[] { C_COLUMN_ID,
-			C_COLUMN_PROP_TYPES_NAME });
+		this.setManagedTable(T_PROP_TYPES);
+		this.setColumns(new String[] { C_ID,
+			C_PROP_TYPES_NAME });
 	}
 	
 	/***
@@ -36,7 +36,7 @@ public class PropTypesDBAdapter extends DBAdapter
 			open();
 		}
 		
-		return db.insert(C_TABLE_PROP_TYPES, null, reg);
+		return db.insert(T_PROP_TYPES, null, reg);
 	}
 	
 //	public PropTypesDBAdapter open() throws SQLException
