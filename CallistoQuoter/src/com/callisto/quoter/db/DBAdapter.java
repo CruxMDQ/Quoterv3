@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public abstract class DBAdapter 
 {
-	static public final String C_COLUMN_ID = "_id";
+	static public final String C_ID = "_id";
 	
 	protected Context context;
 	protected DBHelper dbHelper;
@@ -101,7 +101,7 @@ public abstract class DBAdapter
 	 */
 	public Cursor getRecord(long id) throws SQLException
 	{
-		Cursor c = db.query(true, this.getManagedTable(), columns, C_COLUMN_ID + "=" + id, null, null, null, null, null);
+		Cursor c = db.query(true, this.getManagedTable(), columns, C_ID + "=" + id, null, null, null, null, null);
 		
 		if (c != null)
 		{
@@ -149,9 +149,9 @@ public abstract class DBAdapter
 			open();
 		}
 		
-		if (reg.containsKey(C_COLUMN_ID))
+		if (reg.containsKey(C_ID))
 		{
-			long id = reg.getAsLong(C_COLUMN_ID);
+			long id = reg.getAsLong(C_ID);
 			
 //			reg.remove(C_COLUMN_ID);
 			

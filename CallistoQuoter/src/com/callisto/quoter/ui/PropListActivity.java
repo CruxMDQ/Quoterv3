@@ -131,7 +131,7 @@ public class PropListActivity extends ListActivity
 			{
 				i = new Intent(PropListActivity.this, PropDetailActivity.class);
 				i.putExtra(C_MODE, C_EDIT);
-				i.putExtra(PropDBAdapter.C_COLUMN_ID, info.id);
+				i.putExtra(PropDBAdapter.C_ID, info.id);
 				
 				startActivityForResult(i, C_EDIT);
 				return true;
@@ -337,7 +337,7 @@ public class PropListActivity extends ListActivity
 	{
 		Intent i = new Intent(PropListActivity.this, PropDetailActivity.class);
 		i.putExtra(C_MODE, C_VIEW);
-		i.putExtra(PropDBAdapter.C_COLUMN_ID, id);
+		i.putExtra(PropDBAdapter.C_ID, id);
 		
 		startActivityForResult(i, C_VIEW);
 	}

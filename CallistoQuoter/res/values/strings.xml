@@ -3,7 +3,7 @@
 
     <string name="add_room">Nuevo ambiente</string>
     <string name="add_type_title">Nuevo tipo de ambiente</string>
-    <string name="app_name">Estate Quoter v0.3</string>
+    <string name="app_name">Estate Quoter v0.4</string>
     <string name="action_settings">Configuración</string>
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_save">Guardar</string>
@@ -45,5 +45,8 @@
     <string name="hint_imgDisplayImage">Vista frontal de la propiedad</string>
     <string name="menu_room_add_type">Add room type</string>
     <string name="menu_create_room">Nuevo ambiente</string>
+    <string name="location_search">Buscar ubicación</string>
+    <string name="hint_address_search">Ingrese aquí la dirección</string>
+    <string name="menu_pick_city">Elegir ciudad activa</string>
    
 </resources>

@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -135,11 +133,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 	private String mPhotoPath;
 	private Bitmap mBitmap;
 
-	/*
-	 * ARRAY TO STORE IDs OF ROOMS BELONGING TO CURRENT PROPERTY
-	 */
-//	private int[] mRoomIDs;
-
 	// **** VISIBLE METHODS AND OVERRIDES ****
 	
 	/***
@@ -250,7 +243,6 @@ public class PropDetailActivity extends Activity implements LocationListener
 						if (data.hasExtra("data"))
 						{
 							mBitmap = (Bitmap) data.getExtras().get("data");
-//							Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
 							
 				            mImageView.setImageBitmap(mBitmap);
 						}
@@ -472,7 +464,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		populatePropTypes();
 		populateRatings();
 		
-		int pos = mCursorRatings.getInt(mCursorRatings.getColumnIndex(RatingsDBAdapter.C_COLUMN_ID));
+		int pos = mCursorRatings.getInt(mCursorRatings.getColumnIndex(RatingsDBAdapter.C_ID));
 		Log.i(this.getClass().toString(), "Spinner selected value " + pos);
 		
 		spinnerRating.setSelection(pos);
@@ -530,9 +522,9 @@ public class PropDetailActivity extends Activity implements LocationListener
 		/*
 		 * Get record ID if provided
 		 */
-		if (extra.containsKey(PropDBAdapter.C_COLUMN_ID))
+		if (extra.containsKey(PropDBAdapter.C_ID))
 		{
-			mPropId = extra.getLong(PropDBAdapter.C_COLUMN_ID);
+			mPropId = extra.getLong(PropDBAdapter.C_ID);
 			query(mPropId);
 		}
 		
@@ -875,7 +867,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			if (c.getLong(c.getColumnIndex(RatingsDBAdapter.C_COLUMN_ID)) == id)
+			if (c.getLong(c.getColumnIndex(RatingsDBAdapter.C_ID)) == id)
 			{
 				return c.getPosition();
 			}
@@ -888,7 +880,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 	{
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			long t = c.getLong(c.getColumnIndex(DBAdapter.C_COLUMN_ID));
+			long t = c.getLong(c.getColumnIndex(DBAdapter.C_ID));
 			
 			if (t == id)
 			{
@@ -1024,7 +1016,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		
 		txtAddress.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_ADDRESS)));
 		txtBedrooms.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_BEDROOMS)));
-		
+
 		try
 		{
 			mContactUri = Uri.parse(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
@@ -1246,7 +1238,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 			{
 				Toast.makeText(PropDetailActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
 		
-				reg.put(PropDBAdapter.C_COLUMN_ID, mPropId);
+				reg.put(PropDBAdapter.C_ID, mPropId);
 				
 				long resultCode = mHouses.update(reg);
 				Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			

@@ -1,8 +1,14 @@
 package com.callisto.quoter.db;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.location.Address;
+import android.os.Bundle;
+import android.util.Log;
 
 public class PropDBAdapter extends DBAdapter 
 {
@@ -70,7 +76,7 @@ public class PropDBAdapter extends DBAdapter
 		this.setManagedTable(T_PROPERTIES);
 		this.setColumns(new String[] 
 		{ 
-			C_COLUMN_ID, 
+			C_ID, 
 			C_ADDRESS, 
 			C_BEDROOMS,
 			/*
@@ -133,6 +139,59 @@ public class PropDBAdapter extends DBAdapter
 		Cursor c = db.query(true, T_PROPERTIES, columns, filter, null, null, null, null, null);
 		
 		return c;
+	}
+	
+	/***
+	 * Retrieves all addresses and geolocation data from database, paired with property ID.
+	 * @return Populated arraylist.
+	 * @throws SQLException
+	 */
+	public ArrayList<Address> getAllAddresses() throws SQLException
+	{
+		Cursor c = getCursor();
+		
+		ArrayList<Address> addresses = new ArrayList<Address>();
+		
+		while (c.moveToNext())
+		{
+			// TODO Is it worth fixing locales to be defined dynamically?
+			Address t = new Address(new Locale("Spanish", "Argentina"));
+
+			t.setLatitude(Double.parseDouble
+					(String.valueOf
+						(c.getFloat
+							(c.getColumnIndexOrThrow(C_LATITUDE))
+						)
+					)
+				);
+		
+			t.setLongitude(Double.parseDouble
+					(String.valueOf
+						(c.getFloat
+							(c.getColumnIndexOrThrow(C_LONGITUDE))
+						)
+					)
+				);
+			
+			t.setAddressLine(0,
+					c.getString(
+							c.getColumnIndexOrThrow(C_ADDRESS)
+						)
+					);
+
+			Bundle extras = new Bundle();
+			
+			Long id = c.getLong(c.getColumnIndexOrThrow(C_ID));
+			Log.i(this.getClass().toString() + ".getAllAddresses", "Property id stored on address: " + id);
+			
+			extras.putLong(C_ID, id);
+			
+			t.setExtras(extras);
+			
+			addresses.add(t);
+		}
+		
+		return addresses;
 	}
 	
 //	/***

@@ -55,7 +55,6 @@ import com.callisto.quoter.db.PropsRoomsDBAdapter;
 import com.callisto.quoter.db.RoomTypesDBAdapter;
 import com.callisto.quoter.db.RoomsDBAdapter;
 import com.callisto.quoter.db.CursorWrapper;
-import com.callisto.quoter.interfaces.Observer;
 import com.callisto.quoter.utils.AddRoomDialogWrapper;
 import com.callisto.quoter.utils.AddTypeDialogWrapper;
 import com.callisto.quoter.utils.ImageUtils;
