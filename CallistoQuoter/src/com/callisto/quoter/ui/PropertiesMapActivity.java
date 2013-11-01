@@ -7,23 +7,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
@@ -31,10 +38,11 @@ import com.callisto.quoter.async.GeolocationTask;
 import com.callisto.quoter.async.LocaleTask;
 import com.callisto.quoter.db.DBAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
+import com.callisto.quoter.utils.ImageUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -74,10 +82,20 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 	
 	HashMap<Marker, Cursor> mProperties;
 	
+	private Uri mContactUri;
+
 	private LocationManager mLocationManager;
 	private String mProvider;
 	private double mCurrentLat;
 	private double mCurrentLong;
+
+	protected TextView txtOwnerName;
+	protected TextView txtOwnerPhone;
+	protected ImageView img;
+	protected TextView txtAddress;
+	protected TextView txtPrice;
+	protected TextView txtBuiltSurface;
+	protected TextView txtParcelSurface;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -188,12 +206,10 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 			} 
             catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
             catch (ExecutionException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -236,12 +252,10 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 		}
 	    catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    catch (ExecutionException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -280,12 +294,10 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 				} 
 				catch (InterruptedException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
 				catch (ExecutionException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -301,14 +313,42 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 		}
 	}
 	
-//	@SuppressWarnings("deprecation")
-//	private void query() 
-//	{
-//		mCursorProperties = mDBAdapter.getCursor();
-//		
-//		startManagingCursor(mCursorProperties);
-//	}
-//	
+	/***
+		 * Retrieve latitude and longitude coordinates of current location.
+		 */
+		private void prepareEyeInTheSky()
+		{
+		    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			   
+		    Criteria criteria = new Criteria();
+			    
+		    mProvider = mLocationManager.getBestProvider(criteria, false);
+			    
+		    mLocationManager.requestLocationUpdates(mProvider, 400, 1, this);
+		        
+	//	    Location location = mLocationManager.getLastKnownLocation(mProvider);		
+		    
+	//	    if (location != null) 
+	//	    {
+	//	    	System.out.println("Provider " + mProvider + " has been selected.");
+	//		    	onLocationChanged(location);
+	//	    }
+	//	    
+	//	    try
+	//	    {
+	//	    	if (mCurrentLat == 0 && mCurrentLong == 0)
+	//	    	{
+	//				mCurrentLat = location.getLatitude();
+	//				mCurrentLong = location.getLongitude();
+	//	    	}
+	//			Log.i(this.getClass().toString() + ".doEyeInTheSky", "Lat: " + mCurrentLat + ", long: " + mCurrentLong);
+	//	    }
+	//	    catch (Exception e)
+	//	    {
+	//	//	    	System.out.println(e.getMessage());
+	//	    }
+		}
+
 	private void query()
 	{
 		try
@@ -324,18 +364,91 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 			Log.i(this.getClass().toString(), " " + e.getMessage());
 		}
 		
-		mMap.setOnMarkerClickListener(new OnMarkerClickListener()
+		// TODO Code info retrieval for ***ALL*** of this. ALL OF THIS!
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener()
 		{
+			private Bitmap mBitmap;
+
 			@Override
-			public boolean onMarkerClick(Marker m)
+			public void onInfoWindowClick(Marker m)
 			{
 				Cursor c = mProperties.get(m);
+
+				Cursor contactDetails = retrieveContactDetails(c);
 				
-				Long recordId = c.getLong(c.getColumnIndexOrThrow(DBAdapter.C_ID));
+				Long recordId = c.getLong(c
+						.getColumnIndexOrThrow(DBAdapter.C_ID));
 						
-				view(recordId);
+				Dialog dialog = new Dialog(PropertiesMapActivity.this);
+				dialog.setContentView(R.layout.dialog_map_property_details);
+				dialog.setTitle(c.getString(c.getColumnIndex(PropDBAdapter.C_ADDRESS)));
+				dialog.setCancelable(true);
+
+				if (contactDetails != null)
+				{
+					txtOwnerName = (TextView) dialog
+							.findViewById(R.id.txtOwnerName);
+					txtOwnerName.setText(contactDetails
+							.getString(contactDetails
+									.getColumnIndex(Phone.DISPLAY_NAME)));
+					// text.setText(R.string.lots_of_text);
+
+					txtOwnerPhone = (TextView) dialog
+							.findViewById(R.id.txtOwnerPhone);
+					txtOwnerPhone.setText(contactDetails
+							.getString(contactDetails
+									.getColumnIndex(Phone.NUMBER)));
+					// text.setText(R.string.lots_of_text);
+				}
 				
-				return false;
+				// set up image view
+				img = (ImageView) dialog.findViewById(R.id.imgOwnerThumbnail);
+				try
+				{
+					byte[] rawImage = c.getBlob(c.getColumnIndex(PropDBAdapter.C_IMAGE));
+					
+					mBitmap = ImageUtils.byteToBitmap(rawImage);
+
+					img.setImageBitmap(mBitmap);
+				}
+				catch(SQLException e)
+				{
+					Log.i(this.getClass().toString() + ".query", "Cannot retrieve image from database");
+				}
+				catch(Exception e)
+				{
+					Log.i(this.getClass().toString() + ".query", "Cannot process image");
+				}
+				
+//				img.setImageResource(R.drawable.nista_logo);
+
+				txtAddress = (TextView) dialog.findViewById(R.id.txtAddress);
+				txtAddress.setText(c.getString(c.getColumnIndex(PropDBAdapter.C_ADDRESS)));
+//				text.setText(R.string.lots_of_text);
+
+				txtPrice = (TextView) dialog.findViewById(R.id.txtPrice);
+//				text.setText(R.string.lots_of_text);
+
+				txtBuiltSurface = (TextView) dialog.findViewById(R.id.txtBuiltSurface);
+//				text.setText(R.string.lots_of_text);
+
+				txtParcelSurface = (TextView) dialog.findViewById(R.id.txtParcelSurface);
+//				text.setText(R.string.lots_of_text);
+				
+//				// set up button
+//				Button button = (Button) dialog.findViewById(R.id.Button01);
+//				button.setOnClickListener(new OnClickListener()
+//				{
+//					@Override
+//					public void onClick(View v)
+//					{
+//						finish();
+//					}
+//				});
+				// now that the dialog is set up, it's time to show it
+				dialog.show();
+
+//				view(recordId);
 			}
 		});
 		
@@ -344,42 +457,62 @@ public class PropertiesMapActivity extends FragmentActivity implements LocationL
 		populateMap();
 	}
 	
-	/***
-	 * Retrieve latitude and longitude coordinates of current location.
-	 */
-	private void prepareEyeInTheSky()
+	private Cursor retrieveContactDetails(Cursor c)
 	{
-	    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		   
-	    Criteria criteria = new Criteria();
-		    
-	    mProvider = mLocationManager.getBestProvider(criteria, false);
-		    
-	    mLocationManager.requestLocationUpdates(mProvider, 400, 1, this);
-	        
-//	    Location location = mLocationManager.getLastKnownLocation(mProvider);		
-	    
-//	    if (location != null) 
-//	    {
-//	    	System.out.println("Provider " + mProvider + " has been selected.");
-//		    	onLocationChanged(location);
-//	    }
-//	    
-//	    try
-//	    {
-//	    	if (mCurrentLat == 0 && mCurrentLong == 0)
-//	    	{
-//				mCurrentLat = location.getLatitude();
-//				mCurrentLong = location.getLongitude();
-//	    	}
-//			Log.i(this.getClass().toString() + ".doEyeInTheSky", "Lat: " + mCurrentLat + ", long: " + mCurrentLong);
-//	    }
-//	    catch (Exception e)
-//	    {
-//	//	    	System.out.println(e.getMessage());
-//	    }
-	}
+		Cursor results;
+		
+		/*
+		 * REQUIRED FOR PICKING CONTACT FROM PHONE BOOK
+		 */
+		try
+		{
+			mContactUri = Uri.parse(c.getString(c.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
 
+			if (mContactUri != null)
+			{
+		        	String contactId = mContactUri.getLastPathSegment();
+		        	
+		        	String[] columns = {
+		        			Phone.CONTACT_ID,
+		        			Phone.DATA, 
+		        			Phone.DISPLAY_NAME,
+		        			Phone.NUMBER
+		        			};
+		        	
+		        	results = getContentResolver()
+		                     .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+		                     columns,
+		                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+		                         + " = ?", new String[] { contactId },
+		                     null);
+		            
+		        	return results;
+		        	
+//		            String Name = null;
+//		
+//		            if (phoneCur.moveToFirst())
+//		            {
+//		                Name = phoneCur.getString(phoneCur.getColumnIndex(Phone.DISPLAY_NAME));
+//		            }
+//		
+//		            phoneCur.close();
+//		
+//		        	txtOwnerName.setText(Name);
+//		        	Log.i(this.getClass().toString(), Name);
+			 }
+		}
+        catch (SQLException e) 
+        {
+            Log.i(this.getClass().toString() + "." + "query", "Database retrieval failure", e);
+        }
+		catch (Exception e)
+		{
+			Log.i(this.getClass().toString() + ".query", "Cannot parse contact URI from database");
+		}
+		
+		return null;
+	}
+	
 	private void view(long id)
 	{
 		Intent i = new Intent(PropertiesMapActivity.this, PropDetailActivity.class);

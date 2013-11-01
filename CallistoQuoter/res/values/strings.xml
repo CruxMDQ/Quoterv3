@@ -48,5 +48,7 @@
     <string name="location_search">Buscar ubicación</string>
     <string name="hint_address_search">Ingrese aquí la dirección</string>
     <string name="menu_pick_city">Elegir ciudad activa</string>
+    <string name="label_built_surface">Superficie cubierta: </string>
+    <string name="label_parcel_surface">Superficie de lote: </string>
    
 </resources>

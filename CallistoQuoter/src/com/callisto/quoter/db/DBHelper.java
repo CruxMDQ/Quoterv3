@@ -28,6 +28,9 @@ public class DBHelper extends SQLiteOpenHelper {
 			C_LATITUDE = "re_latitude",
 			C_LONGITUDE = "re_longitude",
 			C_TYPE_ID = "re_prop_type_id",
+			C_PRICE = "re_price",
+			C_SURFACE_BUILT = "re_surface_built",
+			C_SURFACE_PARCEL = "re_surface_parcel",
 			
 			C_PROP_ID = "re_prop_id",
 			C_ROOM_ID = "re_room_id",
@@ -146,6 +149,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		upgradeToVersion7(db);
 		upgradeToVersion8(db);
 		upgradeToVersion9(db);
+		upgradeToVersion10(db);
 	}
 
 	@Override
@@ -239,6 +243,17 @@ public class DBHelper extends SQLiteOpenHelper {
 				Log.i(this.getClass().toString(), e.getMessage());
 			}
 		}
+		if (oldVersion < 10)
+		{
+			try
+			{
+				upgradeToVersion10(db);
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
+		}
 	}
 
 	@Override
@@ -271,29 +286,29 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(4, 'Muy bueno')");
 		db.execSQL("INSERT INTO RATINGS(_id, re_rating) VALUES(5, 'Excelente')");
 		
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_rating_id INTEGER NOT NULL DEFAULT 2");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_RATING_ID + " INTEGER NOT NULL DEFAULT 2");
 
 		Log.i(this.getClass().toString(), "Update to version 3 complete");
 	}
 	
 	private void upgradeToVersion4(SQLiteDatabase db)
 	{
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_owner_uri TEXT");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_OWNER_URI + " TEXT");
 		
 		Log.i(this.getClass().toString(), "Update to version 4 complete");
 	}
 	
 	private void upgradeToVersion5(SQLiteDatabase db)
 	{
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_latitude REAL");
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_longitude REAL");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_LATITUDE + " REAL");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_LONGITUDE + " REAL");
 		
 		Log.i(this.getClass().toString(), "Update to version 5 complete");
 	}
 	
 	private void upgradeToVersion6(SQLiteDatabase db)
 	{
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_image TEXT");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_IMAGE + " TEXT");
 		
 		Log.i(this.getClass().toString(), "Update to version 6 complete");
 	}
@@ -314,7 +329,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "(" + C_ID + ", " + C_PROP_TYPE_NAME + ")"
 				+ " VALUES (3, 'Local')");
 		
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD re_prop_type_id INTEGER NOT NULL DEFAULT 1");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_TYPE_ID + " INTEGER NOT NULL DEFAULT 1");
 		
 		Log.i(this.getClass().toString(), "Update to version 7 complete");
 	}
@@ -389,5 +404,12 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "VALUES (2, 6)");
 		
 		Log.i(this.getClass().toString(), "Update to version 9 complete");
+	}
+	
+	private void upgradeToVersion10(SQLiteDatabase db)
+	{
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_PRICE + " INTEGER");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_BUILT + " REAL");
+		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_PARCEL + " REAL");
 	}
 }
