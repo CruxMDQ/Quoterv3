@@ -4,6 +4,12 @@
           android:title="@string/location_search"
           android:showAsAction="collapseActionView|ifRoom"
           android:actionViewClass="android.widget.SearchView" />
-	<item android:id="@+id/pickCity"
+	<item android:id="@+id/menu_city_select"
 	      android:title="@string/menu_pick_city" />
+	<item android:id="@+id/menu_zone_view_all"
+	      android:title="@string/menu_view_zones" />
+	<item android:id="@+id/menu_zone_create"
+	      android:title="@string/menu_add_zone" />
+	<item android:id="@+id/menu_property_create"
+	      android:title="@string/menu_create_house" />
 </menu>

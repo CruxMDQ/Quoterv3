@@ -3,4 +3,8 @@
         android:id="@+id/completeMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"/>
+        class="com.callisto.quoter.mapfragment.CustomSupportMapFragment"/>
+
+ <!--
+          class="com.google.android.gms.maps.SupportMapFragment"/>
+  -->

@@ -50,5 +50,25 @@
     <string name="menu_pick_city">Elegir ciudad activa</string>
     <string name="label_built_surface">Superficie cubierta: </string>
     <string name="label_parcel_surface">Superficie de lote: </string>
+    <string name="menu_view_zones">Ver zonificación</string>
+    <string name="menu_add_zone">Nueva zona</string>
+    
+    <!-- THE FOLLOWING STRINGS WERE IMPORTED FROM THE WIZARD TUTORIAL -->
+   
+    <string name="app_name">Place Order</string>
+
+    <string name="next">Next</string>
+    <string name="prev">Previous</string>
+    <string name="finish">Submit order</string>
+    <string name="review">Review</string>
+
+    <string name="label_your_name">Name</string>
+    <string name="label_your_email">Email</string>
+    <string name="hint_your_name">e.g. Larry</string>
+    <string name="hint_your_email">Optional</string>
+
+    <string name="submit_confirm_message">Place the order with the deli? You will receive an email
+        confirmation.</string>
+    <string name="submit_confirm_button">Place order</string>
    
 </resources>
