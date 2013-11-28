@@ -178,7 +178,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 								
 								intent.putExtras(extras);
 								
-								startActivity(intent);
+								startActivityForResult(intent, C_CREATE);
 								
 							}
 							catch (Exception e)
@@ -192,6 +192,20 @@ public class PropertiesMapActivity extends FragmentActivity implements
 						System.out.println("Cannot retrieve contact info");
 					}
 					break;
+				}
+				case C_CREATE:
+				{
+					Bundle extras = data.getExtras();
+					
+					try
+					{
+						int pages = extras.getInt("Pages");
+						Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", "" + pages);
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}

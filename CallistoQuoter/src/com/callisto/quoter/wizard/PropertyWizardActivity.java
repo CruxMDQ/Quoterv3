@@ -12,6 +12,9 @@ import com.example.android.wizardpager.wizard.ui.StepPagerStrip;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -109,6 +112,7 @@ public class PropertyWizardActivity extends FragmentActivity implements
 			@Override
 			public void onClick(View v)
 			{
+				
 				if (mPager.getCurrentItem() == mCurrentPageSequence.size())
 				{
 					DialogFragment dg = new DialogFragment()
@@ -118,7 +122,26 @@ public class PropertyWizardActivity extends FragmentActivity implements
 						{
 							return new AlertDialog.Builder(getActivity())
 									.setMessage(R.string.submit_confirm_message)
-									.setPositiveButton(R.string.submit_confirm_button, null)
+//									.setPositiveButton(R.string.submit_confirm_button, null)
+									.setPositiveButton(R.string.submit_confirm_button, new OnClickListener()
+									{	
+										@Override
+										public void onClick(DialogInterface dialog, int which)
+										{
+											Intent result = new Intent();
+											int pageIndex = 0;
+	
+											for (Page page : mWizardModel.getCurrentPageSequence())
+											{
+												result.putExtra(page.getTitle(), page.getData());
+												result.putExtra("Page" + pageIndex, page.getTitle());
+											}
+											
+											result.putExtra("Pages", pageIndex);
+											
+											finish();
+										}
+									})
 									.setNegativeButton(android.R.string.cancel, null)
 									.create();
 						}
@@ -132,7 +155,7 @@ public class PropertyWizardActivity extends FragmentActivity implements
 					{
 						mPager.setCurrentItem(mPagerAdapter.getCount() - 1);
 					}
-					else
+					else 
 					{
 						mPager.setCurrentItem(mPager.getCurrentItem() + 1);
 					}
