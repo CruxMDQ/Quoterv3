@@ -6,9 +6,9 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.callisto.quoter.wizard.ui.RoomSizesFragment;
-import com.example.android.wizardpager.wizard.model.ModelCallbacks;
-import com.example.android.wizardpager.wizard.model.Page;
-import com.example.android.wizardpager.wizard.model.ReviewItem;
+import com.callisto.quoter.wizard.model.ModelCallbacks;
+import com.callisto.quoter.wizard.model.Page;
+import com.callisto.quoter.wizard.model.ReviewItem;
 
 public class RoomSizesPage extends Page
 {

@@ -1,9 +1,5 @@
 package com.callisto.quoter.wizard.ui;
 
-import com.callisto.quoter.R;
-import com.callisto.quoter.wizard.model.RoomSizesPage;
-import com.example.android.wizardpager.wizard.ui.PageFragmentCallbacks;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+
+import com.callisto.quoter.R;
+import com.callisto.quoter.wizard.model.RoomSizesPage;
 
 public class RoomSizesFragment extends Fragment
 {

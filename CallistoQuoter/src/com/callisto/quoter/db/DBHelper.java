@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	/*
 	 * VERSION CHANGE IMPLEMENTED ON DATABASE UPGRADE STEP
 	 */
-	private static int version = 9;	// 9	
+	private static int version = 10;	// 9	
 	
 	private static String name = "REDB";
 	private static CursorFactory factory = null;
@@ -115,6 +115,34 @@ public class DBHelper extends SQLiteOpenHelper {
 	private String D_ROOMS_INDEX = "CREATE UNIQUE INDEX " + C_ID
 			+ " ON " + T_ROOMS
 			+ "(" + C_ID + " ASC)";
+	
+	private String T_SERVICES = "SERVICES",
+			C_SERVICE_NAME = "re_serv_name",
+			C_SERVICE_DETAILS = "re_serv_details";
+			;
+	
+	private String D_SERVICES = "create table if not exists "
+			+ T_SERVICES + "("
+			+ C_ID + " integer primary key, "
+			+ C_SERVICE_NAME + " text not null, "
+			+ C_SERVICE_DETAILS + " text" 
+			+ ");";
+	
+	private String D_SERVICES_INDEX = "CREATE UNIQUE INDEX " + C_SERVICE_NAME
+			+ " ON " + T_SERVICES
+			+ "(" + C_SERVICE_NAME + " ASC)";
+	
+	private String T_PROPS_SERVICES = "PROPS_SERVICES",
+			C_SERV_ID = "re_serv_id";
+	
+	private String D_PROPS_SERVICES = "create table if not exists "
+			+ T_PROPS_SERVICES + "("
+			+ C_PROP_ID + " integer not null, "
+			+ C_SERV_ID + " integer not null, "
+			+ " PRIMARY KEY (" + C_PROP_ID + ", " + C_SERV_ID + "), "
+			+ " FOREIGN KEY" + "(" + C_PROP_ID + ")" + " REFERENCES " + T_PROPERTIES + "(" + C_ID + ") ON DELETE CASCADE,"
+			+ " FOREIGN KEY" + "(" + C_SERV_ID + ")" + " REFERENCES " + T_SERVICES + "(" + C_ID + ") ON DELETE CASCADE"
+			+ ");";
 	
 	public DBHelper(Context context)
 	{
@@ -411,5 +439,30 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_PRICE + " INTEGER");
 		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_BUILT + " REAL");
 		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_PARCEL + " REAL");
+		
+		db.execSQL(D_SERVICES);
+		
+		db.execSQL(D_SERVICES_INDEX);
+		
+		db.execSQL(D_PROPS_SERVICES);
+		
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(1, 'TV cable'");
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(2, 'TV satelital'");
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(3, 'Internet'");
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(4, 'Teléfono'");
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(5, 'Monitoreo'");
+		db.execSQL("INSERT INTO " + T_SERVICES
+				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(6, 'Seguridad privada'");
 	}
 }

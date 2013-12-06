@@ -69,6 +69,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
  * 
  * "We'z havin' to chekk out dem, too:"
  * http://stackoverflow.com/questions/14877878/drawing-a-route-between-2-locations-google-maps-api-android-v2 
+ * http://stackoverflow.com/questions/18507043/android-on-activity-result-always-return-0-and-null-intent
  */
 
 /*
@@ -89,7 +90,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 	static public final String C_CITY = "Mar del Plata";
 
-	static public final int C_PICK_CONTACT = 601, C_PICK_IMAGE = 602;
+	static public final int C_PICK_CONTACT = 601, C_PICK_IMAGE = 602, C_PICK_CONTACT_FOR_NEW_PROPERTY = 603;
 
 	String cityName, countryName;
 
@@ -130,7 +131,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		{
 			switch (requestCode)
 			{
-				case C_PICK_CONTACT:
+				case C_PICK_CONTACT_FOR_NEW_PROPERTY:
 				{
 					try
 					{
@@ -199,8 +200,26 @@ public class PropertiesMapActivity extends FragmentActivity implements
 					
 					try
 					{
+//						for (Page page : mWizardModel.getCurrentPageSequence())
+//						{
+//							result.putExtra(page.getTitle(), page.getData());
+//							result.putExtra("Page" + pageIndex, page.getTitle());
+//							pageIndex++;
+//						}
+//						
+//						result.putExtra("Pages", pageIndex);
+
 						int pages = extras.getInt("Pages");
 						Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", "" + pages);
+						
+						for (int i = 0; i < pages; i++)
+						{
+							String page = extras.getString("Page" + i);
+							Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", page);
+							
+							String value = extras.getString(page);
+							Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", value);
+						}
 					}
 					catch(Exception e)
 					{
@@ -333,7 +352,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 			i = new Intent(Intent.ACTION_PICK,
 					Contacts.CONTENT_URI);
 			
-			startActivityForResult(i, C_PICK_CONTACT);
+			startActivityForResult(i, C_PICK_CONTACT_FOR_NEW_PROPERTY);
 
 			return true;
 		}
