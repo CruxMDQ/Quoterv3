@@ -40,7 +40,10 @@ import com.callisto.quoter.R;
 import com.callisto.quoter.async.GeolocationTask;
 import com.callisto.quoter.async.LocaleTask;
 import com.callisto.quoter.db.DBAdapter;
+import com.callisto.quoter.db.OpTypesDBAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
+import com.callisto.quoter.db.PropTypesDBAdapter;
+import com.callisto.quoter.db.ServicesDBAdapter;
 import com.callisto.quoter.mapfragment.CustomSupportMapFragment;
 import com.callisto.quoter.utils.ImageUtils;
 import com.callisto.quoter.wizard.PropertyWizardActivity;
@@ -119,6 +122,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 	protected TextView txtOwnerName;
 	protected TextView txtOwnerPhone;
 	protected ImageView img;
+	
 	// protected TextView txtAddress;
 	protected TextView txtPrice;
 	protected TextView txtBuiltSurface;
@@ -169,18 +173,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 								// txtOwner.setText(Name);
 								// Log.i(this.getClass().toString(), Name);
 
-								Intent intent = new Intent();
-
-								Bundle extras = new Bundle();
-								
-								extras.putString("mContactUri", mContactUri.toString());
-								
-								intent.setClass(this, PropertyWizardActivity.class);
-								
-								intent.putExtras(extras);
-								
-								startActivityForResult(intent, C_CREATE);
-								
+								startWizardActivity();
 							}
 							catch (Exception e)
 							{
@@ -583,6 +576,36 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		// }
 	}
 
+	private ArrayList<String> pullChoicesFromDB(DBAdapter dbAdapter, String columnName)
+	{
+		ArrayList<String> result = new ArrayList<String>();
+		
+		if (dbAdapter != null)
+		{
+			dbAdapter.open();
+			
+			Cursor c = dbAdapter.getList();
+			
+			while (c.moveToNext())
+			{
+				String value = c.getString(c.getColumnIndex(columnName));
+				
+				result.add(value);
+			}
+			
+			c.close();
+			
+			dbAdapter.close();
+
+			return result;
+		}
+		else
+		{
+			throw new NullPointerException("Database adapter NOT initialized!");
+		}
+		
+	}
+
 	private void query()
 	{
 		try
@@ -754,6 +777,33 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		return null;
 	}
 
+	private void startWizardActivity()
+	{
+		Intent intent = new Intent();
+
+		Bundle extras = new Bundle();
+		
+		ArrayList<String> propTypes = pullChoicesFromDB(new PropTypesDBAdapter(this), PropTypesDBAdapter.C_PROP_TYPES_NAME);
+		ArrayList<String> opTypes = pullChoicesFromDB(new OpTypesDBAdapter(this), OpTypesDBAdapter.C_OP_TYPE_NAME);
+		ArrayList<String> servTypes = pullChoicesFromDB(new ServicesDBAdapter(this), ServicesDBAdapter.C_SERVICE_NAME);
+		
+		extras.putString("LabelPropType", PropTypesDBAdapter.LABEL_PROP_TYPES);
+		extras.putString("LabelOpTypes", OpTypesDBAdapter.LABEL_OP_TYPES);
+		extras.putString("LabelServices", ServicesDBAdapter.LABEL_SERVICES);
+
+		extras.putStringArrayList("propTypes", propTypes);
+		extras.putStringArrayList("opTypes", opTypes);
+		extras.putStringArrayList("servTypes", servTypes);
+		
+		extras.putString("mContactUri", mContactUri.toString());
+		
+		intent.setClass(this, PropertyWizardActivity.class);
+		
+		intent.putExtras(extras);
+		
+		startActivityForResult(intent, C_CREATE);
+	}
+	
 	private void view(long id)
 	{
 		Intent i = new Intent(PropertiesMapActivity.this,

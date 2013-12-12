@@ -69,8 +69,11 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wizard_property);
 
-		mWizardModel = new RealEstateWizardModel(this);		
+		Bundle extras = getIntent().getExtras();
 		
+		mWizardModel = new RealEstateWizardModel(this);
+//		mWizardModel = new RealEstateWizardModel(this, extras);		
+	
 		if (savedInstanceState != null)
 		{
 			mWizardModel.load(savedInstanceState.getBundle("model"));
@@ -87,8 +90,7 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		mStepPagerStrip = (StepPagerStrip) findViewById(R.id.strip);
 		
 		mStepPagerStrip.setOnPageSelectedListener(new StepPagerStrip.OnPageSelectedListener()
-		{
-			
+		{	
 			@Override
 			public void onPageStripSelected(int position)
 			{

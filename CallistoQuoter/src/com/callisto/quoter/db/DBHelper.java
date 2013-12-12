@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	/*
 	 * VERSION CHANGE IMPLEMENTED ON DATABASE UPGRADE STEP
 	 */
-	private static int version = 10;	// 9	
+	private static int version = 11;	// 9	
 	
 	private static String name = "REDB";
 	private static CursorFactory factory = null;
@@ -144,6 +144,31 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ " FOREIGN KEY" + "(" + C_SERV_ID + ")" + " REFERENCES " + T_SERVICES + "(" + C_ID + ") ON DELETE CASCADE"
 			+ ");";
 	
+	private String T_OPERATIONS_TYPES = "OPERATIONS_TYPES",
+			C_OP_TYPE_NAME = "re_op_name";
+	
+	private String D_OPERATIONS = "create table if not exists "
+			+ T_OPERATIONS_TYPES + "("
+			+ C_ID + " integer primary key, "
+			+ C_OP_TYPE_NAME + " text not null"
+			+ ");";
+	
+	private String D_OPERATIONS_INDEX = "CREATE UNIQUE INDEX " + C_OP_TYPE_NAME
+			+ " ON " + T_OPERATIONS_TYPES 
+			+ "(" + C_OP_TYPE_NAME + " ASC)";
+	
+	private String T_PROPS_OPS= "PROPS_OPS",
+			C_OP_TYPE_ID = "re_op_type_id";
+	
+	private String D_PROPS_OPS = "create table if not exists "
+			+ T_PROPS_OPS + "("
+			+ C_PROP_ID + " integer not null, "
+			+ C_OP_TYPE_ID + " integer not null, "
+			+ " PRIMARY KEY (" + C_PROP_ID + ", " + C_OP_TYPE_ID + "), "
+			+ " FOREIGN KEY" + "(" + C_PROP_ID + ")" + " REFERENCES " + T_PROPERTIES + "(" + C_ID + ") ON DELETE CASCADE,"
+			+ " FOREIGN KEY" + "(" + C_OP_TYPE_ID + ")" + " REFERENCES " + T_OPERATIONS_TYPES + "(" + C_ID + ") ON DELETE CASCADE"
+			+ ");";
+	
 	public DBHelper(Context context)
 	{
 		super(context, name, factory, version);
@@ -178,6 +203,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		upgradeToVersion8(db);
 		upgradeToVersion9(db);
 		upgradeToVersion10(db);
+		upgradeToVersion11(db);
 	}
 
 	@Override
@@ -276,6 +302,17 @@ public class DBHelper extends SQLiteOpenHelper {
 			try
 			{
 				upgradeToVersion10(db);
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
+		}
+		if (oldVersion < 11)
+		{
+			try
+			{
+				upgradeToVersion11(db);
 			}
 			catch(SQLException e)
 			{
@@ -447,22 +484,49 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(D_PROPS_SERVICES);
 		
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(1, 'TV cable'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(1, 'TV cable')");
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(2, 'TV satelital'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(2, 'TV satelital')");
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(3, 'Internet'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(3, 'Internet')");
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(4, 'TelŽfono'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(4, 'TelŽfono')");
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(5, 'Monitoreo'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(5, 'Monitoreo')");
 		db.execSQL("INSERT INTO " + T_SERVICES
-				+ "(" + C_SERV_ID + ", " + C_SERVICE_NAME + ")"
-				+ "VALUES(6, 'Seguridad privada'");
+				+ "(" + C_ID + ", " + C_SERVICE_NAME + ")"
+				+ "VALUES(6, 'Seguridad privada')");
+	}
+	
+	private void upgradeToVersion11(SQLiteDatabase db)
+	{
+		db.execSQL(D_OPERATIONS);
+		db.execSQL(D_OPERATIONS_INDEX);
+		db.execSQL(D_PROPS_OPS);
+		
+		db.execSQL("INSERT INTO " + T_OPERATIONS_TYPES 
+				+ "(" + C_ID + ", " + C_OP_TYPE_NAME + ")" 
+				+ "VALUES(1, 'Alquiler comercial')" );
+		
+		db.execSQL("INSERT INTO " + T_OPERATIONS_TYPES 
+				+ "(" + C_ID + ", " + C_OP_TYPE_NAME + ")" 
+				+ "VALUES(2, 'Alquiler residencial')" );
+		
+		db.execSQL("INSERT INTO " + T_OPERATIONS_TYPES 
+				+ "(" + C_ID + ", " + C_OP_TYPE_NAME + ")" 
+				+ "VALUES(3, 'Alquiler vacacional')" );
+		
+		db.execSQL("INSERT INTO " + T_OPERATIONS_TYPES 
+				+ "(" + C_ID + ", " + C_OP_TYPE_NAME + ")" 
+				+ "VALUES(4, 'Venta')" );
+		
+		db.execSQL("INSERT INTO " + T_OPERATIONS_TYPES 
+				+ "(" + C_ID + ", " + C_OP_TYPE_NAME + ")" 
+				+ "VALUES(5, 'Permuta')" );
 	}
 }
