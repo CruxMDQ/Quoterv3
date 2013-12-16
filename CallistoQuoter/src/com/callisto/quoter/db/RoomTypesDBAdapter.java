@@ -7,7 +7,8 @@ public class RoomTypesDBAdapter extends DBAdapter
 	/*
 	 * Define constant with table name
 	 */
-	static public final String T_ROOM_TYPES = "ROOM_TYPES";
+	static public final String T_ROOM_TYPES = "ROOM_TYPES",
+			LABEL_ROOM_TYPES = "Tipo de ambiente";
 
 	/*
 	 * Define constants with column names

@@ -16,6 +16,7 @@
 
 package com.callisto.quoter.wizard.model;
 
+import android.app.Service;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * To create an actual wizard model, extend this class and implement
  * {@link #onNewRootPageList()}.
  */
-public abstract class AbstractWizardModel implements ModelCallbacks
+public abstract class AbstractWizardModel extends Service implements ModelCallbacks
 {
 	protected Context mContext;
 
@@ -39,7 +40,8 @@ public abstract class AbstractWizardModel implements ModelCallbacks
 	public AbstractWizardModel(Context context)
 	{
 		mContext = context;
-		mRootPageList = onNewRootPageList();
+//		mRootPageList = onNewRootPageList();
+		mRootPageList = onNewRootPageList(context);
 	}
 
 	/**
@@ -47,6 +49,11 @@ public abstract class AbstractWizardModel implements ModelCallbacks
 	 */
 	protected abstract PageList onNewRootPageList();
 
+	/**
+	 * CUSTOM IMPLEMENTATION TO TRY AND GET THE DAMN DATABULLSHIT WORKING! (It worked! :D )
+	 */
+	protected abstract PageList onNewRootPageList(Context context);
+	
 	@Override
 	public void onPageDataChanged(Page page)
 	{

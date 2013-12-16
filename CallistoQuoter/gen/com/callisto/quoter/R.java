@@ -1313,9 +1313,10 @@ containing a value of this type.
         public static final int dialog_room_type_change=0x7f030024;
         public static final int fragment_page=0x7f030025;
         public static final int fragment_page_customer_info=0x7f030026;
-        public static final int fragment_page_room_size=0x7f030027;
-        public static final int list_item_review=0x7f030028;
-        public static final int support_simple_spinner_dropdown_item=0x7f030029;
+        public static final int fragment_page_property_address_price=0x7f030027;
+        public static final int fragment_page_room_size=0x7f030028;
+        public static final int list_item_review=0x7f030029;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
     }
     public static final class menu {
         public static final int menu_house_detail=0x7f0d0000;
@@ -1384,7 +1385,7 @@ containing a value of this type.
         public static final int auth_client_requested_by_msg=0x7f070010;
         public static final int btn_cancel=0x7f070022;
         public static final int btn_save=0x7f070023;
-        public static final int cancel=0x7f070047;
+        public static final int cancel=0x7f070048;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -1438,16 +1439,16 @@ containing a value of this type.
         find the service-side assets. [CHAR LIMIT=25] 
          */
         public static final int common_signin_button_text_long=0x7f07000d;
-        public static final int display_name=0x7f070041;
+        public static final int display_name=0x7f070042;
         public static final int empty_list=0x7f070024;
-        public static final int finish=0x7f070056;
+        public static final int finish=0x7f070057;
         public static final int floors=0x7f070025;
-        public static final int hint_address_search=0x7f07004e;
+        public static final int hint_address_search=0x7f07004f;
         public static final int hint_dimension_room=0x7f070026;
         public static final int hint_image=0x7f070027;
-        public static final int hint_imgDisplayImage=0x7f07004a;
-        public static final int hint_your_email=0x7f07005b;
-        public static final int hint_your_name=0x7f07005a;
+        public static final int hint_imgDisplayImage=0x7f07004b;
+        public static final int hint_your_email=0x7f07005c;
+        public static final int hint_your_name=0x7f07005b;
         public static final int house_create_notice=0x7f070028;
         public static final int house_create_title=0x7f070029;
         public static final int house_delete_confirm=0x7f07002a;
@@ -1455,46 +1456,47 @@ containing a value of this type.
         public static final int house_delete_title=0x7f07002c;
         public static final int house_edit_notice=0x7f07002d;
         public static final int house_edit_title=0x7f07002e;
-        public static final int label_built_surface=0x7f070050;
+        public static final int label_built_surface=0x7f070051;
         public static final int label_check_confirmed=0x7f070036;
         public static final int label_house_address=0x7f070037;
         public static final int label_house_rating=0x7f070039;
         public static final int label_house_rooms=0x7f070038;
-        public static final int label_parcel_surface=0x7f070051;
-        public static final int label_pick_owner=0x7f07003d;
-        public static final int label_prop_type=0x7f070048;
-        public static final int label_property_operation=0x7f07003a;
-        public static final int label_property_services=0x7f07003c;
-        public static final int label_property_type=0x7f07003b;
-        public static final int label_your_email=0x7f070059;
-        public static final int label_your_name=0x7f070058;
-        public static final int location_search=0x7f07004d;
-        public static final int menu_add_zone=0x7f070053;
+        public static final int label_parcel_surface=0x7f070052;
+        public static final int label_pick_owner=0x7f07003e;
+        public static final int label_prop_type=0x7f070049;
+        public static final int label_property_operation=0x7f07003b;
+        public static final int label_property_price=0x7f07003a;
+        public static final int label_property_services=0x7f07003d;
+        public static final int label_property_type=0x7f07003c;
+        public static final int label_your_email=0x7f07005a;
+        public static final int label_your_name=0x7f070059;
+        public static final int location_search=0x7f07004e;
+        public static final int menu_add_zone=0x7f070054;
         public static final int menu_cancel=0x7f07002f;
         public static final int menu_create_house=0x7f070030;
-        public static final int menu_create_room=0x7f07004c;
+        public static final int menu_create_room=0x7f07004d;
         public static final int menu_delete=0x7f070031;
         public static final int menu_edit=0x7f070032;
-        public static final int menu_location=0x7f070040;
-        public static final int menu_pick_city=0x7f07004f;
+        public static final int menu_location=0x7f070041;
+        public static final int menu_pick_city=0x7f070050;
         public static final int menu_preferences=0x7f070033;
-        public static final int menu_room_add_type=0x7f07004b;
+        public static final int menu_room_add_type=0x7f07004c;
         public static final int menu_save=0x7f070034;
         public static final int menu_view=0x7f070035;
-        public static final int menu_view_zones=0x7f070052;
-        public static final int new_prop_type=0x7f070049;
-        public static final int next=0x7f070054;
-        public static final int ok=0x7f070046;
-        public static final int prev=0x7f070055;
-        public static final int review=0x7f070057;
-        public static final int room_delete_confirm=0x7f070042;
-        public static final int room_delete_notice=0x7f070043;
-        public static final int room_delete_title=0x7f070044;
-        public static final int room_type=0x7f070045;
-        public static final int submit_confirm_button=0x7f07005d;
-        public static final int submit_confirm_message=0x7f07005c;
-        public static final int title_activity_house_detail=0x7f07003e;
-        public static final int title_activity_house_location=0x7f07003f;
+        public static final int menu_view_zones=0x7f070053;
+        public static final int new_prop_type=0x7f07004a;
+        public static final int next=0x7f070055;
+        public static final int ok=0x7f070047;
+        public static final int prev=0x7f070056;
+        public static final int review=0x7f070058;
+        public static final int room_delete_confirm=0x7f070043;
+        public static final int room_delete_notice=0x7f070044;
+        public static final int room_delete_title=0x7f070045;
+        public static final int room_type=0x7f070046;
+        public static final int submit_confirm_button=0x7f07005e;
+        public static final int submit_confirm_message=0x7f07005d;
+        public static final int title_activity_house_detail=0x7f07003f;
+        public static final int title_activity_house_location=0x7f070040;
     }
     public static final class style {
         /** 

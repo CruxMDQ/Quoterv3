@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -69,10 +70,9 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wizard_property);
 
-		Bundle extras = getIntent().getExtras();
+//		Bundle extras = getIntent().getExtras();
 		
 		mWizardModel = new RealEstateWizardModel(this);
-//		mWizardModel = new RealEstateWizardModel(this, extras);		
 	
 		if (savedInstanceState != null)
 		{
@@ -157,7 +157,7 @@ public class PropertyWizardActivity extends FragmentActivity implements
 										public void onClick(DialogInterface dialog, int which)
 										{
 											Intent result = new Intent();
-											int pageIndex = 0;
+//											int pageIndex = 0;
 	
 //											for (Page page : mWizardModel.getCurrentPageSequence())
 //											{
@@ -213,11 +213,37 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											});
 											/* "End o' dat code chunk. */
 											
+											// Source: http://stackoverflow.com/questions/6453204/caused-by-java-util-nosuchelementexception
+											StringTokenizer tokenizer;
+
 											for (int i = 0; i < reviewItems.size(); i++)
 											{
 												ReviewItem t = reviewItems.get(i);
+											
+												tokenizer = new StringTokenizer (t.getDisplayValue(), ",");	// ", "
 												
+												String value;
 												
+												int valueCount = 0;
+												
+												while (tokenizer.hasMoreTokens())
+												{	
+													String title = t.getTitle();
+													
+													if (title.compareTo("Direcci—n") != 0)
+													{
+														value = tokenizer.nextToken().trim();
+														
+														Log.d(this.getClass().toString(), value);
+													
+														valueCount++;
+													}
+													else
+													{
+														Log.d(this.getClass().toString(), t.getDisplayValue());
+														break;
+													}
+												}
 											}
 											
 											setResult(RESULT_OK, result);

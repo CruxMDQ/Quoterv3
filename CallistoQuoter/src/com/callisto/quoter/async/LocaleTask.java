@@ -11,6 +11,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class LocaleTask extends AsyncTask <LatLng, Void, Address>
 {
@@ -47,6 +48,10 @@ public class LocaleTask extends AsyncTask <LatLng, Void, Address>
         catch (IOException e) 
         {
             e.printStackTrace();
+        }
+        catch (Error err)
+        {
+        	Log.d(this.getClass().toString(), "" + err.getMessage());
         }
 		return null;
 	}

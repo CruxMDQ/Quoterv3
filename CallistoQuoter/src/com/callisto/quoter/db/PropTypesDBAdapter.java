@@ -9,7 +9,7 @@ public class PropTypesDBAdapter extends DBAdapter
 	 * Define constant with table name
 	 */
 	static public final String T_PROP_TYPES = "PROP_TYPES",
-			LABEL_PROP_TYPES = "Tipo de operaci—n";
+			LABEL_PROP_TYPES = "Tipo de propiedad";
 	
 	/*
 	 * Define constants with column names

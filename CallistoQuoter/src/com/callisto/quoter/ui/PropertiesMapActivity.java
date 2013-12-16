@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 
 import android.app.Dialog;
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -82,9 +83,8 @@ import com.google.android.gms.maps.model.PolygonOptions;
  */
 
 public class PropertiesMapActivity extends FragmentActivity implements
-		OnMapClickListener, OnMapLongClickListener, // Added as part of code
-													// being evaluated for
-													// zonification
+		// Added as part of code being evaluated for zonification
+		OnMapClickListener, OnMapLongClickListener,
 		LocationListener
 {
 	static public final String C_MODE = "mode";
@@ -473,6 +473,10 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		{
 			e.printStackTrace();
 		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void initializeMap()
@@ -576,35 +580,35 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		// }
 	}
 
-	private ArrayList<String> pullChoicesFromDB(DBAdapter dbAdapter, String columnName)
-	{
-		ArrayList<String> result = new ArrayList<String>();
-		
-		if (dbAdapter != null)
-		{
-			dbAdapter.open();
-			
-			Cursor c = dbAdapter.getList();
-			
-			while (c.moveToNext())
-			{
-				String value = c.getString(c.getColumnIndex(columnName));
-				
-				result.add(value);
-			}
-			
-			c.close();
-			
-			dbAdapter.close();
-
-			return result;
-		}
-		else
-		{
-			throw new NullPointerException("Database adapter NOT initialized!");
-		}
-		
-	}
+//	private ArrayList<String> pullChoicesFromDB(DBAdapter dbAdapter, String columnName)
+//	{
+//		ArrayList<String> result = new ArrayList<String>();
+//		
+//		if (dbAdapter != null)
+//		{
+//			dbAdapter.open();
+//			
+//			Cursor c = dbAdapter.getList();
+//			
+//			while (c.moveToNext())
+//			{
+//				String value = c.getString(c.getColumnIndex(columnName));
+//				
+//				result.add(value);
+//			}
+//			
+//			c.close();
+//			
+//			dbAdapter.close();
+//
+//			return result;
+//		}
+//		else
+//		{
+//			throw new NullPointerException("Database adapter NOT initialized!");
+//		}
+//		
+//	}
 
 	private void query()
 	{
@@ -783,17 +787,17 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 		Bundle extras = new Bundle();
 		
-		ArrayList<String> propTypes = pullChoicesFromDB(new PropTypesDBAdapter(this), PropTypesDBAdapter.C_PROP_TYPES_NAME);
-		ArrayList<String> opTypes = pullChoicesFromDB(new OpTypesDBAdapter(this), OpTypesDBAdapter.C_OP_TYPE_NAME);
-		ArrayList<String> servTypes = pullChoicesFromDB(new ServicesDBAdapter(this), ServicesDBAdapter.C_SERVICE_NAME);
-		
-		extras.putString("LabelPropType", PropTypesDBAdapter.LABEL_PROP_TYPES);
-		extras.putString("LabelOpTypes", OpTypesDBAdapter.LABEL_OP_TYPES);
-		extras.putString("LabelServices", ServicesDBAdapter.LABEL_SERVICES);
-
-		extras.putStringArrayList("propTypes", propTypes);
-		extras.putStringArrayList("opTypes", opTypes);
-		extras.putStringArrayList("servTypes", servTypes);
+//		ArrayList<String> propTypes = pullChoicesFromDB(new PropTypesDBAdapter(this), PropTypesDBAdapter.C_PROP_TYPES_NAME);
+//		ArrayList<String> opTypes = pullChoicesFromDB(new OpTypesDBAdapter(this), OpTypesDBAdapter.C_OP_TYPE_NAME);
+//		ArrayList<String> servTypes = pullChoicesFromDB(new ServicesDBAdapter(this), ServicesDBAdapter.C_SERVICE_NAME);
+//		
+//		extras.putString("LabelPropType", PropTypesDBAdapter.LABEL_PROP_TYPES);
+//		extras.putString("LabelOpTypes", OpTypesDBAdapter.LABEL_OP_TYPES);
+//		extras.putString("LabelServices", ServicesDBAdapter.LABEL_SERVICES);
+//
+//		extras.putStringArrayList("propTypes", propTypes);
+//		extras.putStringArrayList("opTypes", opTypes);
+//		extras.putStringArrayList("servTypes", servTypes);
 		
 		extras.putString("mContactUri", mContactUri.toString());
 		
@@ -812,5 +816,29 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		i.putExtra(PropDBAdapter.C_ID, id);
 
 		startActivityForResult(i, C_VIEW);
+	}
+	
+	// TODO Figure a way to update the latlng data of a property
+	private void updateProp(int propId)
+	{
+		try
+		{
+			ContentValues reg = new ContentValues();
+		
+			Toast.makeText(PropertiesMapActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
+	
+			reg.put(PropDBAdapter.C_ID, propId);
+
+			reg.put(PropDBAdapter.C_LATITUDE, mCurrentLat);
+			reg.put(PropDBAdapter.C_LONGITUDE, mCurrentLong);
+			
+//				long resultCode = mHouses.update(reg);
+//				Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			
+		}
+		catch(SQLException e)
+		{
+			Log.i(this.getClass().toString(), e.getMessage());
+		}
+		
 	}
 }

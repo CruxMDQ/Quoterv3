@@ -29,6 +29,7 @@
     <string name="label_house_address">Dirección</string>
     <string name="label_house_rooms">Ambientes</string>
     <string name="label_house_rating">Calidad</string>
+    <string name="label_property_price">Precio</string>
     <string name="label_property_operation">Tipo de operación</string>
     <string name="label_property_type">Tipo de propiedad</string>
     <string name="label_property_services">Servicios</string>
