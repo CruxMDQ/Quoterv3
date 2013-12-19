@@ -30,12 +30,16 @@ import android.widget.Toast;
 
 import com.callisto.quoter.R;
 import com.callisto.quoter.db.PropDBAdapter;
+import com.callisto.quoter.db.PropTypesDBAdapter;
+import com.callisto.quoter.db.PropsOpsDBAdapter;
+import com.callisto.quoter.db.PropsRoomsDBAdapter;
 import com.callisto.quoter.ui.PropDetailActivity;
 import com.callisto.quoter.ui.PropListActivity;
 import com.callisto.quoter.utils.ImageUtils;
 import com.callisto.quoter.wizard.model.AbstractWizardModel;
 import com.callisto.quoter.wizard.model.ModelCallbacks;
 import com.callisto.quoter.wizard.model.Page;
+import com.callisto.quoter.wizard.model.PropertyAddressPage;
 import com.callisto.quoter.wizard.model.ReviewItem;
 import com.callisto.quoter.wizard.ui.PageFragmentCallbacks;
 import com.callisto.quoter.wizard.ui.ReviewFragment;
@@ -62,7 +66,6 @@ public class PropertyWizardActivity extends FragmentActivity implements
 	
 	private Uri mContactUri;
 	
-	private PropDBAdapter mProperties;
 	private long mPropId;
 	
 	public void onCreate(Bundle savedInstanceState)
@@ -105,12 +108,6 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		
 		mContactUri = Uri.parse(getIntent().getStringExtra("mContactUri"));
 		
-		/*
-		 * Creating houses adapter
-		 */
-		mProperties = new PropDBAdapter(this);
-		mProperties.open();
-					
 		btnNext = (Button) findViewById(R.id.next_button);
 		btnPrevious = (Button) findViewById(R.id.prev_button);
 //		btnDone = (Button) findViewById(R.id.done_button);
@@ -159,40 +156,41 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											Intent result = new Intent();
 //											int pageIndex = 0;
 	
-//											for (Page page : mWizardModel.getCurrentPageSequence())
-//											{
-//												String t = page.getData().getString(Page.SIMPLE_DATA_KEY);
-//												
-//												// t == null => page contains multiple choices?
-//												if (t != null)
-//												{
-//													// result.putExtra(page.getTitle(), t);
-//													// result.putExtra("choiceCount", 1);
-//
-//													result.putExtra(page.getTitle(), 1);
-//													result.putExtra(page.getTitle() + ", answer " + 1, t);
-//												}
-//												else
-//												{
-//													// mPage.getData().putStringArrayList(Page.SIMPLE_DATA_KEY, selections);
-//													java.util.ArrayList<String> selections = page.getData().getStringArrayList(Page.SIMPLE_DATA_KEY);
-//													
-//													int choices = selections.size();
-//													String t2;
-//													result.putExtra(page.getTitle(), choices);
-//													
-//													for (int i = 0; i < choices; i++)
-//													{
-//														t2 = selections.get(i);
-//														// result.putExtra(page.getTitle(), t2);
-//														result.putExtra(page.getTitle() + ", answer " + i, t2);
-//													}
-//												}
-//												result.putExtra("Page" + pageIndex, page.getTitle());
-//												pageIndex++;
-//											}
-//											
-//											result.putExtra("Pages", pageIndex);
+											/*
+											for (Page page : mWizardModel.getCurrentPageSequence())
+											{
+												String t = page.getData().getString(Page.SIMPLE_DATA_KEY);
+												
+												// t == null => page contains multiple choices?
+												if (t != null)
+												{
+													// result.putExtra(page.getTitle(), t);
+													// result.putExtra("choiceCount", 1);
+
+													result.putExtra(page.getTitle(), 1);
+													result.putExtra(page.getTitle() + ", answer " + 1, t);
+												}
+												else
+												{
+													// mPage.getData().putStringArrayList(Page.SIMPLE_DATA_KEY, selections);
+													java.util.ArrayList<String> selections = page.getData().getStringArrayList(Page.SIMPLE_DATA_KEY);
+													
+													int choices = selections.size();
+													String t2;
+													result.putExtra(page.getTitle(), choices);
+													
+													for (int i = 0; i < choices; i++)
+													{
+														t2 = selections.get(i);
+														// result.putExtra(page.getTitle(), t2);
+														result.putExtra(page.getTitle() + ", answer " + i, t2);
+													}
+												}
+												result.putExtra("Page" + pageIndex, page.getTitle());
+												pageIndex++;
+											}
+											
+											result.putExtra("Pages", pageIndex); */
 											
 											/* "Dis 'ere chunk o' code pulls reviw'd items from... uh... dat 'wizardModel' fing." */
 											ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
@@ -200,6 +198,16 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											for (Page page : mWizardModel.getCurrentPageSequence())
 											{
 												page.getReviewItems(reviewItems);
+
+												for (int i = 0; i < reviewItems.size(); i++)
+												{
+													ReviewItem item = reviewItems.get(i);
+													
+//													if (item.getDBTable() == page.getDBTable())
+//													{
+//														save(item, page.getDBTable());
+//													}
+												}
 											}
 											
 											Collections.sort(reviewItems, new Comparator<ReviewItem>()
@@ -218,9 +226,11 @@ public class PropertyWizardActivity extends FragmentActivity implements
 
 											for (int i = 0; i < reviewItems.size(); i++)
 											{
-												ReviewItem t = reviewItems.get(i);
+												ReviewItem item = reviewItems.get(i);
 											
-												tokenizer = new StringTokenizer (t.getDisplayValue(), ",");	// ", "
+												save(item);
+												
+												tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
 												
 												String value;
 												
@@ -228,19 +238,19 @@ public class PropertyWizardActivity extends FragmentActivity implements
 												
 												while (tokenizer.hasMoreTokens())
 												{	
-													String title = t.getTitle();
+													String title = item.getTitle();
 													
 													if (title.compareTo("Direcci—n") != 0)
 													{
 														value = tokenizer.nextToken().trim();
 														
-														Log.d(this.getClass().toString(), value);
+														Log.d(this.getClass().toString(), item.getTitle() + ": " + value);
 													
 														valueCount++;
 													}
 													else
 													{
-														Log.d(this.getClass().toString(), t.getDisplayValue());
+														Log.d(this.getClass().toString(), item.getTitle() + ": " + item.getDisplayValue());
 														break;
 													}
 												}
@@ -379,91 +389,71 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		return false;
 	}
 
-	/***
-	 * Saves form content into database.
-	 */
-	private void save() 
+	private void save(ReviewItem item)
 	{
-		ContentValues reg = new ContentValues();
-//		
-//		reg.put(PropDBAdapter.C_ADDRESS, txtAddress.getText().toString());
-//		reg.put(PropDBAdapter.C_BEDROOMS, Integer.parseInt(txtBedrooms.getText().toString()));
-//
-		/*
-		 * DATABASE VERSION 4
-		 */
-		try
-		{
+		Log.d(this.getClass().toString(), item.getDBTable() + ", " + item.getDisplayValue());
+		
+		if (item.getDBTable() == PropDBAdapter.T_PROPERTIES)
+		{	
+			PropDBAdapter properties = new PropDBAdapter(this);
+
+			ContentValues reg = new ContentValues();
+			
+			reg.put(PropDBAdapter.C_ADDRESS, item.getDisplayValue());
 			reg.put(PropDBAdapter.C_OWNER_URI, mContactUri.toString());
+
+			try
+			{
+				properties.open();
+				mPropId = properties.insert(reg);
+				properties.close();
+
+				Toast.makeText(PropertyWizardActivity.this, R.string.house_create_notice + " with ID = " + mPropId, Toast.LENGTH_LONG).show();
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
 		}
-		catch(Exception e)
-		{
-			Log.i(this.getClass().toString() + ".save", "Owner URI missing or cannot be retrieved");
-		}
-//		
-//		/*
-//		 * DATABASE VERSION 5
-//		 */
-//		reg.put(PropDBAdapter.C_LATITUDE, mCurrentLat);
-//		reg.put(PropDBAdapter.C_LONGITUDE, mCurrentLong);
-//		
-//		/*
-//		 * DATABASE VERSION 6
-//		 */
-//		try
-//		{
-//			byte[] storedPic = ImageUtils.bitmapToByteArray(mBitmap);
-//			
-//			reg.put(PropDBAdapter.C_IMAGE, storedPic);
-//		}
-//		catch(Exception e)
-//		{
-//			Log.i(this.getClass().toString() + ".save", "Cannot put image into ContentValues object");
-//		}
-//		
-//		/*
-//		 * CHECKBOX IMPLEMENTED ON LESSON 9
-//		 */		
-//		if (chkConfirmed.isChecked())
-//		{
-//			reg.put(PropDBAdapter.C_CONFIRMED, 1);
-//		}
-//		else
-//		{
-//			reg.put(PropDBAdapter.C_CONFIRMED, 0);
-//		}
-//		
-//		/*
-//		 * SPINNER IMPLEMENTED ON LESSON 10
-//		 */
-////		reg.put(PropDBAdapter.C_PROP_RATING_ID, spinnerRating.getSelectedItemId());
-//		reg.put(PropDBAdapter.C_RATING_ID, mRatingId);
+//		Log.i(this.getClass().toString(), "Performing room insertion");
+//		mRoomId = mRooms.insert(reg);
 //
-//		/*
-//		 * MUST use the definition at this DB adapter because of differing column names
-//		 * 
-//		 * FOLLOW-UP: after setting up the onSelectedItemListener on the spinner, is this really necessary? 
-//		 */
-////		mPropTypeId = Long.parseLong(spinnerType.getSelectedItemId());
-//		Log.i(this.getClass().toString(), "mPropTypeId: " + mPropTypeId);
+//		ContentValues propRooms = new ContentValues();
 //		
-//		reg.put(PropDBAdapter.C_PROP_TYPE_ID, mPropTypeId);
-////		reg.put(PropDBAdapter.C_PROP_TYPE_ID, spinnerType.getSelectedItemId());
+//		propRooms.put(PropsRoomsDBAdapter.C_PROP_ID, mPropId);
+//		propRooms.put(PropsRoomsDBAdapter.C_ROOM_ID, mRoomId);
 //
-		/*
-		 * Save content into database
-		 */
-		try
+//		mPropRooms.insert(propRooms);
+		
+		if (item.getDBTable() == PropTypesDBAdapter.T_PROP_TYPES)
 		{
-			mPropId = mProperties.insert(reg);
-			Toast.makeText(PropertyWizardActivity.this, R.string.house_create_notice + " with ID = " + mPropId, Toast.LENGTH_LONG).show();
+			ContentValues reg = new ContentValues();
+			
+			PropTypesDBAdapter propTypes = new PropTypesDBAdapter(this);
+			
+			propTypes.open();
+			long val = propTypes.getId(item.getDisplayValue(), " ");
+			propTypes.close();
+			
+			reg.put(PropDBAdapter.C_ID, mPropId);
+			reg.put(PropDBAdapter.C_PROP_TYPE_ID, val);
+			
+			try
+			{
+				PropDBAdapter properties = new PropDBAdapter(this);
+				
+				properties.open();
+				properties.update(reg);
+				properties.close();
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
 		}
-		catch(SQLException e)
-		{
-			Log.i(this.getClass().toString(), e.getMessage());
-		}
+		
 	}
-	
+
 	private void updateBottomBar()
 	{
 		int position = mPager.getCurrentItem();

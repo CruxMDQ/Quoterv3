@@ -1313,10 +1313,11 @@ containing a value of this type.
         public static final int dialog_room_type_change=0x7f030024;
         public static final int fragment_page=0x7f030025;
         public static final int fragment_page_customer_info=0x7f030026;
-        public static final int fragment_page_property_address_price=0x7f030027;
-        public static final int fragment_page_room_size=0x7f030028;
-        public static final int list_item_review=0x7f030029;
-        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
+        public static final int fragment_page_property_address=0x7f030027;
+        public static final int fragment_page_property_address_price=0x7f030028;
+        public static final int fragment_page_room_size=0x7f030029;
+        public static final int list_item_review=0x7f03002a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002b;
     }
     public static final class menu {
         public static final int menu_house_detail=0x7f0d0000;

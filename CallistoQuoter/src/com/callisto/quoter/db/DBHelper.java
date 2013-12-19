@@ -21,14 +21,14 @@ public class DBHelper extends SQLiteOpenHelper {
 			C_ID = "_id",
 			C_IMAGE = "re_image",
 			C_ADDRESS = "re_address",
-			C_BEDROOMS = "re_bedrooms",
+//			C_BEDROOMS = "re_bedrooms",
 			C_CONFIRMED = "re_confirmed",
 			C_RATING_ID = "re_rating_id",
 			C_OWNER_URI = "re_owner_uri",
 			C_LATITUDE = "re_latitude",
 			C_LONGITUDE = "re_longitude",
 			C_TYPE_ID = "re_prop_type_id",
-			C_PRICE = "re_price",
+//			C_PRICE = "re_price",
 			C_SURFACE_BUILT = "re_surface_built",
 			C_SURFACE_PARCEL = "re_surface_parcel",
 			
@@ -39,8 +39,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private String D_PROPERTIES = "CREATE TABLE " + T_PROPERTIES + "(" 
 			+ C_ID + " INTEGER PRIMARY KEY, "
-			+ C_ADDRESS + " TEXT NOT NULL, "
-			+ C_BEDROOMS + " INTEGER NOT NULL)";
+			+ C_ADDRESS + " TEXT NOT NULL "
+//			+ C_BEDROOMS + " INTEGER NOT NULL" 
+			+ ")";
 	
 	private String D_PROP_INDEX = "CREATE UNIQUE INDEX " + C_ADDRESS 
 			+ " ON " + T_PROPERTIES 
@@ -133,12 +134,14 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ "(" + C_SERVICE_NAME + " ASC)";
 	
 	private String T_PROPS_SERVICES = "PROPS_SERVICES",
-			C_SERV_ID = "re_serv_id";
+			C_SERV_ID = "re_serv_id",
+			C_PRICE = "re_price";
 	
 	private String D_PROPS_SERVICES = "create table if not exists "
 			+ T_PROPS_SERVICES + "("
 			+ C_PROP_ID + " integer not null, "
 			+ C_SERV_ID + " integer not null, "
+			+ C_PRICE + " integer,"
 			+ " PRIMARY KEY (" + C_PROP_ID + ", " + C_SERV_ID + "), "
 			+ " FOREIGN KEY" + "(" + C_PROP_ID + ")" + " REFERENCES " + T_PROPERTIES + "(" + C_ID + ") ON DELETE CASCADE,"
 			+ " FOREIGN KEY" + "(" + C_SERV_ID + ")" + " REFERENCES " + T_SERVICES + "(" + C_ID + ") ON DELETE CASCADE"
@@ -183,9 +186,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		db.execSQL(D_PROP_INDEX);
 		
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Puan 1917', 1)");
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Crocce 1853', 2)");
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Formosa 4910', 2)");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Puan 1917', 1)");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Crocce 1853', 2)");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Formosa 4910', 2)");
+
+		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Puan 1917')");
+		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Crocce 1853')");
+		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Formosa 4910')");
 
 		Log.i(this.getClass().toString(), "Initial data inserted");
 		
@@ -473,7 +480,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	
 	private void upgradeToVersion10(SQLiteDatabase db)
 	{
-		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_PRICE + " INTEGER");
+//		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_PRICE + " INTEGER");
 		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_BUILT + " REAL");
 		db.execSQL("ALTER TABLE " + T_PROPERTIES + " ADD " + C_SURFACE_PARCEL + " REAL");
 		

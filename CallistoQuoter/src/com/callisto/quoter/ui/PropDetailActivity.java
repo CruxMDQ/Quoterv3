@@ -1015,7 +1015,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		mCursorHouses = mHouses.getRecord(id);
 		
 		txtAddress.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_ADDRESS)));
-		txtBedrooms.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_BEDROOMS)));
+//		txtBedrooms.setText(mCursorHouses.getString(mCursorHouses.getColumnIndex(PropDBAdapter.C_BEDROOMS)));
 
 		try
 		{
@@ -1161,7 +1161,7 @@ public class PropDetailActivity extends Activity implements LocationListener
 		ContentValues reg = new ContentValues();
 		
 		reg.put(PropDBAdapter.C_ADDRESS, txtAddress.getText().toString());
-		reg.put(PropDBAdapter.C_BEDROOMS, Integer.parseInt(txtBedrooms.getText().toString()));
+//		reg.put(PropDBAdapter.C_BEDROOMS, Integer.parseInt(txtBedrooms.getText().toString()));
 
 		/*
 		 * DATABASE VERSION 4

@@ -29,12 +29,19 @@ public class ReviewItem
 	private String mTitle;
 	private String mDisplayValue;
 	private String mPageKey;
+	private String mDBTable;
 
 	public ReviewItem(String title, String displayValue, String pageKey)
 	{
 		this(title, displayValue, pageKey, DEFAULT_WEIGHT);
 	}
-
+	
+	public ReviewItem(String title, String displayValue, String pageKey, 
+			String dbField)
+	{
+		this(title, displayValue, pageKey, DEFAULT_WEIGHT, dbField);
+	}
+	
 	public ReviewItem(String title, String displayValue, String pageKey,
 			int weight)
 	{
@@ -43,7 +50,17 @@ public class ReviewItem
 		mPageKey = pageKey;
 		mWeight = weight;
 	}
-
+	
+	public ReviewItem(String title, String displayValue, String pageKey,
+			int weight, String dbField)
+	{
+		mTitle = title;
+		mDisplayValue = displayValue;
+		mPageKey = pageKey;
+		mWeight = weight;
+		mDBTable = dbField;
+	}
+	
 	public String getDisplayValue()
 	{
 		return mDisplayValue;
@@ -83,4 +100,15 @@ public class ReviewItem
 	{
 		mWeight = weight;
 	}
+
+	public String getDBTable()
+	{
+		return mDBTable;
+	}
+
+	public void setDBTable(String mDBField)
+	{
+		this.mDBTable = mDBField;
+	}
+	
 }

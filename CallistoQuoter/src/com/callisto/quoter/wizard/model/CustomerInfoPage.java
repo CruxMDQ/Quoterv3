@@ -50,6 +50,13 @@ public class CustomerInfoPage extends Page
 		dest.add(new ReviewItem("Your email", mData.getString(EMAIL_DATA_KEY),
 				getKey(), -1));
 	}
+	
+	@Override
+	public void getReviewItems(ArrayList<ReviewItem> dest, String dbField)
+	{
+		// This field has no associated 'type' table, so it returns nothing
+		return;
+	}
 
 	@Override
 	public boolean isCompleted()

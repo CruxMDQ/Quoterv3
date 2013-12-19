@@ -31,6 +31,11 @@ public class MultipleFixedChoicePage extends SingleFixedChoicePage
 	{
 		super(callbacks, title);
 	}
+	
+	public MultipleFixedChoicePage(ModelCallbacks callbacks, String title, String dbTable)
+	{
+		super(callbacks, title, dbTable);
+	}
 
 	@Override
 	public Fragment createFragment()
@@ -57,7 +62,8 @@ public class MultipleFixedChoicePage extends SingleFixedChoicePage
 			}
 		}
 
-		dest.add(new ReviewItem(getTitle(), sb.toString(), getKey()));
+		dest.add(new ReviewItem(getTitle(), sb.toString(), getKey(), this.getDBTable()));
+//		dest.add(new ReviewItem(getTitle(), sb.toString(), getKey()));
 	}
 
 	@Override

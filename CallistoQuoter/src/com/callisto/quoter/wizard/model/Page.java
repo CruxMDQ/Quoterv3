@@ -41,11 +41,19 @@ public abstract class Page implements PageTreeNode
 	protected String mTitle;
 	protected boolean mRequired = false;
 	protected String mParentKey;
+	protected String mDBTable;
 
 	protected Page(ModelCallbacks callbacks, String title)
 	{
 		mCallbacks = callbacks;
 		mTitle = title;
+	}
+	
+	protected Page(ModelCallbacks callbacks, String title, String dbTable)
+	{
+		mCallbacks = callbacks;
+		mTitle = title;
+		mDBTable = dbTable;
 	}
 
 	public Bundle getData()
@@ -89,6 +97,8 @@ public abstract class Page implements PageTreeNode
 
 	public abstract void getReviewItems(ArrayList<ReviewItem> dest);
 
+	public abstract void getReviewItems(ArrayList<ReviewItem> dest, String dbField);
+	
 	public boolean isCompleted()
 	{
 		return true;
@@ -109,5 +119,15 @@ public abstract class Page implements PageTreeNode
 	{
 		mRequired = required;
 		return this;
+	}
+
+	public String getDBTable()
+	{
+		return mDBTable;
+	}
+
+	public void setDBTable(String mDBTable)
+	{
+		this.mDBTable = mDBTable;
 	}
 }

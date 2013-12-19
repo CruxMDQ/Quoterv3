@@ -36,6 +36,12 @@ public class SingleFixedChoicePage extends Page
 		super(callbacks, title);
 	}
 
+	public SingleFixedChoicePage(ModelCallbacks callbacks, String title,
+			String dbTable)
+	{
+		super(callbacks, title, dbTable);
+	}
+
 	@Override
 	public Fragment createFragment()
 	{
@@ -55,8 +61,17 @@ public class SingleFixedChoicePage extends Page
 	@Override
 	public void getReviewItems(ArrayList<ReviewItem> dest)
 	{
+//		dest.add(new ReviewItem(getTitle(), mData.getString(SIMPLE_DATA_KEY),
+//				getKey()));
+
+		dest.add(new ReviewItem(getTitle(), mData.getString(SIMPLE_DATA_KEY), getKey(), this.getDBTable()));
+	}
+	
+	@Override
+	public void getReviewItems(ArrayList <ReviewItem> dest, String dbField)
+	{
 		dest.add(new ReviewItem(getTitle(), mData.getString(SIMPLE_DATA_KEY),
-				getKey()));
+				getKey(), dbField));		
 	}
 
 	@Override

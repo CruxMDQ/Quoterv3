@@ -29,11 +29,28 @@ public class RoomSizesPage extends Page
 	@Override
 	public void getReviewItems(ArrayList<ReviewItem> dest)
 	{
+//		dest.add(new ReviewItem("Dimensi—n 1",
+//				mData.getString(ROOM_SIZE_X_KEY), getKey(), -1));
+//
+//		dest.add(new ReviewItem("Dimensi—n 2",
+//				mData.getString(ROOM_SIZE_Y_KEY), getKey(), -1));
+		
 		dest.add(new ReviewItem("Dimensi—n 1",
-				mData.getString(ROOM_SIZE_X_KEY), getKey(), -1));
+				mData.getString(ROOM_SIZE_X_KEY), getKey(), -1, this.getDBTable()));
 
 		dest.add(new ReviewItem("Dimensi—n 2",
-				mData.getString(ROOM_SIZE_Y_KEY), getKey(), -1));
+				mData.getString(ROOM_SIZE_Y_KEY), getKey(), -1, this.getDBTable()));
+		
+	}
+
+	@Override
+	public void getReviewItems(ArrayList<ReviewItem> dest, String dbField)
+	{
+		dest.add(new ReviewItem("Dimensi—n 1",
+				mData.getString(ROOM_SIZE_X_KEY), getKey(), -1, dbField));
+
+		dest.add(new ReviewItem("Dimensi—n 2",
+				mData.getString(ROOM_SIZE_Y_KEY), getKey(), -1, dbField));
 	}
 
 	@Override

@@ -11,12 +11,13 @@ import android.os.IBinder;
 import com.callisto.quoter.R;
 import com.callisto.quoter.db.DBAdapter;
 import com.callisto.quoter.db.OpTypesDBAdapter;
+import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.PropTypesDBAdapter;
 import com.callisto.quoter.db.ServicesDBAdapter;
 import com.callisto.quoter.wizard.model.AbstractWizardModel;
 import com.callisto.quoter.wizard.model.MultipleFixedChoicePage;
 import com.callisto.quoter.wizard.model.PageList;
-import com.callisto.quoter.wizard.model.PropertyAddressNPricePage;
+import com.callisto.quoter.wizard.model.PropertyAddressPage;
 import com.callisto.quoter.wizard.model.SingleFixedChoicePage;
 
 // Original template: WizardPagerSource/SandwichWizardModel
@@ -66,19 +67,25 @@ public class RealEstateWizardModel extends AbstractWizardModel
 		servicesArray = servicesList.toArray(servicesArray);
 		
 	    return new PageList(
-	    		new PropertyAddressNPricePage(
-	    				this, "Datos b‡sicos"),
+	    		new PropertyAddressPage(
+	    				this, "Datos b‡sicos", PropDBAdapter.T_PROPERTIES),
 	    		
 	    		new SingleFixedChoicePage(
-	    				this, PropTypesDBAdapter.LABEL_PROP_TYPES).setChoices(		// "Tipo de propiedad" // getResources().getString(R.string.label_property_type)
+	    				this, 
+	    				PropTypesDBAdapter.LABEL_PROP_TYPES, 
+	    				PropTypesDBAdapter.T_PROP_TYPES).setChoices(		// "Tipo de propiedad" // getResources().getString(R.string.label_property_type)
 	    						propTypesArray),
 
 	    		new MultipleFixedChoicePage(
-	    				this, OpTypesDBAdapter.LABEL_OP_TYPES).setChoices(		// "Tipo de operaciones" // getResources().getString(R.string.label_property_operation)
+	    				this, 
+	    				OpTypesDBAdapter.LABEL_OP_TYPES,
+	    				OpTypesDBAdapter.T_OPERATIONS).setChoices(		// "Tipo de operaciones" // getResources().getString(R.string.label_property_operation)
 	    						opTypesArray),
 	    						
 	    		new MultipleFixedChoicePage(
-	    				this, ServicesDBAdapter.LABEL_SERVICES).setChoices(		// "Servicios disponibles"
+	    				this, 
+	    				ServicesDBAdapter.LABEL_SERVICES,
+	    				ServicesDBAdapter.T_SERVICES).setChoices(		// "Servicios disponibles"
 	    						servicesArray)
 	    		);
 	}

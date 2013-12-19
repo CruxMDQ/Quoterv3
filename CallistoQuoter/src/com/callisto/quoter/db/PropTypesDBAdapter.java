@@ -25,6 +25,11 @@ public class PropTypesDBAdapter extends DBAdapter
 			C_PROP_TYPES_NAME });
 	}
 	
+	public long getId(String filter)
+	{
+		return super.getId(filter, C_PROP_TYPES_NAME);
+	}
+	
 	/***
 	 * Inserts values into a new table record.
 	 * @param reg The set of values to insert.
