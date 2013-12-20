@@ -100,18 +100,25 @@ public abstract class DBAdapter
 	 */
 	public long getId(String filter, String columnName) throws SQLException
 	{
-		long result;
+		long result = 0;
+
+//		String query = "SELECT " + C_ID + " FROM " + this.getManagedTable()
+//				+ " WHERE " + columnName + " = " + filter;
+		
+		Cursor c = this.getCursor();
 
 //		Cursor c = db.rawQuery(
 //				"SELECT " + C_ID + " FROM " + this.getManagedTable()
-//						+ " WHERE " + columnName + " = '" + filter + "'", null);
-
-		Cursor c = db.rawQuery(
-				"SELECT " + C_ID + " FROM " + this.getManagedTable()
-						+ " WHERE " + columnName + " = ?", new String[] { filter });
+//						+ " WHERE " + columnName + " = ?", new String[] { filter });
 		
-		result = c.getLong(c.getColumnIndexOrThrow(C_ID));
-
+		while (c.moveToNext())
+		{
+			String t = c.getString(c.getColumnIndexOrThrow(columnName));
+			if (t.compareTo(filter) == 0)
+			{
+				result = c.getLong(c.getColumnIndexOrThrow(C_ID));
+			}
+		}
 		return result;
 	}
 

@@ -112,7 +112,7 @@ public class GeolocationTask extends AsyncTask<String, Void, LatLng>
 	{
 		mProgressDialog = new ProgressDialog(context);
 		
-		mProgressDialog.setMessage("Recuperando coordenadas geogr√°ficas...");
+		mProgressDialog.setMessage("Recuperando coordenadas geográficas...");
 		
 		mProgressDialog.show();
 	}

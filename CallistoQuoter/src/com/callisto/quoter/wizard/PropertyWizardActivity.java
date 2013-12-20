@@ -415,15 +415,6 @@ public class PropertyWizardActivity extends FragmentActivity implements
 				Log.i(this.getClass().toString(), e.getMessage());
 			}
 		}
-//		Log.i(this.getClass().toString(), "Performing room insertion");
-//		mRoomId = mRooms.insert(reg);
-//
-//		ContentValues propRooms = new ContentValues();
-//		
-//		propRooms.put(PropsRoomsDBAdapter.C_PROP_ID, mPropId);
-//		propRooms.put(PropsRoomsDBAdapter.C_ROOM_ID, mRoomId);
-//
-//		mPropRooms.insert(propRooms);
 		
 		if (item.getDBTable() == PropTypesDBAdapter.T_PROP_TYPES)
 		{
@@ -432,7 +423,7 @@ public class PropertyWizardActivity extends FragmentActivity implements
 			PropTypesDBAdapter propTypes = new PropTypesDBAdapter(this);
 			
 			propTypes.open();
-			long val = propTypes.getId(item.getDisplayValue(), " ");
+			long val = propTypes.getId(item.getDisplayValue());
 			propTypes.close();
 			
 			reg.put(PropDBAdapter.C_ID, mPropId);
@@ -451,7 +442,6 @@ public class PropertyWizardActivity extends FragmentActivity implements
 				Log.i(this.getClass().toString(), e.getMessage());
 			}
 		}
-		
 	}
 
 	private void updateBottomBar()
