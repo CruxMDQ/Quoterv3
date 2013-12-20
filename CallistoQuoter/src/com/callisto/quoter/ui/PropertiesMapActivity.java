@@ -193,15 +193,6 @@ public class PropertiesMapActivity extends FragmentActivity implements
 					
 					try
 					{
-//						for (Page page : mWizardModel.getCurrentPageSequence())
-//						{
-//							result.putExtra(page.getTitle(), page.getData());
-//							result.putExtra("Page" + pageIndex, page.getTitle());
-//							pageIndex++;
-//						}
-//						
-//						result.putExtra("Pages", pageIndex);
-
 						int pages = extras.getInt("Pages");
 						Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", "" + pages);
 						
@@ -299,7 +290,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		}
 	}
 
-	// "We'z disablin' dem two until we'z got the akshun bar fing working propa, boss."
+	// TODO "We'z disablin' dem two until we'z got the akshun bar fing working propa, boss."
 	@Override
 	public void onMapClick(LatLng point)
 	{
@@ -519,6 +510,10 @@ public class PropertiesMapActivity extends FragmentActivity implements
 					latlng = new GeolocationTask(this).execute(
 							a.getAddressLine(0) + ", " + cityName + ", "
 									+ countryName).get();
+					
+					Long recordId = a.getExtras().getLong(PropDBAdapter.C_ID);
+					
+					saveGeoLocData(latlng, recordId);
 				}
 				catch (InterruptedException e)
 				{
@@ -555,60 +550,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		mProvider = mLocationManager.getBestProvider(criteria, false);
 
 		mLocationManager.requestLocationUpdates(mProvider, 400, 1, this);
-
-		// Location location = mLocationManager.getLastKnownLocation(mProvider);
-
-		// if (location != null)
-		// {
-		// System.out.println("Provider " + mProvider + " has been selected.");
-		// onLocationChanged(location);
-		// }
-		//
-		// try
-		// {
-		// if (mCurrentLat == 0 && mCurrentLong == 0)
-		// {
-		// mCurrentLat = location.getLatitude();
-		// mCurrentLong = location.getLongitude();
-		// }
-		// Log.i(this.getClass().toString() + ".doEyeInTheSky", "Lat: " +
-		// mCurrentLat + ", long: " + mCurrentLong);
-		// }
-		// catch (Exception e)
-		// {
-		// // System.out.println(e.getMessage());
-		// }
 	}
-
-//	private ArrayList<String> pullChoicesFromDB(DBAdapter dbAdapter, String columnName)
-//	{
-//		ArrayList<String> result = new ArrayList<String>();
-//		
-//		if (dbAdapter != null)
-//		{
-//			dbAdapter.open();
-//			
-//			Cursor c = dbAdapter.getList();
-//			
-//			while (c.moveToNext())
-//			{
-//				String value = c.getString(c.getColumnIndex(columnName));
-//				
-//				result.add(value);
-//			}
-//			
-//			c.close();
-//			
-//			dbAdapter.close();
-//
-//			return result;
-//		}
-//		else
-//		{
-//			throw new NullPointerException("Database adapter NOT initialized!");
-//		}
-//		
-//	}
 
 	private void query()
 	{
@@ -639,7 +581,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 				Long recordId = c.getLong(c
 						.getColumnIndexOrThrow(DBAdapter.C_ID));
-
+				
 				Dialog dialog = new Dialog(PropertiesMapActivity.this);
 				dialog.setContentView(R.layout.dialog_map_property_details);
 				dialog.setTitle(c.getString(c
@@ -780,24 +722,34 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 		return null;
 	}
+	
+	private void saveGeoLocData(LatLng latlng, long recordId)
+	{
+		ContentValues reg = new ContentValues();
+		
+		reg.put(PropDBAdapter.C_ID, recordId);
+		reg.put(PropDBAdapter.C_LATITUDE, latlng.latitude);
+		reg.put(PropDBAdapter.C_LONGITUDE, latlng.longitude);
+		
+		try
+		{
+			PropDBAdapter properties = new PropDBAdapter(this);
+			
+			properties.open();
+			properties.update(reg);
+			properties.close();
+		}
+		catch(SQLException e)
+		{
+			Log.i(this.getClass().toString(), e.getMessage());
+		}
+	}
 
 	private void startWizardActivity()
 	{
 		Intent intent = new Intent();
 
 		Bundle extras = new Bundle();
-		
-//		ArrayList<String> propTypes = pullChoicesFromDB(new PropTypesDBAdapter(this), PropTypesDBAdapter.C_PROP_TYPES_NAME);
-//		ArrayList<String> opTypes = pullChoicesFromDB(new OpTypesDBAdapter(this), OpTypesDBAdapter.C_OP_TYPE_NAME);
-//		ArrayList<String> servTypes = pullChoicesFromDB(new ServicesDBAdapter(this), ServicesDBAdapter.C_SERVICE_NAME);
-//		
-//		extras.putString("LabelPropType", PropTypesDBAdapter.LABEL_PROP_TYPES);
-//		extras.putString("LabelOpTypes", OpTypesDBAdapter.LABEL_OP_TYPES);
-//		extras.putString("LabelServices", ServicesDBAdapter.LABEL_SERVICES);
-//
-//		extras.putStringArrayList("propTypes", propTypes);
-//		extras.putStringArrayList("opTypes", opTypes);
-//		extras.putStringArrayList("servTypes", servTypes);
 		
 		extras.putString("mContactUri", mContactUri.toString());
 		

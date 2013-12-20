@@ -29,10 +29,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.callisto.quoter.R;
+import com.callisto.quoter.db.OpTypesDBAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.PropTypesDBAdapter;
 import com.callisto.quoter.db.PropsOpsDBAdapter;
 import com.callisto.quoter.db.PropsRoomsDBAdapter;
+import com.callisto.quoter.db.ServicesDBAdapter;
 import com.callisto.quoter.ui.PropDetailActivity;
 import com.callisto.quoter.ui.PropListActivity;
 import com.callisto.quoter.utils.ImageUtils;
@@ -146,51 +148,12 @@ public class PropertyWizardActivity extends FragmentActivity implements
 						{
 							return new AlertDialog.Builder(getActivity())
 									.setMessage(R.string.submit_confirm_message)
-//									.setPositiveButton(R.string.submit_confirm_button, null)									
-									// TODO Develop code to directly write the new property to database 
 									.setPositiveButton(R.string.submit_confirm_button, new OnClickListener()
 									{	
 										@Override
 										public void onClick(DialogInterface dialog, int which)
 										{
 											Intent result = new Intent();
-//											int pageIndex = 0;
-	
-											/*
-											for (Page page : mWizardModel.getCurrentPageSequence())
-											{
-												String t = page.getData().getString(Page.SIMPLE_DATA_KEY);
-												
-												// t == null => page contains multiple choices?
-												if (t != null)
-												{
-													// result.putExtra(page.getTitle(), t);
-													// result.putExtra("choiceCount", 1);
-
-													result.putExtra(page.getTitle(), 1);
-													result.putExtra(page.getTitle() + ", answer " + 1, t);
-												}
-												else
-												{
-													// mPage.getData().putStringArrayList(Page.SIMPLE_DATA_KEY, selections);
-													java.util.ArrayList<String> selections = page.getData().getStringArrayList(Page.SIMPLE_DATA_KEY);
-													
-													int choices = selections.size();
-													String t2;
-													result.putExtra(page.getTitle(), choices);
-													
-													for (int i = 0; i < choices; i++)
-													{
-														t2 = selections.get(i);
-														// result.putExtra(page.getTitle(), t2);
-														result.putExtra(page.getTitle() + ", answer " + i, t2);
-													}
-												}
-												result.putExtra("Page" + pageIndex, page.getTitle());
-												pageIndex++;
-											}
-											
-											result.putExtra("Pages", pageIndex); */
 											
 											/* "Dis 'ere chunk o' code pulls reviw'd items from... uh... dat 'wizardModel' fing." */
 											ArrayList<ReviewItem> reviewItems = new ArrayList<ReviewItem>();
@@ -198,16 +161,6 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											for (Page page : mWizardModel.getCurrentPageSequence())
 											{
 												page.getReviewItems(reviewItems);
-
-												for (int i = 0; i < reviewItems.size(); i++)
-												{
-													ReviewItem item = reviewItems.get(i);
-													
-//													if (item.getDBTable() == page.getDBTable())
-//													{
-//														save(item, page.getDBTable());
-//													}
-												}
 											}
 											
 											Collections.sort(reviewItems, new Comparator<ReviewItem>()
@@ -230,30 +183,30 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											
 												save(item);
 												
-												tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
-												
-												String value;
-												
-												int valueCount = 0;
-												
-												while (tokenizer.hasMoreTokens())
-												{	
-													String title = item.getTitle();
-													
-													if (title.compareTo("Direcci—n") != 0)
-													{
-														value = tokenizer.nextToken().trim();
-														
-														Log.d(this.getClass().toString(), item.getTitle() + ": " + value);
-													
-														valueCount++;
-													}
-													else
-													{
-														Log.d(this.getClass().toString(), item.getTitle() + ": " + item.getDisplayValue());
-														break;
-													}
-												}
+//												tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
+//												
+//												String value;
+//												
+//												int valueCount = 0;
+//												
+//												while (tokenizer.hasMoreTokens())
+//												{	
+//													String title = item.getTitle();
+//													
+//													if (title.compareTo("Direcci—n") != 0)
+//													{
+//														value = tokenizer.nextToken().trim();
+//														
+//														Log.d(this.getClass().toString(), item.getTitle() + ": " + value);
+//													
+//														valueCount++;
+//													}
+//													else
+//													{
+//														Log.d(this.getClass().toString(), item.getTitle() + ": " + item.getDisplayValue());
+//														break;
+//													}
+//												}
 											}
 											
 											setResult(RESULT_OK, result);
@@ -395,10 +348,10 @@ public class PropertyWizardActivity extends FragmentActivity implements
 		
 		if (item.getDBTable() == PropDBAdapter.T_PROPERTIES)
 		{	
-			PropDBAdapter properties = new PropDBAdapter(this);
-
 			ContentValues reg = new ContentValues();
 			
+			PropDBAdapter properties = new PropDBAdapter(this);
+
 			reg.put(PropDBAdapter.C_ADDRESS, item.getDisplayValue());
 			reg.put(PropDBAdapter.C_OWNER_URI, mContactUri.toString());
 
@@ -436,6 +389,82 @@ public class PropertyWizardActivity extends FragmentActivity implements
 				properties.open();
 				properties.update(reg);
 				properties.close();
+			}
+			catch(SQLException e)
+			{
+				Log.i(this.getClass().toString(), e.getMessage());
+			}
+		}
+		
+		// TODO Finish working on this for property services... and figure a way to extract a leaner method out of this mumbo-jumbo.
+		if (item.getDBTable() == OpTypesDBAdapter.T_OPERATIONS)
+		{
+			OpTypesDBAdapter opTypes = new OpTypesDBAdapter(this);
+			
+			StringTokenizer tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
+			
+//			String subItem;
+			
+			while (tokenizer.hasMoreTokens())
+			{	
+				ContentValues reg = new ContentValues();
+
+//				String title = item.getTitle();
+				
+//				if (title.compareTo("Direcci—n") != 0)
+//				{
+					String subItem = tokenizer.nextToken().trim();
+					
+					opTypes.open();
+					long value = opTypes.getId(subItem);
+					opTypes.close();
+					
+					reg.put(PropsOpsDBAdapter.C_PROP_ID, mPropId);
+					reg.put(PropsOpsDBAdapter.C_OP_TYPE_ID, value);
+
+					try
+					{
+						PropsOpsDBAdapter propsOps = new PropsOpsDBAdapter(this);
+
+						propsOps.open();
+						propsOps.insert(reg);
+						propsOps.close();
+					}
+					catch(SQLException e)
+					{
+						Log.i(this.getClass().toString(), e.getMessage());
+					}
+					
+//				}
+//				else
+//				{
+//					Log.d(this.getClass().toString(), item.getTitle() + ": " + item.getDisplayValue());
+//					break;
+//				}
+					
+			}
+		}
+
+		if (item.getDBTable() == ServicesDBAdapter.T_SERVICES)
+		{
+			ContentValues reg = new ContentValues();
+			
+			ServicesDBAdapter servTypes = new ServicesDBAdapter(this);
+			
+			servTypes.open();
+			long val = servTypes.getId(item.getDisplayValue());
+			servTypes.close();
+			
+			reg.put(PropsOpsDBAdapter.C_PROP_ID, mPropId);
+			reg.put(PropsOpsDBAdapter.C_OP_TYPE_ID, val);
+			
+			try
+			{
+				PropsOpsDBAdapter propsOps = new PropsOpsDBAdapter(this);
+
+				propsOps.open();
+				propsOps.insert(reg);
+				propsOps.close();
 			}
 			catch(SQLException e)
 			{

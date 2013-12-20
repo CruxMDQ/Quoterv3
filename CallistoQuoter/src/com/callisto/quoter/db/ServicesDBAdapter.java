@@ -15,9 +15,9 @@ public class ServicesDBAdapter extends DBAdapter
 	{
 		super(context);
 		this.setManagedTable(T_SERVICES);
+		this.setKeyColumn(C_SERVICE_NAME);
 		this.setColumns(new String[] { C_ID,
 				C_SERVICE_NAME,
 				C_SERVICE_DETAILS });
 	}
-
 }

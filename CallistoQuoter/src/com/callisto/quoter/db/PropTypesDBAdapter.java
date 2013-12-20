@@ -21,13 +21,9 @@ public class PropTypesDBAdapter extends DBAdapter
 	{
 		super(context);
 		this.setManagedTable(T_PROP_TYPES);
+		this.setKeyColumn(C_PROP_TYPES_NAME);
 		this.setColumns(new String[] { C_ID,
 			C_PROP_TYPES_NAME });
-	}
-	
-	public long getId(String filter)
-	{
-		return super.getId(filter, C_PROP_TYPES_NAME);
 	}
 	
 	/***

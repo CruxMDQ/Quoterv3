@@ -13,9 +13,9 @@ public abstract class DBAdapter
 	protected Context context;
 	protected DBHelper dbHelper;
 	protected SQLiteDatabase db;
-	protected String managedTable;
+	protected String keyColumn, managedTable;
 	protected String[] columns;
-
+	
 	public SQLiteDatabase getDb()
 	{
 		return db;
@@ -29,6 +29,16 @@ public abstract class DBAdapter
 	public void setManagedTable(String managedTable)
 	{
 		this.managedTable = managedTable;
+	}
+	
+	public String getKeyColumn()
+	{
+		return keyColumn;
+	}
+	
+	public void setKeyColumn(String columnName)
+	{
+		this.keyColumn = columnName;
 	}
 
 	public void setColumns(String[] columns)
@@ -89,39 +99,11 @@ public abstract class DBAdapter
 		return c;
 	}
 
-	/***
-	 * 
-	 * @param filter
-	 *            Value to match for result.
-	 * @param columnName
-	 *            Column to search.
-	 * @return Row identifier.
-	 * @throws SQLException
-	 */
-	public long getId(String filter, String columnName) throws SQLException
+	public long getId(String filter)
 	{
-		long result = 0;
-
-//		String query = "SELECT " + C_ID + " FROM " + this.getManagedTable()
-//				+ " WHERE " + columnName + " = " + filter;
-		
-		Cursor c = this.getCursor();
-
-//		Cursor c = db.rawQuery(
-//				"SELECT " + C_ID + " FROM " + this.getManagedTable()
-//						+ " WHERE " + columnName + " = ?", new String[] { filter });
-		
-		while (c.moveToNext())
-		{
-			String t = c.getString(c.getColumnIndexOrThrow(columnName));
-			if (t.compareTo(filter) == 0)
-			{
-				result = c.getLong(c.getColumnIndexOrThrow(C_ID));
-			}
-		}
-		return result;
+		return this.getId(filter, getKeyColumn());
 	}
-
+	
 	public Cursor getList()
 	{
 		Cursor c = db.query(true, managedTable, columns, null, null, null,
@@ -202,6 +184,40 @@ public abstract class DBAdapter
 
 		// close();
 
+		return result;
+	}
+
+	/***
+	 * 
+	 * @param filter
+	 *            Value to match for result.
+	 * @param columnName
+	 *            Column to search.
+	 * @return Row identifier.
+	 * @throws SQLException
+	 */
+	private long getId(String filter, String columnName) throws SQLException
+	{
+		long result = 0;
+
+//		String query = "SELECT " + C_ID + " FROM " + this.getManagedTable()
+//				+ " WHERE " + columnName + " = " + filter;
+		
+		Cursor c = this.getCursor();
+
+//		Cursor c = db.rawQuery(
+//				"SELECT " + C_ID + " FROM " + this.getManagedTable()
+//						+ " WHERE " + columnName + " = ?", new String[] { filter });
+		
+		while (c.moveToNext())
+		{
+			String t = c.getString(c.getColumnIndexOrThrow(columnName));
+			
+			if (t.compareTo(filter) == 0)
+			{
+				result = c.getLong(c.getColumnIndexOrThrow(C_ID));
+			}
+		}
 		return result;
 	}
 }
