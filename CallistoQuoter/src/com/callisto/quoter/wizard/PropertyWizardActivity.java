@@ -34,6 +34,7 @@ import com.callisto.quoter.db.PropDBAdapter;
 import com.callisto.quoter.db.PropTypesDBAdapter;
 import com.callisto.quoter.db.PropsOpsDBAdapter;
 import com.callisto.quoter.db.PropsRoomsDBAdapter;
+import com.callisto.quoter.db.PropsServicesDBAdapter;
 import com.callisto.quoter.db.ServicesDBAdapter;
 import com.callisto.quoter.ui.PropDetailActivity;
 import com.callisto.quoter.ui.PropListActivity;
@@ -175,39 +176,17 @@ public class PropertyWizardActivity extends FragmentActivity implements
 											/* "End o' dat code chunk. */
 											
 											// Source: http://stackoverflow.com/questions/6453204/caused-by-java-util-nosuchelementexception
-											StringTokenizer tokenizer;
-
+											
 											for (int i = 0; i < reviewItems.size(); i++)
 											{
 												ReviewItem item = reviewItems.get(i);
 											
 												save(item);
-												
-//												tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
-//												
-//												String value;
-//												
-//												int valueCount = 0;
-//												
-//												while (tokenizer.hasMoreTokens())
-//												{	
-//													String title = item.getTitle();
-//													
-//													if (title.compareTo("Direcci—n") != 0)
-//													{
-//														value = tokenizer.nextToken().trim();
-//														
-//														Log.d(this.getClass().toString(), item.getTitle() + ": " + value);
-//													
-//														valueCount++;
-//													}
-//													else
-//													{
-//														Log.d(this.getClass().toString(), item.getTitle() + ": " + item.getDisplayValue());
-//														break;
-//													}
-//												}
 											}
+											
+											Bundle extras = new Bundle();
+											
+											extras.putLong("propId", mPropId);
 											
 											setResult(RESULT_OK, result);
 											finish();
@@ -346,14 +325,14 @@ public class PropertyWizardActivity extends FragmentActivity implements
 	{
 		Log.d(this.getClass().toString(), item.getDBTable() + ", " + item.getDisplayValue());
 		
-		if (item.getDBTable() == PropDBAdapter.T_PROPERTIES)
+		if (item.getDBTable() == PropDBAdapter.T_PROPERTIES) 			// Parameter type: string
 		{	
 			ContentValues reg = new ContentValues();
 			
-			PropDBAdapter properties = new PropDBAdapter(this);
+			PropDBAdapter properties = new PropDBAdapter(this);			// Parameter type: class?
 
-			reg.put(PropDBAdapter.C_ADDRESS, item.getDisplayValue());
-			reg.put(PropDBAdapter.C_OWNER_URI, mContactUri.toString());
+			reg.put(PropDBAdapter.C_ADDRESS, item.getDisplayValue());	// Parameter type: string
+			reg.put(PropDBAdapter.C_OWNER_URI, mContactUri.toString()); // Parameter type: string
 
 			try
 			{
@@ -369,18 +348,18 @@ public class PropertyWizardActivity extends FragmentActivity implements
 			}
 		}
 		
-		if (item.getDBTable() == PropTypesDBAdapter.T_PROP_TYPES)
+		if (item.getDBTable() == PropTypesDBAdapter.T_PROP_TYPES)		// Parameter type: string
 		{
 			ContentValues reg = new ContentValues();
 			
-			PropTypesDBAdapter propTypes = new PropTypesDBAdapter(this);
+			PropTypesDBAdapter propTypes = new PropTypesDBAdapter(this);	// Parameter type: class?
 			
 			propTypes.open();
 			long val = propTypes.getId(item.getDisplayValue());
 			propTypes.close();
 			
-			reg.put(PropDBAdapter.C_ID, mPropId);
-			reg.put(PropDBAdapter.C_PROP_TYPE_ID, val);
+			reg.put(PropDBAdapter.C_ID, mPropId);						// Parameter type: long
+			reg.put(PropDBAdapter.C_PROP_TYPE_ID, val);					// Parameter type: long
 			
 			try
 			{
@@ -447,28 +426,35 @@ public class PropertyWizardActivity extends FragmentActivity implements
 
 		if (item.getDBTable() == ServicesDBAdapter.T_SERVICES)
 		{
-			ContentValues reg = new ContentValues();
-			
+			StringTokenizer tokenizer = new StringTokenizer (item.getDisplayValue(), ",");	// ", "
+
 			ServicesDBAdapter servTypes = new ServicesDBAdapter(this);
 			
-			servTypes.open();
-			long val = servTypes.getId(item.getDisplayValue());
-			servTypes.close();
-			
-			reg.put(PropsOpsDBAdapter.C_PROP_ID, mPropId);
-			reg.put(PropsOpsDBAdapter.C_OP_TYPE_ID, val);
-			
-			try
-			{
-				PropsOpsDBAdapter propsOps = new PropsOpsDBAdapter(this);
+			while (tokenizer.hasMoreTokens())
+			{	
+				ContentValues reg = new ContentValues();
 
-				propsOps.open();
-				propsOps.insert(reg);
-				propsOps.close();
-			}
-			catch(SQLException e)
-			{
-				Log.i(this.getClass().toString(), e.getMessage());
+				String subItem = tokenizer.nextToken().trim();
+				
+				servTypes.open();
+				long value = servTypes.getId(subItem);
+				servTypes.close();
+			
+				reg.put(PropsServicesDBAdapter.C_PROP_ID, mPropId);
+				reg.put(PropsServicesDBAdapter.C_SERV_ID, value);
+			
+				try
+				{
+					PropsServicesDBAdapter propsServices = new PropsServicesDBAdapter(this);
+	
+					propsServices.open();
+					propsServices.insert(reg);
+					propsServices.close();
+				}
+				catch(SQLException e)
+				{
+					Log.i(this.getClass().toString(), e.getMessage());
+				}
 			}
 		}
 	}

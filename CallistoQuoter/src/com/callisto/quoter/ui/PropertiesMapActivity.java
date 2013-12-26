@@ -41,10 +41,7 @@ import com.callisto.quoter.R;
 import com.callisto.quoter.async.GeolocationTask;
 import com.callisto.quoter.async.LocaleTask;
 import com.callisto.quoter.db.DBAdapter;
-import com.callisto.quoter.db.OpTypesDBAdapter;
 import com.callisto.quoter.db.PropDBAdapter;
-import com.callisto.quoter.db.PropTypesDBAdapter;
-import com.callisto.quoter.db.ServicesDBAdapter;
 import com.callisto.quoter.mapfragment.CustomSupportMapFragment;
 import com.callisto.quoter.utils.ImageUtils;
 import com.callisto.quoter.wizard.PropertyWizardActivity;
@@ -161,17 +158,10 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		
 								if (phoneCur.moveToFirst())
 								{
-									// mContactId =
-									// phoneCur.getString(phoneCur.getColumnIndex(Phone.CONTACT_ID));
 									mContactUri = contactData;
-									// Name =
-									// phoneCur.getString(phoneCur.getColumnIndex(Phone.DISPLAY_NAME));
 								}
 		
 								phoneCur.close();
-		
-								// txtOwner.setText(Name);
-								// Log.i(this.getClass().toString(), Name);
 
 								startWizardActivity();
 							}
@@ -189,26 +179,7 @@ public class PropertiesMapActivity extends FragmentActivity implements
 				}
 				case C_CREATE:
 				{
-					Bundle extras = data.getExtras();
-					
-					try
-					{
-						int pages = extras.getInt("Pages");
-						Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", "" + pages);
-						
-						for (int i = 0; i < pages; i++)
-						{
-							String page = extras.getString("Page" + i);
-							Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", page);
-							
-							String value = extras.getString(page);
-							Log.d(this.getClass().toString() + ".onActivityResult::C_CREATE", value);
-						}
-					}
-					catch(Exception e)
-					{
-						e.printStackTrace();
-					}
+					query();
 				}
 			}
 		}
@@ -535,6 +506,8 @@ public class PropertiesMapActivity extends FragmentActivity implements
 							+ c.getLong(c.getColumnIndexOrThrow(DBAdapter.C_ID)));
 
 			mProperties.put(mMap.addMarker(m), c);
+
+//			c.close();
 		}
 	}
 
@@ -554,6 +527,8 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 	private void query()
 	{
+//		mMap.clear();
+
 		try
 		{
 			addresses = mDBAdapter.getAllAddresses();
@@ -577,34 +552,65 @@ public class PropertiesMapActivity extends FragmentActivity implements
 			{
 				Cursor c = mProperties.get(m);
 
-				Cursor contactDetails = retrieveContactDetails(c);
+				mContactUri = Uri.parse(c.getString(c
+						.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
 
-				Long recordId = c.getLong(c
-						.getColumnIndexOrThrow(DBAdapter.C_ID));
-				
 				Dialog dialog = new Dialog(PropertiesMapActivity.this);
 				dialog.setContentView(R.layout.dialog_map_property_details);
-				dialog.setTitle(c.getString(c
-						.getColumnIndex(PropDBAdapter.C_ADDRESS)));
+				
+				String title = c.getString(c
+						.getColumnIndex(PropDBAdapter.C_ADDRESS));
+				
+				dialog.setTitle(title);
+				
 				dialog.setCancelable(true);
 
-				if (contactDetails != null)
+//				Cursor contactDetails = retrieveContactDetails(c);
+				Cursor contactDetails;
+				
+				/***
+				 * [SOLVED] Problem when retrieving stored contact info from DB. Sources:
+				 * - http://stackoverflow.com/questions/8064452/android-database-cursor-index-out-of-bound-of-exception
+				 */
+				try
 				{
+					contactDetails = retrieveContactDetails(mContactUri);
+
 					txtOwnerName = (TextView) dialog
 							.findViewById(R.id.txtOwnerName);
-					txtOwnerName.setText(contactDetails
-							.getString(contactDetails
-									.getColumnIndex(Phone.DISPLAY_NAME)));
-					// text.setText(R.string.lots_of_text);
-
+					
 					txtOwnerPhone = (TextView) dialog
 							.findViewById(R.id.txtOwnerPhone);
-					txtOwnerPhone.setText(contactDetails
-							.getString(contactDetails
-									.getColumnIndex(Phone.NUMBER)));
-					// text.setText(R.string.lots_of_text);
-				}
 
+					while (contactDetails.moveToNext())
+					{
+						String owner = contactDetails
+								.getString(contactDetails
+										.getColumnIndex(Phone.DISPLAY_NAME));
+
+						txtOwnerName.setText(owner);
+
+						String phone = contactDetails
+								.getString(contactDetails
+										.getColumnIndex(Phone.NUMBER));
+						
+						txtOwnerPhone.setText(phone);
+					}
+				}
+				catch (SQLException e)
+				{
+					Log.i(this.getClass().toString() + "." + "query",
+							"Database retrieval failure", e);
+				}
+				catch (Exception e)
+				{
+					Log.i(this.getClass().toString() + ".query",
+							"" + e.getMessage());
+				}
+				
+//				Long recordId = c.getLong(c
+//						.getColumnIndexOrThrow(DBAdapter.C_ID));
+				
 				// set up image view
 				img = (ImageView) dialog.findViewById(R.id.imgOwnerThumbnail);
 				try
@@ -629,31 +635,18 @@ public class PropertiesMapActivity extends FragmentActivity implements
 
 				// img.setImageResource(R.drawable.nista_logo);
 
-				// txtAddress = (TextView) dialog.findViewById(R.id.txtAddress);
-				// txtAddress.setText(c.getString(c.getColumnIndex(PropDBAdapter.C_ADDRESS)));
-				// text.setText(R.string.lots_of_text);
-
 				txtPrice = (TextView) dialog.findViewById(R.id.txtPrice);
-				// text.setText(R.string.lots_of_text);
 
 				txtBuiltSurface = (TextView) dialog
 						.findViewById(R.id.txtBuiltSurface);
-				// text.setText(R.string.lots_of_text);
 
 				txtParcelSurface = (TextView) dialog
 						.findViewById(R.id.txtParcelSurface);
-				// text.setText(R.string.lots_of_text);
 
-				// // set up button
-				// Button button = (Button) dialog.findViewById(R.id.Button01);
-				// button.setOnClickListener(new OnClickListener()
-				// {
-				// @Override
-				// public void onClick(View v)
-				// {
-				// finish();
-				// }
-				// });
+				// c.close();
+				
+				// contactDetails.close();
+				
 				// now that the dialog is set up, it's time to show it
 				dialog.show();
 
@@ -661,67 +654,86 @@ public class PropertiesMapActivity extends FragmentActivity implements
 			}
 		});
 
+//		if (mProperties != null)
+//		{
+//			mProperties.clear();
+//		}
+
 		mProperties = new HashMap<Marker, Cursor>();
 
 		populateMap();
 	}
 
-	private Cursor retrieveContactDetails(Cursor c)
+	/***
+	 * Internal method needed to retrieve contact info from phone book.
+	 * @param uri
+	 * @return
+	 * @throws Exception
+	 * @throws SQLException
+	 */
+	private Cursor retrieveContactDetails(Uri uri) throws Exception, SQLException
 	{
 		Cursor results;
+		
+		String contactId = mContactUri.getLastPathSegment();
 
-		/*
-		 * REQUIRED FOR PICKING CONTACT FROM PHONE BOOK
-		 */
-		try
-		{
-			mContactUri = Uri.parse(c.getString(c
-					.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
+		String[] columns =
+		{ Phone.CONTACT_ID, Phone.DATA2, Phone.DISPLAY_NAME,	// Phone.DATA
+				Phone.NUMBER };
 
-			if (mContactUri != null)
-			{
-				String contactId = mContactUri.getLastPathSegment();
+		results = getContentResolver().query(
+				ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+				columns,
+				ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+						+ " = ?", new String[]
+				{ contactId }, null);
 
-				String[] columns =
-				{ Phone.CONTACT_ID, Phone.DATA, Phone.DISPLAY_NAME,
-						Phone.NUMBER };
-
-				results = getContentResolver().query(
-						ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-						columns,
-						ContactsContract.CommonDataKinds.Phone.CONTACT_ID
-								+ " = ?", new String[]
-						{ contactId }, null);
-
-				return results;
-
-				// String Name = null;
-				//
-				// if (phoneCur.moveToFirst())
-				// {
-				// Name =
-				// phoneCur.getString(phoneCur.getColumnIndex(Phone.DISPLAY_NAME));
-				// }
-				//
-				// phoneCur.close();
-				//
-				// txtOwnerName.setText(Name);
-				// Log.i(this.getClass().toString(), Name);
-			}
-		}
-		catch (SQLException e)
-		{
-			Log.i(this.getClass().toString() + "." + "query",
-					"Database retrieval failure", e);
-		}
-		catch (Exception e)
-		{
-			Log.i(this.getClass().toString() + ".query",
-					"Cannot parse contact URI from database");
-		}
-
-		return null;
+		return results;
 	}
+	
+//	private Cursor retrieveContactDetails(Cursor c)
+//	{
+//		Cursor results;
+//
+//		/*
+//		 * REQUIRED FOR PICKING CONTACT FROM PHONE BOOK
+//		 */
+//		try
+//		{
+//			mContactUri = Uri.parse(c.getString(c
+//					.getColumnIndex(PropDBAdapter.C_OWNER_URI)));
+//
+//			if (mContactUri != null)
+//			{
+//				String contactId = mContactUri.getLastPathSegment();
+//
+//				String[] columns =
+//				{ Phone.CONTACT_ID, Phone.DATA, Phone.DISPLAY_NAME,
+//						Phone.NUMBER };
+//
+//				results = getContentResolver().query(
+//						ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+//						columns,
+//						ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+//								+ " = ?", new String[]
+//						{ contactId }, null);
+//
+//				return results;
+//			}
+//		}
+//		catch (SQLException e)
+//		{
+//			Log.i(this.getClass().toString() + "." + "query",
+//					"Database retrieval failure", e);
+//		}
+//		catch (Exception e)
+//		{
+//			Log.i(this.getClass().toString() + ".query",
+//					"Cannot parse contact URI from database");
+//		}
+//
+//		return null;
+//	}
 	
 	private void saveGeoLocData(LatLng latlng, long recordId)
 	{
@@ -768,29 +780,5 @@ public class PropertiesMapActivity extends FragmentActivity implements
 		i.putExtra(PropDBAdapter.C_ID, id);
 
 		startActivityForResult(i, C_VIEW);
-	}
-	
-	// TODO Figure a way to update the latlng data of a property
-	private void updateProp(int propId)
-	{
-		try
-		{
-			ContentValues reg = new ContentValues();
-		
-			Toast.makeText(PropertiesMapActivity.this, R.string.house_edit_notice, Toast.LENGTH_LONG).show();
-	
-			reg.put(PropDBAdapter.C_ID, propId);
-
-			reg.put(PropDBAdapter.C_LATITUDE, mCurrentLat);
-			reg.put(PropDBAdapter.C_LONGITUDE, mCurrentLong);
-			
-//				long resultCode = mHouses.update(reg);
-//				Log.i(this.getClass().toString(), "Database operation result code: " + resultCode);			
-		}
-		catch(SQLException e)
-		{
-			Log.i(this.getClass().toString(), e.getMessage());
-		}
-		
 	}
 }

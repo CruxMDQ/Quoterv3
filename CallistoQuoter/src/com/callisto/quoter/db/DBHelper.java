@@ -190,9 +190,9 @@ public class DBHelper extends SQLiteOpenHelper {
 //		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Crocce 1853', 2)");
 //		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + "," + C_BEDROOMS + ") VALUES ('Formosa 4910', 2)");
 
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Puan 1917')");
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Crocce 1853')");
-		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Formosa 4910')");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Puan 1917')");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Crocce 1853')");
+//		db.execSQL("INSERT INTO " + T_PROPERTIES + "(" + C_ADDRESS + ") VALUES ('Formosa 4910')");
 
 		Log.i(this.getClass().toString(), "Initial data inserted");
 		
@@ -435,45 +435,45 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		db.execSQL(D_PROPS_ROOMS);
 
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (1, 1, 4, 4)");
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (2, 2, 3, 2)");
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (3, 3, 3, 4)");
-		
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (1, 1)");
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (1, 2)");
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (1, 3)");
-		
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (4, 1, 5, 3)");
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (5, 2, 2, 2)");
-		db.execSQL("INSERT INTO " + T_ROOMS 
-				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
-				+ " VALUES (6, 3, 4, 4)");
-
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (2, 4)");
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (2, 5)");
-		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
-				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
-				+ "VALUES (2, 6)");
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (1, 1, 4, 4)");
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (2, 2, 3, 2)");
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (3, 3, 3, 4)");
+//		
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (1, 1)");
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (1, 2)");
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (1, 3)");
+//		
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (4, 1, 5, 3)");
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (5, 2, 2, 2)");
+//		db.execSQL("INSERT INTO " + T_ROOMS 
+//				+ "(" + C_ID + ", " + C_ROOM_TYPE_ID + ", " + T_ROOM_X + ", " + T_ROOM_Y + " )"
+//				+ " VALUES (6, 3, 4, 4)");
+//
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (2, 4)");
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (2, 5)");
+//		db.execSQL("INSERT INTO " + T_PROPS_ROOMS
+//				+ "(" + C_PROP_ID + ", " + C_ROOM_ID + ")"
+//				+ "VALUES (2, 6)");
 		
 		Log.i(this.getClass().toString(), "Update to version 9 complete");
 	}

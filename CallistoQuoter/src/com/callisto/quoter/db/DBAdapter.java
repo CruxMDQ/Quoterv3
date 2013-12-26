@@ -216,8 +216,12 @@ public abstract class DBAdapter
 			if (t.compareTo(filter) == 0)
 			{
 				result = c.getLong(c.getColumnIndexOrThrow(C_ID));
+				break;
 			}
 		}
+		
+		c.close();
+		
 		return result;
 	}
 }
